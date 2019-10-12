@@ -265,7 +265,7 @@ local function ForceShowOffline()
     return true
   end
 
-  SetGuildRosterShowOffline(true)
+  -- SetGuildRosterShowOffline(true)
 
   return false
 end
@@ -429,28 +429,28 @@ end
 
 -- Disable updates when the guild roster is open.
 -- This is a temporary hack until we get a better location for data storage
-lib:RawHook("GuildFrame_LoadUI", function(...)
-  SetGuildRosterShowOffline(EPGP.db.profile.blizzard_show_offline)
-  lib.hooks.GuildFrame_LoadUI(...)
-  lib:RawHookScript(GuildRosterFrame, "OnShow", function(frame, ...)
-    GUILDFRAMEVISIBLE = true
-    if GuildRosterShowOfflineButton then
-      GuildRosterShowOfflineButton:SetChecked(EPGP.db.profile.blizzard_show_offline)
-      GuildRosterShowOfflineButton:Enable()
-    end
-    SetGuildRosterShowOffline(EPGP.db.profile.blizzard_show_offline)
-    lib.hooks[frame].OnShow(frame, ...)
-  end)
-  lib:RawHookScript(GuildRosterFrame, "OnHide", function(frame, ...)
-    GUILDFRAMEVISIBLE = false
-    EPGP.db.profile.blizzard_show_offline = GetGuildRosterShowOffline()
-    lib.hooks[frame].OnHide(frame, ...)
-    SetGuildRosterShowOffline(true)
-  end)
-  lib:Unhook("GuildFrame_LoadUI")
+-- lib:RawHook("GuildFrame_LoadUI", function(...)
+--   SetGuildRosterShowOffline(EPGP.db.profile.blizzard_show_offline)
+--   lib.hooks.GuildFrame_LoadUI(...)
+--   lib:RawHookScript(GuildRosterFrame, "OnShow", function(frame, ...)
+--     GUILDFRAMEVISIBLE = true
+--     if GuildRosterShowOfflineButton then
+--       GuildRosterShowOfflineButton:SetChecked(EPGP.db.profile.blizzard_show_offline)
+--       GuildRosterShowOfflineButton:Enable()
+--     end
+--     SetGuildRosterShowOffline(EPGP.db.profile.blizzard_show_offline)
+--     lib.hooks[frame].OnShow(frame, ...)
+--   end)
+--   lib:RawHookScript(GuildRosterFrame, "OnHide", function(frame, ...)
+--     GUILDFRAMEVISIBLE = false
+--     EPGP.db.profile.blizzard_show_offline = GetGuildRosterShowOffline()
+--     lib.hooks[frame].OnHide(frame, ...)
+--     SetGuildRosterShowOffline(true)
+--   end)
+--   lib:Unhook("GuildFrame_LoadUI")
 
-  SetGuildRosterShowOffline(true)
-end, true)
+--   SetGuildRosterShowOffline(true)
+-- end, true)
 
 
 ForceShowOffline()
