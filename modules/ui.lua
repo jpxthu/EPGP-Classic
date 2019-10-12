@@ -683,13 +683,24 @@ end
 local function EPGPSideFrameEPDropDown_SetList(dropDown)
   local list = {}
   local seen = {}
-  for _,dungeons in ipairs(C_Calendar.EventGetTextures(0)) do
-    if dungeons['expansionLevel'] == GetExpansionLevel() and not seen[dungeons['title']] and dungeons['isLfr'] ~= true then
-      seen[dungeons['title']] = true
-      tinsert(list, dungeons['title'])
-    end
-  end
+
+  -- WOW Classic does not have this API
+  -- for dungeons in ipairs(C_Calendar.EventGetTextures(0)) do
+  --   if dungeons['expansionLevel'] == GetExpansionLevel() and not seen[dungeons['title']] and dungeons['isLfr'] ~= true then
+  --     seen[dungeons['title']] = true
+  --     tinsert(list, dungeons['title'])
+  --   end
+  -- end
+
+  tinsert(list, L["Molten Core"])
+  tinsert(list, L["Onyxia's Lair"])
+  tinsert(list, L["Blackwing Lair"])
+  tinsert(list, L["Zul'Gurub"])
+  tinsert(list, L["Ruins of Ahn'Qiraj"])
+  tinsert(list, L["Temple of Ahn'Qiraj"])
+  tinsert(list, L["Naxxramas"])
   tinsert(list, OTHER)
+
   dropDown:SetList(list)
   local text = dropDown.text:GetText()
   for i=1,#list do
