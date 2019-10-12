@@ -31,9 +31,9 @@ local callbacks = mod.callbacks
 
 local timestamp_t = {}
 local function GetTimestamp(diff)
-  timestamp_t.month = C_Calendar.GetDate().month
-  timestamp_t.day = C_Calendar.GetDate().monthDay
-  timestamp_t.year = C_Calendar.GetDate().year
+  timestamp_t.month = tonumber(date("%m"))
+  timestamp_t.day = tonumber(date("%d"))
+  timestamp_t.year = tonumber(date("%Y"))
   timestamp_t.hour = select(1, GetGameTime())
   timestamp_t.min = select(2, GetGameTime())
   if diff then

@@ -967,7 +967,11 @@ function EPGP:GUILD_ROSTER_UPDATE()
 end
 
 function EPGP:LogBonusLootRoll(player, coinsLeft, reward, currencyID)
-  local weekday, month, day, year = C_Calendar.GetDate()
+  -- local weekday, month, day, year = C_Calendar.GetDate()
+  local month = tonumber(date("%m"))
+  local day = tonumber(date("%d"))
+  local year = tonumber(date("%Y"))
+
   local hour, minute = GetGameTime()
   local timestamp = string.format("%04d-%02d-%02d %02d:%02d:00", year, month, day, hour, minute)
   local entry = {
