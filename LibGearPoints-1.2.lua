@@ -735,10 +735,10 @@ function lib:GetValue(item)
   -- Check if item is relevant.  Item is automatically relevant if it
   -- is in CUSTOM_ITEM_DATA (as of 6.0, can no longer rely on ilvl alone
   -- for these).
-  if level < 339 and not CUSTOM_ITEM_DATA[itemID] then
-    Debug("%s is not relevant.", itemLink)
-    return nil, nil, level, rarity, equipLoc
-  end
+  -- if level < 339 and not CUSTOM_ITEM_DATA[itemID] then
+  --   Debug("%s is not relevant.", itemLink)
+  --   return nil, nil, level, rarity, equipLoc
+  -- end
 
   -- Get the bonuses for the item to check against known bonuses
   local itemBonuses = ItemUtils:BonusIDs(itemLink)
