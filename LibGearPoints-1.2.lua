@@ -59,6 +59,11 @@ local EQUIPSLOT_MULTIPLIER_2 = {
 --value indicating heroic/mythic ilvl should be derived from the bonus
 --list rather than the raw ilvl (mainly for T17+ tier gear)
 local CUSTOM_ITEM_DATA = {
+  -- Classic
+  [18423] = { 4, 74, "INVTYPE_NECK" }, -- Head of Onyxia
+  [18646] = { 4, 75, "INVTYPE_2HWEAPON" }, -- The Eye of Divinity
+  [18703] = { 4, 75, "INVTYPE_RANGED" }, -- Ancient Petrified Leaf
+
   -- Tier 4
   [29753] = { 4, 120, "INVTYPE_CHEST" },
   [29754] = { 4, 120, "INVTYPE_CHEST" },
