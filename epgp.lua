@@ -732,7 +732,7 @@ function EPGP:CanIncGPBy(reason, amount)
   if amount ~= math.floor(amount + 0.5) then
     return false
   end
-  if amount < -99999 or amount > 99999 or amount == 0 then
+  if amount < -99999 or amount > 99999 then -- or amount == 0
     return false
   end
   return true
