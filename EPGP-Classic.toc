@@ -58,6 +58,7 @@ modules\gptooltip.lua
 modules\ldb.lua
 modules\log.lua
 modules\loot.lua
+modules\points.lua
 modules\ui.lua
 modules\warnings.lua
 modules\whisper.lua

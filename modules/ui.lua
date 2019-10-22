@@ -592,10 +592,22 @@ local function EPGPSideFrameGPDropDown_SetList(dropDown)
 end
 
 local function AddGPControls(frame)
+  local function SetButtonText(button, text, enable)
+    button:SetText(text)
+    button:SetWidth(button:GetTextWidth() + BUTTON_TEXT_PADDING)
+    if enable then
+      button:Enable()
+    else
+      button:Disable()
+    end
+  end
+
   local reasonLabel =
     frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   reasonLabel:SetText(L["GP Reason"])
   reasonLabel:SetPoint("TOPLEFT")
+
+  local gp1, c1, gp2, c2, gp3, c3
 
   local dropDown = GUI:Create("Dropdown")
   dropDown:SetWidth(168)
@@ -609,13 +621,23 @@ local function AddGPControls(frame)
       local parent = self.frame:GetParent()
       local itemLink = self.text:GetText()
       if itemLink and itemlink ~= "" then
-        local gp1, gp2 = GP:GetValue(itemLink)
-        if not gp1 then
-          parent.editBox:SetText("")
-        elseif not gp2 then
-          parent.editBox:SetText(tostring(gp1))
+        gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemLink)
+        if gp1 then
+          SetButtonText(parent.gpButton1, ("GP1: %d (%s)"):format(gp1, c1), true)
+          parent.editBox:SetText(("%d"):format(gp1))
         else
-          parent.editBox:SetText(L["%d or %d"]:format(gp1, gp2))
+          SetButtonText(parent.gpButton1, "GP1:", false)
+          parent.editBox:SetText("")
+        end
+        if gp2 then
+          SetButtonText(parent.gpButton2, ("GP2: %d (%s)"):format(gp2, c2), true)
+        else
+          SetButtonText(parent.gpButton2, "GP2:", false)
+        end
+        if gp3 then
+          SetButtonText(parent.gpButton3, ("GP3: %d (%s)"):format(gp3, c3), true)
+        else
+          SetButtonText(parent.gpButton3, "GP3:", false)
         end
         parent.editBox:SetFocus()
         parent.editBox:HighlightText()
@@ -653,11 +675,44 @@ local function AddGPControls(frame)
     end)
   dropDown:SetCallback("OnLeave", function() GameTooltip:Hide() end)
 
+  local gpButton1 = CreateFrame("Button", "gpButton1", frame, "UIPanelButtonTemplate")
+  gpButton1:SetNormalFontObject("GameFontNormalSmall")
+  gpButton1:SetHighlightFontObject("GameFontHighlightSmall")
+  gpButton1:SetDisabledFontObject("GameFontDisableSmall")
+  gpButton1:SetHeight(BUTTON_HEIGHT)
+  gpButton1:SetText("GP1:")
+  gpButton1:SetWidth(gpButton1:GetTextWidth() + BUTTON_TEXT_PADDING)
+  gpButton1:SetPoint("TOP", dropDown.frame, "BOTTOM", 0, -2)
+  gpButton1:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton1:Disable()
+
+  local gpButton2 = CreateFrame("Button", "gpButton2", frame, "UIPanelButtonTemplate")
+  gpButton2:SetNormalFontObject("GameFontNormalSmall")
+  gpButton2:SetHighlightFontObject("GameFontHighlightSmall")
+  gpButton2:SetDisabledFontObject("GameFontDisableSmall")
+  gpButton2:SetHeight(BUTTON_HEIGHT)
+  gpButton2:SetText("GP2:")
+  gpButton2:SetWidth(gpButton2:GetTextWidth() + BUTTON_TEXT_PADDING)
+  gpButton2:SetPoint("TOP", gpButton1, "BOTTOM")
+  gpButton2:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton2:Disable()
+
+  local gpButton3 = CreateFrame("Button", "gpButton3", frame, "UIPanelButtonTemplate")
+  gpButton3:SetNormalFontObject("GameFontNormalSmall")
+  gpButton3:SetHighlightFontObject("GameFontHighlightSmall")
+  gpButton3:SetDisabledFontObject("GameFontDisableSmall")
+  gpButton3:SetHeight(BUTTON_HEIGHT)
+  gpButton3:SetText("GP3:")
+  gpButton3:SetWidth(gpButton3:GetTextWidth() + BUTTON_TEXT_PADDING)
+  gpButton3:SetPoint("TOP", gpButton2, "BOTTOM")
+  gpButton3:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton3:Disable()
+
   local label =
     frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   label:SetText(L["Value"])
   label:SetPoint("LEFT", reasonLabel)
-  label:SetPoint("TOP", dropDown.frame, "BOTTOM", 0, -2)
+  label:SetPoint("TOP", gpButton3, "BOTTOM")
 
   local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
   button:SetNormalFontObject("GameFontNormalSmall")
@@ -678,6 +733,27 @@ local function AddGPControls(frame)
   editBox:SetPoint("RIGHT", button, "LEFT")
   editBox:SetPoint("TOP", label, "BOTTOM")
 
+  local function EditBotSetText(text)
+    editBox:SetText(text)
+    editBox:SetFocus()
+    editBox:HighlightText()
+  end
+
+  gpButton1:SetScript(
+    "OnClick",
+    function (self)
+      EditBotSetText(tostring(gp1))
+    end)
+  gpButton2:SetScript(
+    "OnClick",
+    function (self)
+      EditBotSetText(tostring(gp2))
+    end)
+  gpButton3:SetScript(
+    "OnClick",
+    function (self)
+      EditBotSetText(tostring(gp3))
+    end)
   button:SetScript(
     "OnUpdate",
     function(self)
@@ -690,6 +766,7 @@ local function AddGPControls(frame)
 
   frame:SetHeight(
     reasonLabel:GetHeight() +
+    gpButton1:GetHeight() * 3 +
     dropDown.frame:GetHeight() +
     label:GetHeight() +
     button:GetHeight())
@@ -697,6 +774,9 @@ local function AddGPControls(frame)
   frame.reasonLabel = reasonLabel
   frame.dropDown = dropDown
   frame.label = label
+  frame.gpButton1 = gpButton1
+  frame.gpButton2 = gpButton2
+  frame.gpButton3 = gpButton3
   frame.button = button
   frame.editBox = editBox
 
@@ -705,6 +785,9 @@ local function AddGPControls(frame)
       self.editBox:SetText("")
       self.dropDown:SetValue(nil)
       self.dropDown.frame:Show()
+      SetButtonText(self.gpButton1, "GP1:", false)
+      SetButtonText(self.gpButton2, "GP2:", false)
+      SetButtonText(self.gpButton3, "GP3:", false)
     end
 end
 
@@ -983,7 +1066,7 @@ local function CreateEPGPSideFrame(self)
 
   f:Hide()
   f:SetWidth(225)
-  f:SetHeight(255)
+  f:SetHeight(310)
   f:SetPoint("TOPLEFT", EPGPFrame, "TOPRIGHT", -33, -20)
 
   local h = f:CreateTexture(nil, "ARTWORK")
