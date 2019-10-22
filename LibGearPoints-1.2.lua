@@ -794,7 +794,10 @@ function lib:GetValue(item)
   local ilvl_denominator = 26 -- how much ilevel difference from standard affects cost, higher values mean less effect
   local version = select(4, GetBuildInfo())
   local level_cap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
-  if version < 40200 then
+  if version < 20200 then
+    standard_ilvl = 66
+    ilvl_denominator = 10
+  elseif version < 40200 then
     standard_ilvl = 359
   elseif version < 40300 then
     standard_ilvl = 378
