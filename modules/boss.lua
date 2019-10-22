@@ -13,9 +13,9 @@ local function ShowPopup(event_name, boss_name)
   end
 
   local dialog
-  if event_name == "kill" or event_name == "BossKilled" then
+  if event_name == "kill" or event_name == "DBM_Kill" or event_name == "BossKilled" then
     DLG:Spawn("EPGP_BOSS_DEAD", boss_name)
-  elseif event_name == "wipe" and mod.db.profile.wipedetection then
+  elseif event_name == "wipe" or event_name == "DBM_Wipe" and mod.db.profile.wipedetection then
     DLG:Spawn("EPGP_BOSS_ATTEMPT", boss_name)
   end
 end
@@ -92,8 +92,8 @@ function mod:OnEnable()
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
   if DBM then
     EPGP:Print(L["Using %s for boss kill tracking"]:format("DBM"))
-    DBM:RegisterCallback("kill", dbmCallback)
-    DBM:RegisterCallback("wipe", dbmCallback)
+    DBM:RegisterCallback("DBM_Kill", dbmCallback)
+    DBM:RegisterCallback("DBM_Wipe", dbmCallback)
   elseif BigWigsLoader then
     EPGP:Print(L["Using %s for boss kill tracking"]:format("BigWigs"))
     BigWigsLoader.RegisterMessage(self, "BigWigs_OnBossWin", bwCallback)
