@@ -1,14 +1,14 @@
-## Interface: 80000
-## Title: EPGP
+## Interface: 11302
+## Title: EPGP Classic
 ## Notes: Effort Points/Gear Points Loot System
-## Author: Alkis Evlogimenos Zernin(Maintainer)
-## Version: v6.0.2
+## Author: jpxthu (Maintainer)
+## Version: v1.0.0
 ## SavedVariables: EPGP_DB
 ## OptionalDeps: LibRealmInfo
 ## X-Category: Guild
-## X-Website: http://code.google.com/p/epgp/
-## X-Compatible-With: 80000
-## X-Since-Interface: 60000
+## X-Website: https://github.com/jpxthu/EPGP-Classic
+## X-Compatible-With: 11302
+## X-Since-Interface: 11302
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
