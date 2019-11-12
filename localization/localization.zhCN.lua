@@ -42,6 +42,7 @@ L["Blackwing Lair"] = "黑翼之巢"
 -- L["%d or %d"] = true
 -- L["Do you want to resume recurring award (%s) %d EP/%s?"] = true
 -- L["EP/GP are reset"] = true
+L["[EPGP auto reply] "] = "[EPGP 自动回复] "
 -- L["EPGP decay"] = true
 -- L["EPGP is an in game, relational loot distribution system"] = true
 -- L["EPGP is using Officer Notes for data storage. Do you really want to edit the Officer Note by hand?"] = true

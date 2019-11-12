@@ -23,7 +23,8 @@ function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
       local firstChar, offset = member:match("([%z\1-\127\194-\244][\128-\191]*)()")
       member = firstChar:upper()..member:sub(offset):lower()
     else
-      SendChatMessage(L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."],
+      SendChatMessage(L["[EPGP auto reply] "] ..
+        L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."],
         "WHISPER", nil, sender)
       return
     end
@@ -37,15 +38,15 @@ function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
   senderMap[member] = sender
 
   if not EPGP:GetEPGP(member) then
-    SendChatMessage(L["%s is not eligible for EP awards"]:format(member),
-                    "WHISPER", nil, sender)
+    SendChatMessage(L["[EPGP auto reply] "] ..
+      L["%s is not eligible for EP awards"]:format(member), "WHISPER", nil, sender)
   elseif EPGP:IsMemberInAwardList(member) then
-    SendChatMessage(L["%s is already in the award list"]:format(member),
-                    "WHISPER", nil, sender)
+    SendChatMessage(L["[EPGP auto reply] "] ..
+      L["%s is already in the award list"]:format(member), "WHISPER", nil, sender)
   else
     EPGP:SelectMember(member)
-    SendChatMessage(L["%s is added to the award list"]:format(member),
-                    "WHISPER", nil, sender)
+    SendChatMessage(L["[EPGP auto reply] "] ..
+      L["%s is added to the award list"]:format(member), "WHISPER", nil, sender)
   end
 end
 
@@ -70,11 +71,12 @@ local function SendNotifiesAndClearExtras(
     for member,_ in pairs(extras_awarded) do
       local sender = senderMap[member]
       if sender then
-        SendChatMessage(L["%+d EP (%s) to %s"]:format(
+        SendChatMessage(L["[EPGP auto reply] "] ..
+                        L["%+d EP (%s) to %s"]:format(
                           extras_amount, extras_reason, member),
                         "WHISPER", nil, sender)
         EPGP:DeSelectMember(member)
-        SendChatMessage(
+        SendChatMessage(L["[EPGP auto reply] "] ..
           L["%s is now removed from the award list"]:format(member),
           "WHISPER", nil, sender)
       end
