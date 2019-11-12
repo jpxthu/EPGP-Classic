@@ -152,22 +152,7 @@ local function CreateEPGPExportImportFrame()
   f:SetScript(
     "OnShow",
     function (self)
-      if self.export then
-        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB))
-        self.button1:Show()
-        self.button1:SetText(CLOSE)
-        self.button1:SetPoint("CENTER", self, "CENTER")
-        self.button1:SetScript("OnClick",
-                               function (self) self:GetParent():Hide() end)
-        self.button2:Hide()
-        self.editbox:SetText(EPGP:GetModule("log"):Export())
-        self.editbox:HighlightText()
-        self.editbox:SetScript("OnTextChanged",
-                               function (self)
-                                 local text = EPGP:GetModule("log"):Export()
-                                 self:SetText(text)
-                               end)
-      else
+      if self.export == false then
         self.help:SetText(L["To restore to an earlier version of the standings, copy and paste the text from: %s"]:format(EPGPWEB))
         self.editbox:SetText(L["Paste import data here"])
         self.button1:Show()
@@ -186,6 +171,31 @@ local function CreateEPGPExportImportFrame()
         self.button2:SetScript("OnClick",
                                function (self) self:GetParent():Hide() end)
         self.editbox:SetScript("OnTextChanged", nil)
+      elseif self.exportDetail then
+        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB))
+        self.button1:Show()
+        self.button1:SetText(CLOSE)
+        self.button1:SetPoint("CENTER", self, "CENTER")
+        self.button1:SetScript("OnClick",
+                               function (self) self:GetParent():Hide() end)
+        self.button2:Hide()
+        self.editbox:SetText(EPGP:GetModule("log"):ExportDetail())
+        self.editbox:HighlightText()
+      else
+        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB))
+        self.button1:Show()
+        self.button1:SetText(CLOSE)
+        self.button1:SetPoint("CENTER", self, "CENTER")
+        self.button1:SetScript("OnClick",
+                               function (self) self:GetParent():Hide() end)
+        self.button2:Hide()
+        self.editbox:SetText(EPGP:GetModule("log"):Export())
+        self.editbox:HighlightText()
+        self.editbox:SetScript("OnTextChanged",
+                               function (self)
+                                 local text = EPGP:GetModule("log"):Export()
+                                 self:SetText(text)
+                               end)
       end
     end)
   f:SetScript(
@@ -397,6 +407,24 @@ local function CreateEPGPLogFrame()
     "OnClick",
     function(self, button, down)
       EPGPExportImportFrame.export = true
+      EPGPExportImportFrame.exportDetail = false
+      EPGPExportImportFrame:Hide()
+      EPGPExportImportFrame:Show()
+    end)
+
+  local exportDetail = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+  exportDetail:SetNormalFontObject("GameFontNormalSmall")
+  exportDetail:SetHighlightFontObject("GameFontHighlightSmall")
+  exportDetail:SetDisabledFontObject("GameFontDisableSmall")
+  exportDetail:SetHeight(BUTTON_HEIGHT)
+  exportDetail:SetPoint("LEFT", export, "RIGHT")
+  exportDetail:SetText(L["Export Detail"])
+  exportDetail:SetWidth(exportDetail:GetTextWidth() + BUTTON_TEXT_PADDING)
+  exportDetail:SetScript(
+    "OnClick",
+    function(self, button, down)
+      EPGPExportImportFrame.export = true
+      EPGPExportImportFrame.exportDetail = true
       EPGPExportImportFrame:Hide()
       EPGPExportImportFrame:Show()
     end)
@@ -406,7 +434,7 @@ local function CreateEPGPLogFrame()
   import:SetHighlightFontObject("GameFontHighlightSmall")
   import:SetDisabledFontObject("GameFontDisableSmall")
   import:SetHeight(BUTTON_HEIGHT)
-  import:SetPoint("LEFT", export, "RIGHT")
+  import:SetPoint("LEFT", exportDetail, "RIGHT")
   import:SetText(L["Import"])
   import:SetWidth(import:GetTextWidth() + BUTTON_TEXT_PADDING)
   import:SetScript(

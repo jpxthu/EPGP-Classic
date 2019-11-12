@@ -50,6 +50,7 @@ L["EPGP reset"] = true
 L["EP Reason"] = true
 L["expected number"] = true
 L["Export"] = true
+L["Export Detail"] = true
 L["Extras Percent should be a number between 0 and 100"] = true
 L["GP: %d"] = true
 L["GP: %d or %d"] = true

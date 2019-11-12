@@ -250,6 +250,16 @@ function mod:Export()
   return JSON.Serialize(d):gsub("\124", "\124\124")
 end
 
+function mod:ExportDetail()
+  local l = ""
+  for i, record in ipairs(self.db.profile.log) do
+    local timestamp, kind, name, reason, amount = unpack(record)
+    l = l .. tostring(timestamp) .. "\t" .. tostring(kind) .. "\t" .. tostring(name) .. "\t" .. tostring(reason) .. "\t" .. tostring(amount) .. "\n"
+  end
+
+  return l
+end
+
 function mod:Import(jsonStr)
   local success, d = pcall(JSON.Deserialize, jsonStr)
   if not success then
