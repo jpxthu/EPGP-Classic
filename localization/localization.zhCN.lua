@@ -131,6 +131,7 @@ L["%s is now removed from the award list"] = "%s 已被移出计分名单，重�
 -- L["'%s' '%s' - expected 'on' or 'off', or no argument to toggle."] = true
 -- L["%s: %s to %s"] = true
 -- L["Standby"] = true
+L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."] = "不允许代替他人申请替补，请密语 \"epgp standby\"。"
 -- L["Standby whispers in raid"] = true
 -- L["Start recurring award (%s) %d EP/%s"] = true
 -- L["Stop recurring award"] = true

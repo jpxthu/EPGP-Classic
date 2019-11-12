@@ -1,6 +1,8 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("EPGP", "enUS", true)
 if not L then return end
 
+L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."] = true
+L["Allow whisper for others"] = true
 L["Alts"] = true
 L["A member is awarded EP"] = true
 L["A member is credited GP"] = true
@@ -129,6 +131,7 @@ L["'%s' '%s' - expected 'on', 'off' or 'default', or no argument to toggle."] = 
 L["'%s' '%s' - expected 'on' or 'off', or no argument to toggle."] = true
 L["%s: %s to %s"] = true
 L["Standby"] = true
+L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."] = true
 L["Standby whispers in raid"] = true
 L["Start recurring award (%s) %d EP/%s"] = true
 L["Stop recurring award"] = true

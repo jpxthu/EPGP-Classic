@@ -18,14 +18,21 @@ function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
 
   local member = msg:sub(13):match("([^ ]+)")
   if member then
-    -- http://lua-users.org/wiki/LuaUnicode
-    local firstChar, offset = member:match("([%z\1-\127\194-\244][\128-\191]*)()")
-    member = firstChar:upper()..member:sub(offset):lower()
+    if mod.db.profile.forOthers then
+      -- http://lua-users.org/wiki/LuaUnicode
+      local firstChar, offset = member:match("([%z\1-\127\194-\244][\128-\191]*)()")
+      member = firstChar:upper()..member:sub(offset):lower()
+    else
+      SendChatMessage(L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."],
+        "WHISPER", nil, sender)
+      return
+    end
   else
     member = sender
   end
 
   member = EPGP:GetFullCharacterName(member)
+  member = EPGP:GetMain(member)
 
   senderMap[member] = sender
 
@@ -80,6 +87,7 @@ mod.dbDefaults = {
   profile = {
     enabled = false,
     medium = "GUILD",
+    forOthers = false,
   }
 }
 
@@ -105,6 +113,12 @@ mod.optionsArgs = {
       ["CHANNEL"] = CUSTOM,
       ["NONE"] = NONE,
     },
+  },
+  forOthers = {
+    order = 20,
+    type = "toggle",
+    name = L["Allow whisper for others"],
+    desc = L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."],
   },
 }
 
