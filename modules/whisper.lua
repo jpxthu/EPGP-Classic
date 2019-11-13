@@ -11,6 +11,20 @@ if ChatThrottleLib then
                     end
 end
 
+local function ResumeWhisperSenderMap()
+  local vars = EPGP.db.profile
+  if not vars.whisperSenderMap then
+    vars.whisperSenderMap = {}
+    return false
+  end
+
+  for member, sender in pairs(vars.whisperSenderMap) do
+    senderMap[member] = sender
+  end
+
+  return true
+end
+
 function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
   if not UnitInRaid("player") then return end
 
@@ -36,6 +50,7 @@ function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
   member = EPGP:GetMain(member)
 
   senderMap[member] = sender
+  EPGP.db.profile.whisperSenderMap[member] = sender
 
   if not EPGP:GetEPGP(member) then
     SendChatMessage(L["[EPGP auto reply] "] ..
@@ -81,6 +96,7 @@ local function SendNotifiesAndClearExtras(
           "WHISPER", nil, sender)
       end
       senderMap[member] = nil
+      EPGP.db.profile.whisperSenderMap[member] = nil
     end
   end
 end
@@ -95,6 +111,7 @@ mod.dbDefaults = {
 
 function mod:OnInitialize()
   self.db = EPGP.db:RegisterNamespace("whisper", mod.dbDefaults)
+  ResumeWhisperSenderMap()
 end
 
 mod.optionsName = L["Whisper"]

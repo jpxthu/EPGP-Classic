@@ -518,6 +518,8 @@ function EPGP:SelectMember(name)
   end
   selected[name] = true
   selected._count = selected._count + 1
+  EPGP.db.profile.selected[name] = true
+  EPGP.db.profile.selected._count = EPGP.db.profile.selected._count + 1
   DestroyStandings()
   return true
 end
@@ -534,6 +536,8 @@ function EPGP:DeSelectMember(name)
   end
   selected[name] = nil
   selected._count = selected._count - 1
+  EPGP.db.profile.selected[name] = nil
+  EPGP.db.profile.selected._count = EPGP.db.profile.selected._count - 1
   DestroyStandings()
   return true
 end
@@ -598,7 +602,7 @@ end
 function EPGP:ResetGP()
   assert(EPGP:CanResetEPGP())
 
-  for i = 1, EPGP:GetNumMembers() do 
+  for i = 1, EPGP:GetNumMembers() do
     m = EPGP:GetMember(i)
     local ep, gp, main = EPGP:GetEPGP(m)
     actual_gp = gp - EPGP:GetBaseGP()
@@ -616,7 +620,7 @@ end
 function EPGP:RescaleGP()
   assert(EPGP:CanResetEPGP())
 
-  for i = 1, EPGP:GetNumMembers() do 
+  for i = 1, EPGP:GetNumMembers() do
     m = EPGP:GetMember(i)
     local ep, gp, main = EPGP:GetEPGP(m)
     actual_gp = gp - EPGP:GetBaseGP()
@@ -914,6 +918,8 @@ function EPGP:GROUP_ROSTER_UPDATE()
       if UnitInRaid(Ambiguate(name, "none")) then
         selected[name] = nil
         selected._count = selected._count - 1
+        EPGP.db.profile.selected[name] = nil
+        EPGP.db.profile.selected._count = EPGP.db.profile.selected._count - 1
       end
     end
   else
@@ -921,6 +927,8 @@ function EPGP:GROUP_ROSTER_UPDATE()
     -- everyone from the selected list.
     wipe(selected)
     selected._count = 0
+    wipe(EPGP.db.profile.selected)
+    EPGP.db.profile.selected._count = 0
     -- We also need to stop any recurring EP since they should stop
     -- once a raid stops.
     if self:RunningRecurringEP() then
@@ -928,6 +936,22 @@ function EPGP:GROUP_ROSTER_UPDATE()
     end
   end
   DestroyStandings()
+end
+
+function EPGP:ResumeSelected()
+  local vars = EPGP.db.profile
+  if not vars.selected then
+    vars.selected = {}
+    vars.selected._count = 0
+    return false
+  end
+
+  for name, value in pairs(vars.selected) do
+    selected[name] = value
+  end
+  selected._count = vars.selected._count
+
+  return true
 end
 
 local initialized = false
@@ -948,6 +972,9 @@ function EPGP:GUILD_ROSTER_UPDATE()
       end
       if not initialized then
         initialized = true
+
+        EPGP:ResumeSelected()
+
         -- Enable all modules that are supposed to be enabled
         for name, module in EPGP:IterateModules() do
           if not module.db or module.db.profile.enabled or not module.dbDefaults then
@@ -955,6 +982,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
             module:Enable()
           end
         end
+
         -- Check if we have a recurring award we can resume
         if EPGP:CanResumeRecurringEP() then
           EPGP:ResumeRecurringEP()
