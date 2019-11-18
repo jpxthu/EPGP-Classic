@@ -12,6 +12,9 @@ if ChatThrottleLib then
                     end
 end
 
+-- Do not change the announcement format unless you know what will happened.
+-- EPGP will sync logs using announcement.
+
 function mod:AnnounceTo(medium, fmt, ...)
   if not medium then return end
 
@@ -79,7 +82,9 @@ function mod:MassEPAward(event_name, names, reason, amount,
 
   if extras_names then
     local extras = MakeCommaSeparated(extras_names)
-    mod:Announce(L["%+d EP (%s) to %s"], extras_amount, extras_reason, extras)
+    if extras ~= "" then
+      mod:Announce(L["%+d EP (%s) to %s"], extras_amount, extras_reason, extras)
+    end
   end
 end
 

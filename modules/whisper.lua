@@ -25,6 +25,17 @@ local function ResumeWhisperSenderMap()
   return true
 end
 
+local function SenderMapExpireClear()
+  local vars = EPGP.db.profile
+  local t = time()
+  for n, s in pairs(senderMap) do
+    if s.expire and s.expire <= t then
+      s = nil
+      vars.whisperSenderMap[n] = nil
+    end
+  end
+end
+
 function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
   if not UnitInRaid("player") then return end
 
@@ -49,13 +60,18 @@ function mod:CHAT_MSG_WHISPER(event_name, msg, sender)
   member = EPGP:GetFullCharacterName(member)
   member = EPGP:GetMain(member)
 
-  senderMap[member] = sender
-  EPGP.db.profile.whisperSenderMap[member] = sender
+  local isProtected = false
+  if senderMap[member] and senderMap[member].expire then
+    isProtected = true
+  end
+
+  senderMap[member] = { name = sender }
+  EPGP.db.profile.whisperSenderMap[member] = { name = sender }
 
   if not EPGP:GetEPGP(member) then
     SendChatMessage(L["[EPGP auto reply] "] ..
       L["%s is not eligible for EP awards"]:format(member), "WHISPER", nil, sender)
-  elseif EPGP:IsMemberInAwardList(member) then
+  elseif EPGP:IsMemberInAwardList(member) and not isProtected then
     SendChatMessage(L["[EPGP auto reply] "] ..
       L["%s is already in the award list"]:format(member), "WHISPER", nil, sender)
   else
@@ -82,23 +98,51 @@ local function SendNotifiesAndClearExtras(
       L["If you want to be on the award list but you are not in the raid, you need to whisper me: 'epgp standby' or 'epgp standby <name>' where <name> is the toon that should receive awards"])
   end
 
-  if extras_awarded then
-    for member,_ in pairs(extras_awarded) do
-      local sender = senderMap[member]
-      if sender then
+  local vars = EPGP.db.profile
+  if not extras_awarded then
+    wipe(senderMap)
+    wipe(vars.whisperSenderMap)
+    return
+  end
+
+  local time_now = time()
+  local time_protect = mod.db.profile.protectTime
+  local time_expire = time_now + time_protect
+
+  for member,_ in pairs(extras_awarded) do
+    local sender = senderMap[member]
+    if sender then
+      SendChatMessage(L["[EPGP auto reply] "] ..
+                      L["%+d EP (%s) to %s"]:format(
+                        extras_amount, extras_reason, member),
+                      "WHISPER", nil, sender.name)
+
+      -- Not first time
+      if sender.expire then
         SendChatMessage(L["[EPGP auto reply] "] ..
-                        L["%+d EP (%s) to %s"]:format(
-                          extras_amount, extras_reason, member),
-                        "WHISPER", nil, sender)
-        EPGP:DeSelectMember(member)
+          L["%s is not in the award list now. Whisper me 'epgp standby' to enlist again."]:format(member),
+            "WHISPER", nil, sender.name)
+
+      -- First time
+      else
         SendChatMessage(L["[EPGP auto reply] "] ..
-          L["%s is now removed from the award list"]:format(member),
-          "WHISPER", nil, sender)
+          L["%s is now removed from the award list. Whisper me 'epgp standby' to enlist again."]:format(member),
+            "WHISPER", nil, sender.name)
+
+        if time_protect == 0 then
+          senderMap[member] = nil
+          vars.whisperSenderMap[member] = nil
+          EPGP:DeSelectMember(member)
+        else
+          sender.expire = time_expire
+          vars.whisperSenderMap[member].expire = time_expire
+          EPGP:SelectMemberExpire(member, time_expire)
+        end
       end
-      senderMap[member] = nil
-      EPGP.db.profile.whisperSenderMap[member] = nil
     end
   end
+
+  SenderMapExpireClear()
 end
 
 mod.dbDefaults = {
@@ -106,6 +150,7 @@ mod.dbDefaults = {
     enabled = false,
     medium = "GUILD",
     forOthers = false,
+    protectTime = 300,
   }
 }
 
@@ -123,7 +168,7 @@ mod.optionsArgs = {
     name = L["Automatic handling of the standby list through whispers when in raid. When this is enabled, the standby list is cleared after each reward."],
   },
   medium = {
-    order = 10,
+    order = 2,
     type = "select",
     name = L["Announce medium"],
     desc = L["Sets the announce medium EPGP will use to announce EPGP actions."],
@@ -133,12 +178,44 @@ mod.optionsArgs = {
       ["NONE"] = NONE,
     },
   },
-  forOthers = {
-    order = 20,
-    type = "toggle",
-    name = L["Allow whisper for others"],
-    desc = L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."],
+  forOthersGroup = {
+    order = 3,
+    type = "group",
+    name = "",
+    inline = true,
+    args = {
+      help = {
+        order = 1,
+        type = "description",
+        name = L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."],
+      },
+      forOthers = {
+        type = "toggle",
+        name = L["Allow whisper for others"],
+        desc = L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."],
+      },
+    },
   },
+  protectGroup = {
+    order = 4,
+    type = "group",
+    name = L["Time protect"],
+    inline = true,
+    args = {
+      help = {
+        order = 1,
+        type = "description",
+        name = L["The standby list will be cleared x seconds after each reward."],
+      },
+      protectTime = {
+        name = L["Protect Time (sec)"],
+        type = "range",
+        min = 0,
+        max = 1800,
+        step = 1
+      },
+    },
+  }
 }
 
 function mod:OnEnable()
