@@ -312,13 +312,13 @@ frame:Show()
 function lib:DebugTest()
   EmulateEvent('CHAT_MSG_LOOT',
                LOOT_ITEM:format(UnitName('player'),
-                                select(2, GetItemInfo(40592))),
+                                select(2, GetItemInfo(18609))),
                '', '', '', '')
   EmulateEvent('CHAT_MSG_LOOT',
-               LOOT_ITEM_SELF:format(select(2, GetItemInfo(32386))),
+               LOOT_ITEM_SELF:format(select(2, GetItemInfo(19334))),
                '', '', '', '')
   EmulateEvent('CHAT_MSG_LOOT',
-               LOOT_ITEM_SELF:format(select(2, GetItemInfo(43954))),
+               LOOT_ITEM_SELF:format(select(2, GetItemInfo(17077))),
                '', '', '', '')
 end
 
@@ -341,7 +341,7 @@ end
 -- This tests all the possible situations for the loot detection patch.
 function lib:LootTest()
   -- Make a little array of itemlinks for testing purposes.
-  local items = {40592, 32386, 40244}
+  local items = {18609, 19334, 17077}
   for id, itemID in pairs(items) do
     local item = select(2, GetItemInfo(itemID))
     if not item then return print(format('DEBUG ITEM %d NOT FOUND!', itemID)) end
