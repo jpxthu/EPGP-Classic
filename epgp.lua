@@ -168,7 +168,7 @@ function EPGP:CurrentTier()
 	return tier
 end
 
-local version = GetAddOnMetadata('EPGP', 'Version')
+local version = GetAddOnMetadata("EPGP-Classic", "Version")
 if not version or #version == 0 then
   version = "(development)"
 end
