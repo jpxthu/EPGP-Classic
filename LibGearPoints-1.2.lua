@@ -10,50 +10,6 @@ if not lib then return end
 local Debug = LibStub("LibDebug-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
 
--- This is the high price equipslot multiplier.
--- Values adjusted to be proportional to the amount of stats provided by each slot in Legion
-local EQUIPSLOT_MULTIPLIER_1 = {
-  INVTYPE_HEAD = 1,
-  INVTYPE_CHEST = 1,
-  INVTYPE_ROBE = 1,
-  INVTYPE_LEGS = 1,
-  INVTYPE_WRIST = 0.56,
-  INVTYPE_FINGER = 0.56,
-  INVTYPE_CLOAK = 0.56,
-  INVTYPE_NECK = 0.56,
-  INVTYPE_SHOULDER = 0.75,
-  INVTYPE_WAIST = 0.75,
-  INVTYPE_FEET = 0.75,
-  INVTYPE_HAND = 0.75,
-  INVTYPE_TRINKET = 1.25,
-  INVTYPE_RELIC = 0.667,
-
-  -- The below are not relevant for Legion items, only for old
-  INVTYPE_WEAPON = 1.5,
-  INVTYPE_SHIELD = 1.5,
-  INVTYPE_2HWEAPON = 2,
-  INVTYPE_WEAPONMAINHAND = 1.5,
-  INVTYPE_WEAPONOFFHAND = 0.5,
-  INVTYPE_HOLDABLE = 0.5,
-  INVTYPE_RANGED = 2.0,
-  INVTYPE_RANGEDRIGHT = 2.0,
-  INVTYPE_THROWN = 0.5,
-
-  -- Hack for Tier 9 25M heroic tokens.
-  INVTYPE_CUSTOM_MULTISLOT_TIER = 0.9,
-}
-
--- Note: The second multiplier is not really used in Legion
-
--- This is the low price equipslot multiplier (off hand weapons, non
--- tanking shields).
-local EQUIPSLOT_MULTIPLIER_2 = {
-  INVTYPE_WEAPON = 0.5,
-  INVTYPE_2HWEAPON = 0.5,
-  INVTYPE_SHIELD = 0.5,
-  INVTYPE_RANGEDRIGHT = 1.5
-}
-
 --Used to display GP values directly on tier tokens; keys are itemIDs,
 --values are rarity, ilvl, inventory slot, and an optional boolean
 --value indicating heroic/mythic ilvl should be derived from the bonus
@@ -664,16 +620,6 @@ local quality_threshold = 4
 local recent_items_queue = {}
 local recent_items_map = {}
 
-local relicSubClass
-local function GetRelicSubClassString()
-	if not relicSubClass then		-- If not cached obtain 
-		local _, itemLink, rarity, level, _, itemClass, itemSubClass, _, equipLoc = GetItemInfo(140819)		-- ID of some relic
-		relicSubClass = itemSubClass
-	end
-
-	return relicSubClass
-end
-
 
 -- Given a list of item bonuses, return the ilvl delta it represents
 -- (15 for Heroic, 30 for Mythic)
@@ -766,11 +712,6 @@ function lib:GetValue(item)
     return nil, nil, level, rarity, equipLoc
   end
 
-  -- Check if it is a Relic
-  if equipLoc == "" and itemSubClass == GetRelicSubClassString() then
-    equipLoc = "INVTYPE_RELIC"
-  end
-
   -- Does the item have bonus sockets or tertiary stats?  If so,
   -- set extra GP to apply later.  We don't care about warforged
   -- here as that uses the increased item level instead.
@@ -781,56 +722,65 @@ function lib:GetValue(item)
 
   UpdateRecentLoot(itemLink)
 
-  local slot_multiplier1 = EQUIPSLOT_MULTIPLIER_1[equipLoc]
-  local slot_multiplier2 = EQUIPSLOT_MULTIPLIER_2[equipLoc]
-
-  if not slot_multiplier1 then
-    return nil, nil, level, rarity, equipLoc
+  local modPoints = EPGP:GetModule("points")
+  if not modPoints then
+    return nil, nil, nil, nil, nil, nil
   end
+
+  slotS1, slotC1, slotS2, slotC2, slotS3, slotC3, baseGP, standard_ilvl, ilvl_denominator =
+    modPoints:GetScale(equipLoc, itemSubClass)
+
+  if not slotS1 then
+    return nil, nil, nil, nil, nil, nil
+  end
+
   -- 0.06973 is our coefficient so that ilvl 359 chests cost exactly
   -- 1000gp.  In 4.2 and higher, we renormalize to make ilvl 378
   -- chests cost 1000.  Repeat ad infinitum!
-  local standard_ilvl
-  local ilvl_denominator = 26 -- how much ilevel difference from standard affects cost, higher values mean less effect
-  local version = select(4, GetBuildInfo())
-  local level_cap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
-  if version < 20200 then
-    standard_ilvl = 66
-    ilvl_denominator = 10
-  elseif version < 40200 then
-    standard_ilvl = 359
-  elseif version < 40300 then
-    standard_ilvl = 378
-  elseif version < 50200 then
-    standard_ilvl = 496
-  elseif version < 50400 then
-    standard_ilvl = 522
-  elseif version < 60000 or level_cap == 90 then
-    standard_ilvl = 553
-  elseif version < 60200 then
-    standard_ilvl = 680
-    ilvl_denominator = 30
-  elseif version < 70000 then
-    standard_ilvl = 710 -- HFC HC
-    ilvl_denominator = 30
-  elseif version < 70200 then
-    standard_ilvl = 890 -- The Nighthold HC
-    ilvl_denominator = 30
-  elseif version < 70300 then
-    standard_ilvl = 915 -- Tomb of Sargeras HC
-    ilvl_denominator = 30
-  elseif version < 80000 then
-    standard_ilvl = 945 -- Antorus, the Burning Throne HC
-    ilvl_denominator = 30
-  else
-    standard_ilvl = 370 -- Uldir
-    ilvl_denominator = 32
-  end
-  local multiplier = 1000 * 2 ^ (-standard_ilvl / ilvl_denominator)
+  -- local standard_ilvl
+  -- local ilvl_denominator = 26 -- how much ilevel difference from standard affects cost, higher values mean less effect
+  -- local version = select(4, GetBuildInfo())
+  -- local level_cap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
+  -- if version < 20200 then
+  --   standard_ilvl = 66
+  --   ilvl_denominator = 10
+  -- elseif version < 40200 then
+  --   standard_ilvl = 359
+  -- elseif version < 40300 then
+  --   standard_ilvl = 378
+  -- elseif version < 50200 then
+  --   standard_ilvl = 496
+  -- elseif version < 50400 then
+  --   standard_ilvl = 522
+  -- elseif version < 60000 or level_cap == 90 then
+  --   standard_ilvl = 553
+  -- elseif version < 60200 then
+  --   standard_ilvl = 680
+  --   ilvl_denominator = 30
+  -- elseif version < 70000 then
+  --   standard_ilvl = 710 -- HFC HC
+  --   ilvl_denominator = 30
+  -- elseif version < 70200 then
+  --   standard_ilvl = 890 -- The Nighthold HC
+  --   ilvl_denominator = 30
+  -- elseif version < 70300 then
+  --   standard_ilvl = 915 -- Tomb of Sargeras HC
+  --   ilvl_denominator = 30
+  -- elseif version < 80000 then
+  --   standard_ilvl = 945 -- Antorus, the Burning Throne HC
+  --   ilvl_denominator = 30
+  -- else
+  --   standard_ilvl = 370 -- Uldir
+  --   ilvl_denominator = 32
+  -- end
+
+  local multiplier = baseGP * 2 ^ (-standard_ilvl / ilvl_denominator)
   local gp_base = multiplier * 2 ^ (level/ilvl_denominator)
-  local high = math.floor(0.5 + gp_base * slot_multiplier1) + extra_gp
-  local low = slot_multiplier2 and math.floor(0.5 + gp_base * slot_multiplier2) + extra_gp or nil
-  Debug("%s:%d, %d, %d, %s, %s", itemLink, high, low or 0, level, rarity, equipLoc)
-  Debug("%d, %d, %d",multiplier,gp_base,slot_multiplier1)
-  return high, low, level, rarity, equipLoc
+
+  local slotGP1 = (slotS1 and math.floor(0.5 + gp_base * slotS1) + extra_gp) or nil
+  local slotGP2 = (slotS2 and math.floor(0.5 + gp_base * slotS2) + extra_gp) or nil
+  local slotGP3 = (slotS3 and math.floor(0.5 + gp_base * slotS3) + extra_gp) or nil
+  Debug("%s:%d, %d, %d, %d, %s, %s", itemLink, slotGP1, slotGP2 or 0, slotGP3 or 0, level, rarity, equipLoc)
+
+  return slotGP1, slotC1, slotGP2, slotC2, slotGP3, slotC3
 end

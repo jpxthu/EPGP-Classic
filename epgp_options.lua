@@ -129,7 +129,7 @@ function EPGP:ProcessCommand(str)
     if amount then
       amount = tonumber(amount)
     else
-      local gp1, gp2 = GP:GetValue(itemlink)
+      local gp1, _, gp2 = GP:GetValue(itemlink)
       self:Print(gp1, gp2)
       -- Only automatically fill amount if we have a single GP value.
       if gp1 and not gp2 then

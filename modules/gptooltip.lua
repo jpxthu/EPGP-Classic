@@ -6,19 +6,20 @@ local ItemUtils = LibStub("LibItemUtils-1.0")
 
 function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
-  local gp1, gp2, ilvl = GP:GetValue(itemlink)
+  local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
 
-  if gp1 then
-    if gp2 then
-      tooltip:AddLine(
-        L["GP: %d or %d"]:format(gp1, gp2),
-        NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
-    else
-      tooltip:AddLine(
-        L["GP: %d"]:format(gp1),
-        NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
-    end
-  end
+  if not gp1 then return end
+  tooltip:AddLine(
+    ("GP1: %d (%s)"):format(gp1, c1),
+    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+  if not gp2 then return end
+  tooltip:AddLine(
+    ("GP2: %d (%s)"):format(gp2, c2),
+    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+  if not gp3 then return end
+  tooltip:AddLine(
+    ("GP3: %d (%s)"):format(gp3, c3),
+    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 end
 
 mod.dbDefaults = {

@@ -29,21 +29,32 @@ if not mod.callbacks then
 end
 local callbacks = mod.callbacks
 
-local timestamp_t = {}
+-- local timestamp_t = {}
 local function GetTimestamp(diff)
-  timestamp_t.month = tonumber(date("%m"))
-  timestamp_t.day = tonumber(date("%d"))
-  timestamp_t.year = tonumber(date("%Y"))
-  timestamp_t.hour = select(1, GetGameTime())
-  timestamp_t.min = select(2, GetGameTime())
+  local t = time();
   if diff then
-    timestamp_t.month = timestamp_t.month + (diff.month or 0)
-    timestamp_t.day = timestamp_t.day + (diff.day or 0)
-    timestamp_t.year = timestamp_t.year + (diff.year or 0)
-    timestamp_t.hour = timestamp_t.hour + (diff.hour or 0)
-    timestamp_t.min = timestamp_t.min + (diff.min or 0)
+    local years  = (diff.year  or 0)
+    local months = (diff.month or 0) + years  * 12
+    local days   = (diff.day   or 0) + months * 30
+    local hours  = (diff.hour  or 0) + days   * 24
+    local mins   = (diff.min   or 0) + hours  * 60
+    local secs   = (diff.sec   or 0) + mins   * 60
+    return t + secs
   end
-  return time(timestamp_t)
+  return t
+  -- timestamp_t.month = tonumber(date("%m"))
+  -- timestamp_t.day = tonumber(date("%d"))
+  -- timestamp_t.year = tonumber(date("%Y"))
+  -- timestamp_t.hour = select(1, GetGameTime())
+  -- timestamp_t.min = select(2, GetGameTime())
+  -- if diff then
+  --   timestamp_t.month = timestamp_t.month + (diff.month or 0)
+  --   timestamp_t.day = timestamp_t.day + (diff.day or 0)
+  --   timestamp_t.year = timestamp_t.year + (diff.year or 0)
+  --   timestamp_t.hour = timestamp_t.hour + (diff.hour or 0)
+  --   timestamp_t.min = timestamp_t.min + (diff.min or 0)
+  -- end
+  -- return time(timestamp_t)
 end
 
 local LOG_FORMAT = "LOG:%d\31%s\31%s\31%s\31%d"
@@ -237,6 +248,16 @@ function mod:Export()
   end
 
   return JSON.Serialize(d):gsub("\124", "\124\124")
+end
+
+function mod:ExportDetail()
+  local l = ""
+  for i, record in ipairs(self.db.profile.log) do
+    local timestamp, kind, name, reason, amount = unpack(record)
+    l = l .. tostring(timestamp) .. "\t" .. tostring(kind) .. "\t" .. tostring(name) .. "\t" .. tostring(reason) .. "\t" .. tostring(amount) .. "\n"
+  end
+
+  return l
 end
 
 function mod:Import(jsonStr)

@@ -168,7 +168,7 @@ function EPGP:CurrentTier()
 	return tier
 end
 
-local version = GetAddOnMetadata('EPGP', 'Version')
+local version = GetAddOnMetadata("EPGP-Classic", "Version")
 if not version or #version == 0 then
   version = "(development)"
 end
@@ -188,7 +188,8 @@ local alt_data = {}
 local ignored = {}
 local standings = {}
 local selected = {}
-selected._count = 0  -- This is safe since _ is not allowed in names
+-- selected._count = 0  -- This is safe since _ is not allowed in names
+local selected_count = 0
 
 -- for compatibility with release of EPGP Lootmaster; remove after new LM is pushed
 function EPGP:UnitInRaid(name)
@@ -297,9 +298,19 @@ local function OutsidersChanged()
   GS:SetOutsidersEnabled(EPGP.db.profile.outsiders == 1)
 end
 
+local function SelectClearExpire()
+  local t = time()
+  for n, s in pairs(selected) do
+    if s.expire and s.expire <= t then
+      EPGP:DeSelectMember(n)
+    end
+  end
+end
+
 local function RefreshStandings(order, showEveryone)
   -- Debug("Resorting standings")
   if UnitInRaid("player") then
+    SelectClearExpire()
     -- If we are in raid:
     ---  showEveryone = true: show all in raid (including alts) and
     ---  all leftover mains
@@ -516,8 +527,10 @@ function EPGP:SelectMember(name)
       return false
     end
   end
-  selected[name] = true
-  selected._count = selected._count + 1
+  selected[name] = { expire = nil }
+  selected_count = selected_count + 1
+  EPGP.db.profile.selected[name] = { expire = nil }
+  EPGP.db.profile.selected_count = EPGP.db.profile.selected_count + 1
   DestroyStandings()
   return true
 end
@@ -533,19 +546,26 @@ function EPGP:DeSelectMember(name)
     return false
   end
   selected[name] = nil
-  selected._count = selected._count - 1
+  selected_count = selected_count - 1
+  EPGP.db.profile.selected[name] = nil
+  EPGP.db.profile.selected_count = EPGP.db.profile.selected_count - 1
   DestroyStandings()
   return true
 end
 
+function EPGP:SelectMemberExpire(name, time_expire)
+  selected[name].expire = time_expire
+  EPGP.db.profile.selected[name].expire = time_expire
+end
+
 function EPGP:GetNumMembersInAwardList()
   if UnitInRaid("player") then
-    return GetNumGroupMembers() + selected._count
+    return GetNumGroupMembers() + selected_count
   else
-    if selected._count == 0 then
+    if selected_count == 0 then
       return self:GetNumMembers()
     else
-      return selected._count
+      return selected_count
     end
   end
 end
@@ -558,7 +578,7 @@ function EPGP:IsMemberInAwardList(name)
   else
     -- If we are not in raid and there is noone selected everyone will
     -- get an award.
-    if selected._count == 0 then
+    if selected_count == 0 then
       return true
     end
     return selected[name]
@@ -570,7 +590,7 @@ function EPGP:IsMemberInExtrasList(name)
 end
 
 function EPGP:IsAnyMemberInExtrasList()
-  return selected._count ~= 0
+  return selected_count ~= 0
 end
 
 function EPGP:CanResetEPGP()
@@ -598,7 +618,7 @@ end
 function EPGP:ResetGP()
   assert(EPGP:CanResetEPGP())
 
-  for i = 1, EPGP:GetNumMembers() do 
+  for i = 1, EPGP:GetNumMembers() do
     m = EPGP:GetMember(i)
     local ep, gp, main = EPGP:GetEPGP(m)
     actual_gp = gp - EPGP:GetBaseGP()
@@ -616,7 +636,7 @@ end
 function EPGP:RescaleGP()
   assert(EPGP:CanResetEPGP())
 
-  for i = 1, EPGP:GetNumMembers() do 
+  for i = 1, EPGP:GetNumMembers() do
     m = EPGP:GetMember(i)
     local ep, gp, main = EPGP:GetEPGP(m)
     actual_gp = gp - EPGP:GetBaseGP()
@@ -732,7 +752,7 @@ function EPGP:CanIncGPBy(reason, amount)
   if amount ~= math.floor(amount + 0.5) then
     return false
   end
-  if amount < -99999 or amount > 99999 or amount == 0 then
+  if amount < -99999 or amount > 99999 then -- or amount == 0
     return false
   end
   return true
@@ -811,6 +831,7 @@ function EPGP:IncMassEPBy(reason, amount)
   local extras_amount = math.floor(self.db.profile.extras_p * 0.01 * amount)
   local extras_reason = reason .. " - " .. L["Standby"]
 
+  SelectClearExpire()
   for i=1,EPGP:GetNumMembers() do
     local name = EPGP:GetMember(i)
     if EPGP:IsMemberInAwardList(name) then
@@ -913,14 +934,18 @@ function EPGP:GROUP_ROSTER_UPDATE()
     for name,_ in pairs(selected) do
       if UnitInRaid(Ambiguate(name, "none")) then
         selected[name] = nil
-        selected._count = selected._count - 1
+        selected_count = selected_count - 1
+        EPGP.db.profile.selected[name] = nil
+        EPGP.db.profile.selected_count = EPGP.db.profile.selected_count - 1
       end
     end
   else
     -- If we are not in a raid, this means we just left so remove
     -- everyone from the selected list.
     wipe(selected)
-    selected._count = 0
+    selected_count = 0
+    wipe(EPGP.db.profile.selected)
+    EPGP.db.profile.selected_count = 0
     -- We also need to stop any recurring EP since they should stop
     -- once a raid stops.
     if self:RunningRecurringEP() then
@@ -928,6 +953,22 @@ function EPGP:GROUP_ROSTER_UPDATE()
     end
   end
   DestroyStandings()
+end
+
+function EPGP:ResumeSelected()
+  local vars = EPGP.db.profile
+  if not vars.selected or not vars.selected_count then
+    vars.selected = {}
+    vars.selected_count = 0
+    return false
+  end
+
+  for name, value in pairs(vars.selected) do
+    selected[name] = value
+  end
+  selected_count = vars.selected_count
+
+  return true
 end
 
 local initialized = false
@@ -939,6 +980,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
     end
   else
     local guild = GetGuildInfo("player") or ""
+    local realm = GetRealmName()
     if #guild == 0 then
       GuildRoster()
     else
@@ -948,6 +990,9 @@ function EPGP:GUILD_ROSTER_UPDATE()
       end
       if not initialized then
         initialized = true
+
+        EPGP:ResumeSelected()
+
         -- Enable all modules that are supposed to be enabled
         for name, module in EPGP:IterateModules() do
           if not module.db or module.db.profile.enabled or not module.dbDefaults then
@@ -955,12 +1000,15 @@ function EPGP:GUILD_ROSTER_UPDATE()
             module:Enable()
           end
         end
+
         -- Check if we have a recurring award we can resume
         if EPGP:CanResumeRecurringEP() then
           EPGP:ResumeRecurringEP()
         else
           EPGP:CancelRecurringEP()
         end
+        
+        EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
       end
     end
   end

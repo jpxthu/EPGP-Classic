@@ -29,16 +29,24 @@ DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
     },
   },
   on_show = function(self, data)
-    self.text:SetFormattedText("\n"..L["Credit GP to %s"].."\n", data.item)
+    local text = ("\n"..L["Credit GP to %s"].."\n"):format(data.item)
+    local edit = ""
     self.icon:SetTexture(data.icon)
-    local gp1, gp2 = GP:GetValue(data.item)
-    if not gp1 then
-      self.editboxes[1]:SetText("")
-    elseif not gp2 then
-      self.editboxes[1]:SetText(tostring(gp1))
-    else
-      self.editboxes[1]:SetText(L["%d or %d"]:format(gp1, gp2))
+    local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(data.item)
+    if gp1 then
+      text = text .. ("\nGP1: %d (%s)"):format(gp1, c1)
+      edit = tostring(gp1)
     end
+    if gp2 then
+      text = text .. ("\nGP2: %d (%s)"):format(gp2, c2)
+      edit = edit .. (" or %d"):format(gp2)
+    end
+    if gp3 then
+      text = text .. ("\nGP3: %d (%s)"):format(gp3, c3)
+      edit = edit .. (" or %d"):format(gp3)
+    end
+    self.text:SetFormattedText(text)
+    self.editboxes[1]:SetText(edit)
     self.editboxes[1]:HighlightText()
     if not self.icon_frame then
       local icon_frame = CreateFrame("Frame", nil, self)
