@@ -61,6 +61,11 @@ local function CreateEPGPFrame()
   f:SetHeight(512)
   f:SetPoint("TOPLEFT", nil, "TOPLEFT", 0, -104)
   f:SetHitRectInsets(0, 30, 0, 45)
+  f:SetScript(
+    "OnMouseDown",
+    function (self) self:StartMoving() end)
+  f:SetScript(
+    "OnMouseUp", function (self) self:StopMovingOrSizing() end)
 
   local t = f:CreateTexture(nil, "BACKGROUND")
   t:SetTexture("Interface\\PetitionFrame\\GuildCharter-Icon")
