@@ -163,9 +163,9 @@ local modulePrototype = {
 EPGP:SetDefaultModulePrototype(modulePrototype)
 
 function EPGP:CurrentTier()
-	local tier = math.floor(select(4, GetBuildInfo()) / 100)
+  local tier = math.floor(select(4, GetBuildInfo()) / 100)
 
-	return tier
+  return tier
 end
 
 local version = GetAddOnMetadata("EPGP-Classic", "Version")
@@ -369,25 +369,25 @@ end
 
 -- Convert name into Nickname-Realm format (add current realm if none specified)
 function EPGP:GetFullCharacterName(name)
-	if string.find(name, "%-") then
-		return name;
-	else
-		return name .. "-" .. ourRealmName;
-	end
+  if string.find(name, "%-") then
+    return name;
+  else
+    return name .. "-" .. ourRealmName;
+  end
 end
 
 -- Short name if on our server, full name if from different server
 function EPGP:GetDisplayCharacterName(name)
-	local dashIndex = string.find(name, "%-")
-	if not dashIndex then
-		return name			-- Already short, we assume it's on our server
-	end
+  local dashIndex = string.find(name, "%-")
+  if not dashIndex then
+    return name -- Already short, we assume it's on our server
+  end
 
-	if ourRealmName == string.sub(name, dashIndex + 1) then
-		return string.sub(name, 1, dashIndex - 1)
-	else
-		return name
-	end
+  if ourRealmName == string.sub(name, dashIndex + 1) then
+    return string.sub(name, 1, dashIndex - 1)
+  else
+    return name
+  end
 end
 
 local function ParseGuildNote(callback, name, note)
@@ -403,7 +403,7 @@ local function ParseGuildNote(callback, name, note)
     local mainName = note
 
     -- Allow specifying 'short' names in the officer notes, add the server by default
-	mainName = EPGP:GetFullCharacterName(mainName)
+    mainName = EPGP:GetFullCharacterName(mainName)
 
     local main_ep = EPGP:DecodeNote(GS:GetNote(mainName))
     if not main_ep then
@@ -458,7 +458,7 @@ function EPGP:ImportRoster(t, new_base_gp)
   local notes = {}
   for _, entry in pairs(t) do
     local name, ep, gp = unpack(entry)
-	name = EPGP:GetFullCharacterName(name)
+    name = EPGP:GetFullCharacterName(name)
     notes[name] = EncodeNote(ep, gp)
   end
 
@@ -589,6 +589,22 @@ function EPGP:IsMemberInExtrasList(name)
   return UnitInRaid("player") and selected[name]
 end
 
+-- 1: In raid
+-- 2: In standby list
+-- 0: Other
+function EPGP:GetMemberAwardState(name)
+  if UnitInRaid("player") and UnitInRaid(Ambiguate(name, "none")) then
+    return 1
+  end
+  if selected_count == 0 then
+    return 0
+  end
+  if selected[name] then
+    return 2
+  end
+  return 0
+end
+
 function EPGP:IsAnyMemberInExtrasList()
   return selected_count ~= 0
 end
@@ -626,7 +642,7 @@ function EPGP:ResetGP()
       local delta = -actual_gp
       EPGP:IncGPBy(m, "GP Reset", delta, true, false)
       if delta > 0 then
-	callbacks:Fire("GPAward", name, "GP Reset", delta, true)
+        callbacks:Fire("GPAward", name, "GP Reset", delta, true)
       end
     end
   end
@@ -658,7 +674,7 @@ function EPGP:RescaleGP()
       local delta = -(actual_gp - actual_gp / 2 ^ (decay_ilvl/ilvl_denominator))
       EPGP:IncGPBy(m, "GP Rescale", delta, true, false)
       if delta > 0 then
-	callbacks:Fire("GPAward", name, "GP Decay", delta, true)
+        callbacks:Fire("GPAward", name, "GP Decay", delta, true)
       end
     end
   end
@@ -1007,7 +1023,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
         else
           EPGP:CancelRecurringEP()
         end
-        
+
         EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
       end
     end
@@ -1041,7 +1057,7 @@ function EPGP:PrintCoinLog(num, show_gold)
     if show_gold or e.reward then
       table.insert(to_show, 1, e)
       if #to_show == num then
-	break
+        break
       end
     end
   end

@@ -61,6 +61,11 @@ local function CreateEPGPFrame()
   f:SetHeight(512)
   f:SetPoint("TOPLEFT", nil, "TOPLEFT", 0, -104)
   f:SetHitRectInsets(0, 30, 0, 45)
+  f:SetScript(
+    "OnMouseDown",
+    function (self) self:StartMoving() end)
+  f:SetScript(
+    "OnMouseUp", function (self) self:StopMovingOrSizing() end)
 
   local t = f:CreateTexture(nil, "BACKGROUND")
   t:SetTexture("Interface\\PetitionFrame\\GuildCharter-Icon")
@@ -1453,7 +1458,7 @@ local function CreateEPGPFrameStandings()
             local altName = EPGP:GetAlt(self.name, i)
 
             -- Show short alt name for alts from our server and long for others
-			altName = EPGP:GetDisplayCharacterName(altName)
+            altName = EPGP:GetDisplayCharacterName(altName)
             GameTooltip:AddLine(altName, 1, 1, 1)
           end
         elseif EPGP:GetMain(self.name) ~= self.name then
@@ -1508,12 +1513,18 @@ local function CreateEPGPFrameStandings()
           row.cells[4]:SetFormattedText("%.4g", pr)
         end
         row.check:Hide()
-        if UnitInRaid("player") and EPGP:StandingsShowEveryone() then
-          if EPGP:IsMemberInAwardList(row.name) then
+        if UnitInRaid("player") then -- and EPGP:StandingsShowEveryone()
+          local state_ = EPGP:GetMemberAwardState(row.name)
+          if state_ == 1 then
+            row.check:SetTexture("Interface\\CURSOR\\Attack")
+            row.check:Show()
+          elseif state_ == 2 then
+            row.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
             row.check:Show()
           end
         elseif EPGP:IsAnyMemberInExtrasList() then
           if EPGP:IsMemberInAwardList(row.name) then
+            row.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
             row.check:Show()
           end
         end

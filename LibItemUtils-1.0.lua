@@ -58,7 +58,7 @@ function lib:BonusIDs(item)
 
   local itemString = string.match(itemLink, "item[%-?%d:]+")
   if not itemString then return nil end
-  
+
   local bonuses = {}
     local tbl = { strsplit(":", itemString) }
     for key, value in pairs(tbl) do
@@ -336,11 +336,11 @@ function lib:GetItemIlevel(item, fallback)
     if line then
       local text = line:GetText()
       if text then
-	local item_level_pattern = ITEM_LEVEL:gsub("%%d", "(%%d+)")
-	local ilvl = tonumber(text:match(item_level_pattern))
-	if ilvl then
-	  return ilvl
-	end
+        local item_level_pattern = ITEM_LEVEL:gsub("%%d", "(%%d+)")
+        local ilvl = tonumber(text:match(item_level_pattern))
+        if ilvl then
+          return ilvl
+        end
       end
     end
   end
@@ -388,7 +388,7 @@ local slot_table = {
   INVTYPE_SHOULDER = {"ShoulderSlot", nil},
   INVTYPE_CLOAK = {"BackSlot", nil},
   INVTYPE_CHEST = {"ChestSlot", nil},
-  INVTYPE_WRIST	= {"WristSlot", nil},
+  INVTYPE_WRIST = {"WristSlot", nil},
   INVTYPE_HAND = {"HandsSlot", nil},
   INVTYPE_WAIST = {"WaistSlot", nil},
   INVTYPE_LEGS = {"LegsSlot", nil},
@@ -397,7 +397,7 @@ local slot_table = {
   INVTYPE_ROBE = {"ChestSlot", nil},
   INVTYPE_2HWEAPON = {"MainHandSlot", "SecondaryHandSlot"},
   INVTYPE_WEAPONMAINHAND = {"MainHandSlot", nil},
-  INVTYPE_WEAPONOFFHAND	= {"SecondaryHandSlot", "MainHandSlot"},
+  INVTYPE_WEAPONOFFHAND = {"SecondaryHandSlot", "MainHandSlot"},
   INVTYPE_WEAPON = {"MainHandSlot","SecondaryHandSlot"},
   INVTYPE_THROWN = {"RangedSlot", nil},
   INVTYPE_RANGED = {"RangedSlot", nil},
@@ -629,7 +629,7 @@ end
 
 function lib:DebugTestBonus(item)
   local bonuses = self:BonusIDs(item)
-  
+
   for key, value in pairs(bonuses) do
     Debug("%s: %s", tostring(key), tostring(value))
   end

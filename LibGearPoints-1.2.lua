@@ -488,7 +488,7 @@ local CUSTOM_ITEM_DATA = {
   [120279] = { 4, 670, "INVTYPE_HEAD", true },
   [119316] = { 4, 670, "INVTYPE_HEAD", true },
   [120278] = { 4, 670, "INVTYPE_HEAD", true },
-  
+
   -- T18
   [127957] = { 4, 695, "INVTYPE_SHOULDER", true },
   [127967] = { 4, 695, "INVTYPE_SHOULDER", true },

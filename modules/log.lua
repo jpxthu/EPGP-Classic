@@ -220,7 +220,7 @@ function mod:TrimToOneMonth()
 end
 
 local function GetRegion()
-	return LibStub("LibRealmInfo"):GetCurrentRegion()
+  return LibStub("LibRealmInfo"):GetCurrentRegion()
 end
 
 function mod:Export()
@@ -240,7 +240,7 @@ function mod:Export()
   for i, record in ipairs(self.db.profile.log) do
     local timestamp, kind, name, reason, amount = unpack(record)
     if kind == "GP" or kind == "BI" then
-	  local itemString = reason:match("item[%-?%d:]+")
+      local itemString = reason:match("item[%-?%d:]+")
       if itemString then
         table.insert(d.loot, {timestamp, name, itemString, amount})
       end
