@@ -174,7 +174,7 @@ end
 
 function EPGP:FakeCoinEvent(item)
   LLN.BonusMessageReceiver(nil, string.format("BONUS_LOOT_RESULT^%s^%s^%s^%s", "item", item, 32, 776),
-			   nil, UnitName("player"))
+                           nil, UnitName("player"))
 end
 
 function EPGP:ToggleUI()

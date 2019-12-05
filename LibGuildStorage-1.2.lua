@@ -334,7 +334,7 @@ local function Frame_OnUpdate(self, elapsed)
           holder = name
         end
 
-	Debug("Entry " .. holder .. " is " .. extName)
+        Debug("Entry " .. holder .. " is " .. extName)
         -- Mark this note as seen
         entry.seen = true
         if entry.note ~= holder then

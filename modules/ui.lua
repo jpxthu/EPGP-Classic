@@ -1458,7 +1458,7 @@ local function CreateEPGPFrameStandings()
             local altName = EPGP:GetAlt(self.name, i)
 
             -- Show short alt name for alts from our server and long for others
-			altName = EPGP:GetDisplayCharacterName(altName)
+            altName = EPGP:GetDisplayCharacterName(altName)
             GameTooltip:AddLine(altName, 1, 1, 1)
           end
         elseif EPGP:GetMain(self.name) ~= self.name then
