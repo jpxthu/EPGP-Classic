@@ -589,6 +589,22 @@ function EPGP:IsMemberInExtrasList(name)
   return UnitInRaid("player") and selected[name]
 end
 
+-- 1: In raid
+-- 2: In standby list
+-- 0: Other
+function EPGP:GetMemberAwardState(name)
+  if UnitInRaid("player") and UnitInRaid(Ambiguate(name, "none")) then
+    return 1
+  end
+  if selected_count == 0 then
+    return 0
+  end
+  if selected[name] then
+    return 2
+  end
+  return 0
+end
+
 function EPGP:IsAnyMemberInExtrasList()
   return selected_count ~= 0
 end

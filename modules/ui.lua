@@ -1513,12 +1513,18 @@ local function CreateEPGPFrameStandings()
           row.cells[4]:SetFormattedText("%.4g", pr)
         end
         row.check:Hide()
-        if UnitInRaid("player") and EPGP:StandingsShowEveryone() then
-          if EPGP:IsMemberInAwardList(row.name) then
+        if UnitInRaid("player") then -- and EPGP:StandingsShowEveryone()
+          local state_ = EPGP:GetMemberAwardState(row.name)
+          if state_ == 1 then
+            row.check:SetTexture("Interface\\CURSOR\\Attack")
+            row.check:Show()
+          elseif state_ == 2 then
+            row.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
             row.check:Show()
           end
         elseif EPGP:IsAnyMemberInExtrasList() then
           if EPGP:IsMemberInAwardList(row.name) then
+            row.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
             row.check:Show()
           end
         end
