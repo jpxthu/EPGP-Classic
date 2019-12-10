@@ -252,7 +252,7 @@ mod.optionsArgs = {
         name = "base_gp",
         min = 1,
         max = 10000,
-        step = 1,
+        step = 0.01,
       },
       standardIlvl = {
         order = 3,
@@ -260,7 +260,7 @@ mod.optionsArgs = {
         name = "standard_ilvl",
         min = 0,
         max = 1000,
-        step = 1,
+        step = 0.01,
       },
       ilvlDenominator = {
         order = 4,
@@ -268,7 +268,7 @@ mod.optionsArgs = {
         name = "ilvl_denominator",
         min = 1,
         max = 100,
-        step = 1,
+        step = 0.01,
       },
     },
   },
