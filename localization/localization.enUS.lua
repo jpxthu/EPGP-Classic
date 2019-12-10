@@ -167,4 +167,5 @@ L["Whisper"] = true
 L["Wipe awards"] = true
 L["Wiped on %s. Award EP?"] = true
 L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"] = true
+L["You may need to deselect \"Show only members\" on EPGP web after uploading."] = true
 L["Zul'Gurub"] = true

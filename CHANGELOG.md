@@ -1,3 +1,5 @@
+- Export and upload to EPGP web is fixed.
+
 ### v1.1.1 (2019.12.6)
 
 - Set EPGP main frame movable.
