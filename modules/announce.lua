@@ -165,6 +165,7 @@ mod.optionsArgs = {
     order = 1,
     type = "description",
     name = L["Announces EPGP actions to the specified medium."],
+    fontSize = "medium",
   },
   medium = {
     order = 10,

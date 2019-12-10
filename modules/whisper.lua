@@ -166,6 +166,7 @@ mod.optionsArgs = {
     order = 1,
     type = "description",
     name = L["Automatic handling of the standby list through whispers when in raid. When this is enabled, the standby list is cleared after each reward."],
+    fontSize = "medium",
   },
   medium = {
     order = 2,
@@ -188,6 +189,7 @@ mod.optionsArgs = {
         order = 1,
         type = "description",
         name = L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."],
+        fontSize = "medium",
       },
       forOthers = {
         type = "toggle",
@@ -206,6 +208,7 @@ mod.optionsArgs = {
         order = 1,
         type = "description",
         name = L["The standby list will be cleared x seconds after each reward."],
+        fontSize = "medium",
       },
       protectTime = {
         name = L["Protect Time (sec)"],

@@ -86,7 +86,8 @@ mod.optionsArgs = {
   help = {
     order = 1,
     type = "description",
-    name = L["Automatic loot tracking by means of a popup to assign GP to the toon that received loot. This option only has effect if you are in a raid and you are either the Raid Leader or the Master Looter."]
+    name = L["Automatic loot tracking by means of a popup to assign GP to the toon that received loot. This option only has effect if you are in a raid and you are either the Raid Leader or the Master Looter."],
+    fontSize = "medium",
   },
   threshold = {
     order = 10,
