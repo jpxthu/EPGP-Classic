@@ -1,3 +1,5 @@
+### v1.1.2 (2019.12.11)
+
 - Args in GP equation could be float.
 - Make text bigger in EPGP option frame.
 - Export and upload to EPGP web is fixed.
