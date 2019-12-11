@@ -61,7 +61,8 @@ mod.optionsArgs = {
   help = {
     order = 1,
     type = "description",
-    name = L["Automatic boss tracking by means of a popup to mass award EP to the raid and standby when a boss is killed."]
+    name = L["Automatic boss tracking by means of a popup to mass award EP to the raid and standby when a boss is killed."],
+    fontSize = "medium",
   },
   wipedetection = {
     type = "toggle",

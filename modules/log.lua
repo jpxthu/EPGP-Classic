@@ -220,7 +220,11 @@ function mod:TrimToOneMonth()
 end
 
 local function GetRegion()
-  return LibStub("LibRealmInfo"):GetCurrentRegion()
+  local region = GetCVar("portal")
+  if region then
+    region = region:lower()
+  end
+  return region
 end
 
 function mod:Export()

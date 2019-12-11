@@ -177,7 +177,7 @@ local function CreateEPGPExportImportFrame()
                                function (self) self:GetParent():Hide() end)
         self.editbox:SetScript("OnTextChanged", nil)
       elseif self.exportDetail then
-        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB))
+        self.help:SetText("This is just for test now. You can export this to TSV.")
         self.button1:Show()
         self.button1:SetText(CLOSE)
         self.button1:SetPoint("CENTER", self, "CENTER")
@@ -187,7 +187,8 @@ local function CreateEPGPExportImportFrame()
         self.editbox:SetText(EPGP:GetModule("log"):ExportDetail())
         self.editbox:HighlightText()
       else
-        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB))
+        self.help:SetText(L["To export the current standings, copy the text below and post it to: %s"]:format(EPGPWEB) .. "\n" ..
+                          L["You may need to deselect \"Show only members\" on EPGP web after uploading."])
         self.button1:Show()
         self.button1:SetText(CLOSE)
         self.button1:SetPoint("CENTER", self, "CENTER")

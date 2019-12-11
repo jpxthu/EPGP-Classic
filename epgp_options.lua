@@ -15,11 +15,13 @@ function EPGP:SetupOptions()
         order = 1,
         type = "description",
         name = L["EPGP is an in game, relational loot distribution system"],
+        fontSize = "medium",
       },
       hint = {
         order = 2,
         type = "description",
         name = L["Hint: You can open these options by typing /epgp config"],
+        fontSize = "medium",
       },
       list_errors = {
         order = 1000,
