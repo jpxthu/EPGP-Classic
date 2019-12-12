@@ -1,3 +1,7 @@
+### v1.1.3 (2019.12.13)
+
+- Update TOC interface version
+
 ### v1.1.2 (2019.12.11)
 
 - Args in GP equation could be float.
