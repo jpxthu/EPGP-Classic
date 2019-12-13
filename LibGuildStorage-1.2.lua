@@ -270,6 +270,20 @@ local function ForceShowOffline()
   return false
 end
 
+local ourRealmName = string.gsub(GetRealmName(), "%s+", "")     -- Realm name with no spaces
+local function GetOurRealmName()
+  return ourRealmName
+end
+
+-- Convert name into Nickname-Realm format (add current realm if none specified)
+local function GetFullCharacterName(name)
+  if string.find(name, "%-") then
+    return name;
+  else
+    return name .. "-" .. ourRealmName;
+  end
+end
+
 local function Frame_OnUpdate(self, elapsed)
   local startTime = debugprofilestop()
   if ForceShowOffline() then
@@ -312,8 +326,11 @@ local function Frame_OnUpdate(self, elapsed)
   for i = index, last_index do
 
     local name, rank, _, _, _, _, pubNote, note, _, _, class = GetGuildRosterInfo(i)
+
     -- We use full names including the '-server' portion
-    local name = Ambiguate(name, "mail")
+    -- 2019.12.13: WOW Classic updated to 1.13.3, "Ambiguate" performs different. No server/realm if character in the same realm.
+    -- https://wow.gamepedia.com/API_Ambiguate
+    local name = GetFullCharacterName(Ambiguate(name, "mail"))
 
     -- Start of outsiders patch
     if OUTSIDERSENABLED then

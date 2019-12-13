@@ -1,3 +1,6 @@
+- 解决替补和小号相关功能不可用的问题。  
+  根本原因是暴雪在 1.13.3 更改了 [Ambiguate](https://wow.gamepedia.com/API_Ambiguate) API 的表现。
+
 ### v1.1.3 (2019.12.13)
 
 - 更新游戏接口版本号。
