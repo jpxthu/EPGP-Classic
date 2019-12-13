@@ -1,3 +1,5 @@
+### v1.1.4 (2019.12.13)
+
 - Fix bug: guns and wands did not show GP on some Non-Chinese clients.
 - Fix bug: standby and alts did not work.  
   The reason of this bug is Blizzard changed performance of API "[Ambiguate](https://wow.gamepedia.com/API_Ambiguate)" in 1.13.3.
