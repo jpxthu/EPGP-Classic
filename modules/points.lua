@@ -1,16 +1,16 @@
 local mod = EPGP:NewModule("points")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
-local LB = LibStub("LibBabble-Inventory-3.0"):GetLookupTable();
 
 local localName = {}
-localName.Bow      = LB["Bow"]
-localName.Gun      = LB["Gun"]
-localName.Crossbow = LB["Crossbow"]
-localName.Thrown   = LB["Thrown"]
-localName.Wand     = LB["Wand"]
-localName.Idol     = LB["Idol"]
-localName.Libram   = LB["Libram"]
-localName.Totem    = LB["Totem"]
+localName.Bow      = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_BOWS)
+localName.Gun      = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_GUNS)
+localName.Crossbow = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_CROSSBOW)
+localName.Thrown   = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_THROWN)
+localName.Wand     = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_WAND)
+localName.Idol     = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_IDOL)
+localName.Libram   = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_LIBRAM)
+localName.Totem    = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_TOTEM)
+-- localName.Relic    = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_RELIC)
 localName.OneHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPON, _G.WEAPON)
 localName.TwoHWeapon  = L["%s %s"]:format(_G.INVTYPE_2HWEAPON, _G.WEAPON)
 localName.MainHWeapon = L["%s %s"]:format(_G.INVTYPE_WEAPONMAINHAND, _G.WEAPON)
@@ -95,7 +95,7 @@ local profileDefault = {
   weaponScale2 = 0.5,
   weaponComment2 = localName.OffHWeapon .. " / " .. L["%s %s"]:format(L["Tank"], localName.MainHWeapon),
   weaponScale3 = 0.25,
-  weaponComment3 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   shieldScale1 = 1.5,
   shieldComment1 = L["%s %s"]:format(L["Tank"], _G.SHIELDSLOT),
@@ -105,23 +105,23 @@ local profileDefault = {
   weapon2HScale1 = 2,
   weapon2HComment1 = localName.TwoHWeapon,
   weapon2HScale2 = 0.5,
-  weapon2HComment2 = L["%s %s"]:format(LB["Hunter"], localName.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], localName.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
   weaponMainHComment1 = localName.MainHWeapon,
   weaponMainHScale2 = 0.25,
-  weaponMainHComment2 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
   weaponOffHComment1 = localName.OffHWeapon,
   weaponOffHScale2 = 0.25,
-  weaponOffHComment2 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
 
   rangedScale1 = 2,
-  rangedComment1 = L["%s %s"]:format(LB["Hunter"], _G.INVTYPE_RANGED),
+  rangedComment1 = L["%s %s"]:format(L["Hunter"], _G.INVTYPE_RANGED),
   rangedScale2 = 0.5,
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 
@@ -687,7 +687,7 @@ local profileOOR = {
   weaponScale2 = 0.5,
   weaponComment2 = localName.OffHWeapon,
   weaponScale3 = 0.15,
-  weaponComment3 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   shieldScale1 = 0.5,
   shieldComment1 = _G.SHIELDSLOT,
@@ -695,23 +695,23 @@ local profileOOR = {
   weapon2HScale1 = 2,
   weapon2HComment1 = localName.TwoHWeapon,
   weapon2HScale2 = 0.3,
-  weapon2HComment2 = L["%s %s"]:format(LB["Hunter"], localName.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], localName.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
   weaponMainHComment1 = localName.MainHWeapon,
   weaponMainHScale2 = 0.15,
-  weaponMainHComment2 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
   weaponOffHComment1 = localName.OffHWeapon,
   weaponOffHScale2 = 0.15,
-  weaponOffHComment2 = L["%s %s"]:format(LB["Hunter"], localName.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
 
   rangedScale1 = 2,
-  rangedComment1 = L["%s %s"]:format(LB["Hunter"], _G.INVTYPE_RANGED),
+  rangedComment1 = L["%s %s"]:format(L["Hunter"], _G.INVTYPE_RANGED),
   rangedScale2 = 0.3,
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 

@@ -61,6 +61,7 @@ L["Gear Points"] = "装备分数"
 -- L["GP rescale for new tier"] = true
 -- L["Guild or Raid are awarded EP"] = true
 -- L["Hint: You can open these options by typing /epgp config"] = true
+L["Hunter"] = "猎人"
 -- L["Idle"] = true
 L["If you want to be on the award list but you are not in the raid, you need to whisper me: 'epgp standby' or 'epgp standby <name>' where <name> is the toon that should receive awards"] = "如果你是活动替补但没有在团队中，你需要密我 epgp standby；如果需要为其它角色计分，密语 epgp standby <角色名>。"
 -- L["Ignoring EP change for unknown member %s"] = true
