@@ -181,6 +181,8 @@ if not EPGP.callbacks then
 end
 local callbacks = EPGP.callbacks
 
+-- status: 0 - none, 1 - need/greed, 2 - bid, 3 - roll
+local bid = { result = {}, violate = {}, status = 0 }
 local ep_data = {}
 local gp_data = {}
 local main_data = {}
@@ -281,6 +283,33 @@ local comparators = {
            return a_ep/a_gp > b_ep/b_gp
          else
            return a_qualifies
+         end
+       end,
+  BR = function(a, b)
+         local a_ep, a_gp = EPGP:GetEPGP(a)
+         local b_ep, b_gp = EPGP:GetEPGP(b)
+
+         local a_qualifies = a_ep >= EPGP.db.profile.min_ep
+         local b_qualifies = b_ep >= EPGP.db.profile.min_ep
+
+         local a_bid = bid.result[a]
+         local b_bid = bid.result[b]
+         local bid_status = bid.status
+
+         if a_qualifies ~= b_qualifies then
+          return a_qualifies
+         end
+
+         if a_bid == b_bid then
+           return a_ep/a_gp > b_ep/b_gp
+         end
+
+         if not a_bid then return false end
+         if not b_bid then return true end
+         if bid_status == 1 then
+           return a_bid < b_bid
+         else
+           return a_bid > b_bid
          end
        end,
 }
@@ -962,6 +991,7 @@ function EPGP:GROUP_ROSTER_UPDATE()
     selected_count = 0
     wipe(EPGP.db.profile.selected)
     EPGP.db.profile.selected_count = 0
+    EPGP:SetBidStatus(0)
     -- We also need to stop any recurring EP since they should stop
     -- once a raid stops.
     if self:RunningRecurringEP() then
@@ -969,6 +999,93 @@ function EPGP:GROUP_ROSTER_UPDATE()
     end
   end
   DestroyStandings()
+end
+
+function EPGP:HandleBidResult(name, value)
+  local fullName = EPGP:GetFullCharacterName(name)
+  local vars = EPGP.db.profile
+  bid.result[fullName] = value
+  vars.bid.result[fullName] = value
+  self:StandingsSort(self.db.profile.sort_order)
+  callbacks:Fire("StandingsChanged")
+end
+
+function EPGP:HandleRollResult(name, roll, low, high)
+  local fullName = self:GetFullCharacterName(name)
+  local vars = self.db.profile
+  if bid.result[fullName] then
+    bid.violate[fullName] = true
+    vars.bid.violate[fullName] = true
+  else
+    bid.result[fullName] = roll
+    vars.bid.result[fullName] = roll
+    if low ~= 1 or high ~= 100 then
+      bid.violate[fullName] = true
+      vars.bid.violate[fullName] = true
+    end
+  end
+  self:StandingsSort(self.db.profile.sort_order)
+  callbacks:Fire("StandingsChanged")
+end
+
+function EPGP:GetBidStatus()
+  return bid.status
+end
+
+function EPGP:GetBidResult(name)
+  return bid.result[name], bid.violate[name]
+end
+
+local function BidReset(status)
+  if not status then status = 0 end
+  table.wipe(bid.result)
+  table.wipe(bid.violate)
+  bid.status = status
+  local vars = EPGP.db.profile
+  table.wipe(vars.bid.result)
+  table.wipe(vars.bid.violate)
+  vars.bid.status = status
+end
+
+function EPGP:SetBidStatus(status, reset)
+  if not reset and bid.status == status then return end
+  BidReset(status)
+  callbacks:Fire("BidStatusUpdate", status)
+  callbacks:Fire("StandingsChanged")
+end
+
+function EPGP:ResumeBidResult()
+  local vars = EPGP.db.profile
+  if not vars.bid then
+    vars.bid = { result = {}, violate = {}, status = 0 }
+    return
+  end
+
+  if vars.bid.result then
+    for name, value in pairs(vars.bid.result) do
+      bid.result[name] = value
+    end
+  else
+    vars.bid.result = {}
+  end
+  if vars.bid.violate then
+    for name, value in pairs(vars.bid.violate) do
+      bid.violate[name] = value
+    end
+  else
+    vars.bid.violate = {}
+  end
+  if vars.bid.status then
+    bid.status = vars.bid.status
+    if bid.status ~= 0 then
+      callbacks:Fire("BidStatusUpdate", bid.status)
+      callbacks:Fire("StandingsChanged")
+    end
+  else
+    vars.bid.status = 0
+  end
+
+  return true
 end
 
 function EPGP:ResumeSelected()
@@ -1025,6 +1142,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
         end
 
         EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
+        EPGP:ResumeBidResult()
       end
     end
   end

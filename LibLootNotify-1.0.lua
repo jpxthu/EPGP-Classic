@@ -103,6 +103,7 @@ local announcedLoot = {}
 
 local function CorpseLootReceiver(prefix, message, distribution, sender)
   announcedLoot[message] = true
+  EPGP.callbacks:Fire("CorpseLootReceived", message)
 end
 
 local function removeSpecId(itemLink)
@@ -122,10 +123,12 @@ local function removeSpecId(itemLink)
 end
 
 local function HandleLootWindow()
-  local loot = {}
   -- Don't send events if we're not in a raid or are in LFR
   local _, _, diffculty = GetInstanceInfo()
   if not UnitInRaid("player") or diffculty == 7 then return end
+
+  local loot = {}
+  local loot_all = {}
 
   for i = 1, GetNumLootItems() do
     local itemLink = GetLootSlotLink(i)
@@ -135,11 +138,15 @@ local function HandleLootWindow()
         table.insert(loot, itemLink)
         announcedLoot[itemLink] = true
       end
+      table.insert(loot_all, itemLink)
     end
   end
   if #loot > 0 then
     Debug("loot count: %s", #loot)
     EPGP.callbacks:Fire("LootEpics", loot)
+  end
+  if #loot_all > 0 then
+    EPGP.callbacks:Fire("LootWindow", loot_all)
   end
 end
 

@@ -1,3 +1,7 @@
+### v1.2.0 (2019.12.30)
+
+- Add loot tracking & distribution module.
+
 ### v1.1.4 (2019.12.13)
 
 - Fix bug: guns and wands did not show GP on some Non-Chinese clients.
