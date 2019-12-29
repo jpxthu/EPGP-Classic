@@ -25,6 +25,7 @@ From "epgp (dkp reloaded)":
 
 New added:
 - Enhancement on member list view, whisper, gear points (GP)
+- Loot tracking and distribution module.
 
 ## Contribute
 
