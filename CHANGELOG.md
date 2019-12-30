@@ -1,3 +1,7 @@
+### v1.2.1 (2019.12.31)
+
+- Bug fix: UI didn't update when raid roster update (#7)
+
 ### v1.2.0 (2019.12.30)
 
 - Add loot tracking & distribution module.
