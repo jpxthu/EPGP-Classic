@@ -57,6 +57,15 @@ local function ToggleOnlySideFrame(frame)
   end
 end
 
+local disableWhileNotInRaidList = {}
+local function DisableWhileNotInRaid()
+  if UnitInRaid("player") then
+    for i, v in pairs(disableWhileNotInRaidList) do v:Enable() end
+  else
+    for i, v in pairs(disableWhileNotInRaidList) do v:Disable() end
+  end
+end
+
 local function CreateEPGPFrame()
   -- EPGPFrame
   local f = CreateFrame("Frame", "EPGPFrame", UIParent)
@@ -1701,22 +1710,14 @@ local function CreateEPGPFrameStandings()
     function(self)
       EPGP:StandingsShowEveryone(not not self:GetChecked())
     end)
+  table.insert(disableWhileNotInRaidList, cb)
+
   local t = cb:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   t:SetText(L["Show everyone"])
   t:SetPoint("RIGHT", cb, "LEFT", 0, 2)
+
   f:SetWidth(t:GetStringWidth() + 4 * tl:GetWidth() + cb:GetWidth())
-
-  local function HideWhileNotInRaid(self)
-    if UnitInRaid("player") then
-      self:Show()
-    else
-      self:Hide()
-    end
-  end
-
-  f:RegisterEvent("RAID_ROSTER_UPDATE")
-  f:SetScript("OnEvent", HideWhileNotInRaid)
-  f:SetScript("OnShow", HideWhileNotInRaid)
+  f:Show()
 
   -- Make the log frame
   CreateEPGPLogFrame()
@@ -1744,12 +1745,12 @@ local function CreateEPGPFrameStandings()
   award:SetPoint("BOTTOMLEFT")
   award:SetText(L["Mass EP Award"])
   award:SetWidth(award:GetTextWidth() + BUTTON_TEXT_PADDING)
-  award:RegisterEvent("RAID_ROSTER_UPDATE")
   award:SetScript(
     "OnClick",
     function()
       ToggleOnlySideFrame(EPGPSideFrame2)
     end)
+  table.insert(disableWhileNotInRaidList, award)
 
   local loot = CreateFrame("Button", nil, main, "UIPanelButtonTemplate")
   loot:SetNormalFontObject("GameFontNormalSmall")
@@ -2054,6 +2055,17 @@ local function CreateEPGPFrameStandings()
     end)
 end
 
+local function OnEvent(self, event, ...)
+  if event == "GROUP_ROSTER_UPDATE" then
+    DisableWhileNotInRaid()
+  end
+end
+
+local function OnShow(self)
+  GuildRoster()
+  DisableWhileNotInRaid()
+end
+
 function mod:OnEnable()
   if not EPGPFrame then
     CreateEPGPFrame()
@@ -2065,7 +2077,9 @@ function mod:OnEnable()
   end
 
   HideUIPanel(EPGPFrame)
-  EPGPFrame:SetScript("OnShow", GuildRoster)
+  EPGPFrame:SetScript("OnShow", OnShow)
+  EPGPFrame:SetScript("OnEvent", OnEvent)
+  EPGPFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 end
 
 function mod:OnDisable()
