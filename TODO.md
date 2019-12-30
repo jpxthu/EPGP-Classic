@@ -21,6 +21,10 @@
 - [x] Figure out: recording from other EPGP users (`ACEComm`)
 - [ ] Undo selected log
 
+## EPGP/PR
+
+- [ ] Whisper to get EPGP and PR ranking
+
 ## Gear points (GP)
 
 - [ ] Advice reset in new tier (`EPGP_NEW_TIER`)
@@ -40,8 +44,8 @@
 - [ ] Localization
   - [x] Copy from `EPGP (dkp reloaded)` (only valid on Curseforge)
 - [ ] Loot
-  - [x] "HandleLootWindow"
-  - [x] Loot, bid, roll
+  - [x] "HandleLootWindow" (#6)
+  - [x] Loot, bid, roll (#6)
   - [ ] Sync status
 - [x] Set frame movable (#3)
 - [x] Title and version on main GUI (#2)
