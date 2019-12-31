@@ -1628,7 +1628,7 @@ local function AddLootControls(frame)
     end
 end
 
-local function CreateEPGPLootFrame(self)
+local function CreateEPGPLootFrame()
   local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame)
   table.insert(SIDEFRAMES, f)
 
