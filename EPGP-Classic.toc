@@ -60,6 +60,8 @@ modules\gptooltip.lua
 modules\ldb.lua
 modules\log.lua
 modules\loot.lua
+modules\options_custom_items.lua
+modules\options.lua
 modules\points.lua
 modules\ui.lua
 modules\warnings.lua

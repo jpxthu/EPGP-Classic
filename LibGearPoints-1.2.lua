@@ -1,5 +1,4 @@
 -- A library to compute Gear Points for items as described in
--- http://code.google.com/p/epgp/wiki/GearPoints
 
 local MAJOR_VERSION = "LibGearPoints-1.2"
 local MINOR_VERSION = 10200
@@ -11,15 +10,25 @@ local Debug = LibStub("LibDebug-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
 local LN = LibStub("LibLocalConstant-1.0")
 
---Used to display GP values directly on tier tokens; keys are itemIDs,
---values are rarity, ilvl, inventory slot, and an optional boolean
---value indicating heroic/mythic ilvl should be derived from the bonus
---list rather than the raw ilvl (mainly for T17+ tier gear)
+-- Used to display GP values directly on tier tokens; keys are itemIDs,
+-- values are:
+-- 1. rarity, int, 4 = epic
+-- 2. ilvl, int
+-- 3. inventory slot, string
+-- 4. an optional boolean value indicating heroic/mythic ilvl should be
+--    derived from the bonus list rather than the raw ilvl
+--    (mainly for T17+ tier gear)
+-- 5. faction (Horde/Alliance), string
 local CUSTOM_ITEM_DATA = {
-  -- Classic
-  [18423] = { 4, 74, "INVTYPE_NECK" }, -- Head of Onyxia
+  -- Classic P2
+  [18422] = { 4, 74, "INVTYPE_NECK", nil, "Horde" }, -- Head of Onyxia
+  [18423] = { 4, 74, "INVTYPE_NECK", nil, "Alliance" }, -- Head of Onyxia
   [18646] = { 4, 75, "INVTYPE_2HWEAPON" }, -- The Eye of Divinity
   [18703] = { 4, 75, "INVTYPE_RANGED" }, -- Ancient Petrified Leaf
+
+  -- Classic P3
+  [19002] = { 4, 83, "INVTYPE_NECK", nil, "Horde" },
+  [19003] = { 4, 83, "INVTYPE_NECK", nil, "Alliance" },
 
   -- Tier 4
   -- [29753] = { 4, 120, "INVTYPE_CHEST" },
@@ -592,6 +601,10 @@ local CUSTOM_ITEM_DATA = {
   -- [152532] = { 4, 930, "INVTYPE_SHOULDER", true },
 }
 
+function lib:GetCustomItemsDefault()
+  return CUSTOM_ITEM_DATA
+end
+
 -- Used to add extra GP if the item contains bonus stats
 -- generally considered chargeable. Sockets are very
 -- valuable in early BFA.
@@ -673,7 +686,7 @@ end
 function lib:GetValue(item)
   if not item then return end
 
-  local _, itemLink, rarity, level, _, itemClass, itemSubClass, _, equipLoc = GetItemInfo(item)
+  local _, itemLink, rarity, ilvl, _, _, itemSubClass, _, equipLoc = GetItemInfo(item)
   if not itemLink then return end
 
   -- Get the item ID to check against known token IDs
@@ -682,53 +695,59 @@ function lib:GetValue(item)
   itemID = tonumber(itemID)
 
   -- For now, just use the actual ilvl, not the upgraded cost
-  -- level = ItemUtils:GetItemIlevel(item, level)
+  -- ilvl = ItemUtils:GetItemIlevel(item, ilvl)
 
   -- Check if item is relevant.  Item is automatically relevant if it
   -- is in CUSTOM_ITEM_DATA (as of 6.0, can no longer rely on ilvl alone
   -- for these).
-  -- if level < 339 and not CUSTOM_ITEM_DATA[itemID] then
+  -- if ilvl < 339 and not CUSTOM_ITEM_DATA[itemID] then
   --   Debug("%s is not relevant.", itemLink)
-  --   return nil, nil, level, rarity, equipLoc
+  --   return nil, nil, ilvl, rarity, equipLoc
   -- end
 
   -- Get the bonuses for the item to check against known bonuses
-  local itemBonuses = ItemUtils:BonusIDs(itemLink)
+  -- local itemBonuses = ItemUtils:BonusIDs(itemLink)
 
   -- Check to see if there is custom data for this item ID
-  if CUSTOM_ITEM_DATA[itemID] then
-    rarity, level, equipLoc, useItemBonuses = unpack(CUSTOM_ITEM_DATA[itemID])
-    if useItemBonuses then
-      level = level + GetItemBonusLevelDelta(itemBonuses)
-    end
+  local customItem = EPGP.db.profile.customItems[itemID]
+  if customItem then
+    rarity = customItem.rarity
+    ilvl = customItem.ilvl
+    equipLoc = customItem.equipLoc
+    -- rarity, ilvl, equipLoc, useItemBonuses = unpack(CUSTOM_ITEM_DATA[itemID])
+    -- if useItemBonuses then
+    --   ilvl = ilvl + GetItemBonusLevelDelta(itemBonuses)
+    -- end
 
-    if not level then
-      return error("GetValue(item): could not determine item level from CUSTOM_ITEM_DATA.", 3)
+    -- if not ilvl then
+    --   return error("GetValue(item): could not determine item level from CUSTOM_ITEM_DATA.", 3)
+    -- end
+  else
+    -- Is the item above our minimum threshold?
+    if not rarity or rarity < quality_threshold then
+      Debug("%s is below rarity threshold.", itemLink)
+      return
     end
   end
 
-  -- Is the item above our minimum threshold?
-  if not rarity or rarity < quality_threshold then
-    Debug("%s is below rarity threshold.", itemLink)
-    return nil, nil, level, rarity, equipLoc
+  UpdateRecentLoot(itemLink)
+
+  if equipLoc == "CUSTOM_SCALE" then
+    local gp1, gp2 = self:CalculateGPFromScale(customItem.s1, customItem.s2, nil, ilvl, rarity)
+    return gp1, "", gp2, ""
+  elseif equipLoc == "CUSTOM_GP" then
+    return customItem.gp1, "", customItem.gp2, ""
+  else
+    return self:CalculateGPFromEquipLoc(equipLoc, itemSubClass, ilvl, rarity)
   end
 
   -- Does the item have bonus sockets or tertiary stats?  If so,
   -- set extra GP to apply later.  We don't care about warforged
   -- here as that uses the increased item level instead.
-  local extra_gp = 0
-  for _, value in pairs(itemBonuses) do
-    extra_gp = extra_gp + (ITEM_BONUS_GP[value] or 0)
-  end
-
-  UpdateRecentLoot(itemLink)
-
-  slotS1, slotC1, slotS2, slotC2, slotS3, slotC3, baseGP, standard_ilvl, ilvl_denominator =
-    self:GetScale(equipLoc, itemSubClass)
-
-  if not slotS1 then
-    return nil, nil, nil, nil, nil, nil
-  end
+  -- local extra_gp = 0
+  -- for _, value in pairs(itemBonuses) do
+  --   extra_gp = extra_gp + (ITEM_BONUS_GP[value] or 0)
+  -- end
 
   -- 0.06973 is our coefficient so that ilvl 359 chests cost exactly
   -- 1000gp.  In 4.2 and higher, we renormalize to make ilvl 378
@@ -769,16 +788,6 @@ function lib:GetValue(item)
   --   standard_ilvl = 370 -- Uldir
   --   ilvl_denominator = 32
   -- end
-
-  local multiplier = baseGP * 2 ^ (-standard_ilvl / ilvl_denominator)
-  local gp_base = multiplier * 2 ^ (level/ilvl_denominator)
-
-  local slotGP1 = (slotS1 and math.floor(0.5 + gp_base * slotS1) + extra_gp) or nil
-  local slotGP2 = (slotS2 and math.floor(0.5 + gp_base * slotS2) + extra_gp) or nil
-  local slotGP3 = (slotS3 and math.floor(0.5 + gp_base * slotS3) + extra_gp) or nil
-  Debug("%s:%d, %d, %d, %d, %s, %s", itemLink, slotGP1, slotGP2 or 0, slotGP3 or 0, level, rarity, equipLoc)
-
-  return slotGP1, slotC1, slotGP2, slotC2, slotGP3, slotC3
 end
 
 local LOCAL_NAME = LN:LocalName()
@@ -790,7 +799,7 @@ switchRanged[LOCAL_NAME.Crossbow] = "ranged"
 switchRanged[LOCAL_NAME.Wand]     = "wand"
 switchRanged[LOCAL_NAME.Thrown]   = "thrown"
 
-local switchSlot = {
+local switchEquipLoc = {
   ["INVTYPE_HEAD"]            = "head",
   ["INVTYPE_NECK"]            = "neck",
   ["INVTYPE_SHOULDER"]        = "shoulder",
@@ -816,10 +825,11 @@ local switchSlot = {
   ["INVTYPE_THROWN"]          = "ranged",
   ["INVTYPE_RELIC"]           = "relic",
   -- ["INVTYPE_BAG"]             = "bag",
+  ["INVTYPE_WAND"]            = "wand", -- Fate
 }
 
-function lib:GetScale(slot, subClass)
-  local name = switchSlot[slot] or switchRanged[subClass]
+function lib:GetScale(equipLoc, subClass)
+  local name = switchEquipLoc[equipLoc] or switchRanged[subClass]
   local vars = EPGP:GetModule("points").db.profile
   if name then
     return vars[name .. "Scale1"], vars[name .. "Comment1"],
@@ -827,4 +837,37 @@ function lib:GetScale(slot, subClass)
            vars[name .. "Scale3"], vars[name .. "Comment3"]
   end
   return
+end
+
+function lib:CalculateGPFromScale(s1, s2, s3, ilvl, rarity)
+  local vars = EPGP:GetModule("points").db.profile
+  
+  local baseGP = vars.baseGP
+  local standardIlvl = vars.standardIlvl
+  local ilvlDenominator = vars.ilvlDenominator
+  local multiplier = baseGP * 2 ^ (-standardIlvl / ilvlDenominator)
+  local gpBase = multiplier * 2 ^ (ilvl / ilvlDenominator)
+
+  local gp1 = (s1 and math.floor(0.5 + gpBase * s1)) or nil
+  local gp2 = (s2 and math.floor(0.5 + gpBase * s2)) or nil
+  local gp3 = (s3 and math.floor(0.5 + gpBase * s3)) or nil
+
+  return gp1, gp2, gp3
+end
+
+function lib:CalculateGPFromEquipLoc(equipLoc, subClass, ilvl, rarity)
+  local s1, c1, s2, c2, s3, c3 = self:GetScale(equipLoc, subClass)
+  local vars = EPGP:GetModule("points").db.profile
+
+  local baseGP = vars.baseGP
+  local standardIlvl = vars.standardIlvl
+  local ilvlDenominator = vars.ilvlDenominator
+  local multiplier = baseGP * 2 ^ (-standardIlvl / ilvlDenominator)
+  local gpBase = multiplier * 2 ^ (ilvl / ilvlDenominator)
+
+  local gp1 = (s1 and math.floor(0.5 + gpBase * s1)) or nil
+  local gp2 = (s2 and math.floor(0.5 + gpBase * s2)) or nil
+  local gp3 = (s3 and math.floor(0.5 + gpBase * s3)) or nil
+
+  return gp1, c1, gp2, c2, gp3, c3, s1, s2, s3
 end

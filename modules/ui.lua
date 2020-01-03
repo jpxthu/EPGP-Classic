@@ -11,7 +11,7 @@ local callbacks = EPGP.callbacks
 
 local EPGPWEB = "http://www.epgpweb.com"
 
-local BUTTON_TEXT_PADDING = 20
+local BUTTON_TEXT_PADDING = 15
 local BUTTON_HEIGHT = 22
 local ROW_TEXT_PADDING = 5
 
@@ -1676,6 +1676,43 @@ local function CreateEPGPLootFrame()
     end)
 end
 
+local function CreateEPGPOptionsFrame()
+  local f = CreateFrame("Frame", "EPGPOptionsFrame", EPGPFrame)
+  table.insert(SIDEFRAMES, f)
+
+  f:Hide()
+  f:SetWidth(500)
+  f:SetHeight(400)
+  f:SetPoint("TOPLEFT", EPGPFrame, "TOPRIGHT", -33, -6)
+
+  local t = f:CreateTexture(nil, "OVERLAY")
+  t:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Corner")
+  t:SetWidth(32)
+  t:SetHeight(32)
+  t:SetPoint("TOPRIGHT", f, "TOPRIGHT", -6, -7)
+
+  f:SetBackdrop({
+      bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+      edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+      tile = true,
+      tileSize = 32,
+      edgeSize = 32,
+      insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+
+  local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+  cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
+
+  f:SetScript("OnShow",
+    function()
+      if not f.initiated then
+        f.initiated = true
+        EPGP:GetModule("options"):FillFrame(f)
+      end
+      -- if f.OnShow then f:OnShow() end
+    end)
+end
+
 local function CreateEPGPFrameStandings()
   -- Make the show everyone checkbox
   local f = CreateFrame("Frame", nil, EPGPFrame)
@@ -1737,6 +1774,9 @@ local function CreateEPGPFrameStandings()
 
   -- Make the loot frame
   CreateEPGPLootFrame()
+
+  -- Make the loot frame
+  CreateEPGPOptionsFrame()
 
   -- Make the main frame
   local main = CreateFrame("Frame", nil, EPGPFrame)
@@ -1804,6 +1844,20 @@ local function CreateEPGPFrameStandings()
       else
         self:Disable()
       end
+    end)
+
+  local option = CreateFrame("Button", nil, main, "UIPanelButtonTemplate")
+  option:SetNormalFontObject("GameFontNormalSmall")
+  option:SetHighlightFontObject("GameFontHighlightSmall")
+  option:SetDisabledFontObject("GameFontDisableSmall")
+  option:SetHeight(BUTTON_HEIGHT)
+  option:SetPoint("RIGHT", decay, "LEFT")
+  option:SetText(L["Options"])
+  option:SetWidth(option:GetTextWidth() + BUTTON_TEXT_PADDING)
+  option:SetScript(
+    "OnClick",
+    function(self, button, down)
+      ToggleOnlySideFrame(EPGPOptionsFrame)
     end)
 
   local fontHeight = select(2, GameFontNormal:GetFont())
