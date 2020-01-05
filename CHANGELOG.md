@@ -1,3 +1,8 @@
+### v1.2.2 (2020.1.5)
+
+- Fix bug: nan PR with 0 GP + 0 base_gp (#9)  
+  Thanks to guild "涟漪" in realm "匕首岭-zhCN" for reporting this bug and cooperate.
+
 ### v1.2.1 (2019.12.31)
 
 - Bug fix: UI didn't update when raid roster update (#7)
