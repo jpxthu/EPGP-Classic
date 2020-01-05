@@ -1137,6 +1137,7 @@ local function CreateEPGPSideFrame(self)
     self.title:SetText(EPGP:GetDisplayCharacterName(self.name))
     if not epFrame.button then
       AddGPControls(gpFrame)
+      f:SetHeight(gpFrame:GetHeight() + epFrame:GetHeight() + 60)
       gpFrame.button:SetScript(
         "OnClick",
         function(self)
@@ -1147,6 +1148,7 @@ local function CreateEPGPSideFrame(self)
     end
     if not epFrame.button then
       AddEPControls(epFrame)
+      f:SetHeight(gpFrame:GetHeight() + epFrame:GetHeight() + 60)
       epFrame.button:SetScript(
         "OnClick",
         function(self)
