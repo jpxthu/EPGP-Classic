@@ -280,7 +280,7 @@ local comparators = {
          local b_qualifies = b_ep >= EPGP.db.profile.min_ep
 
          if a_qualifies == b_qualifies then
-           return a_ep/a_gp > b_ep/b_gp
+           return a_ep / math.max(1, a_gp) > b_ep / math.max(1, b_gp)
          else
            return a_qualifies
          end

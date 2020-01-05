@@ -26,7 +26,7 @@ L["Automatic loot tracking"] = true
 L["Automatic loot tracking by means of a popup to assign GP to the toon that received loot. This option only has effect if you are in a raid and you are either the Raid Leader or the Master Looter."] = true
 L["Award EP"] = true
 L["Awards for wipes on bosses. Requires DBM, DXE, or BigWigs"] = true
-L["Base GP should be a positive number"] = true
+L["Base GP should be a positive number (>= 0)"] = true
 L["Bid medium"] = true
 L["Blackwing Lair"] = true
 L["Bonus roll for %s (%s left): got %s (ilvl %d)"] = true
@@ -88,7 +88,7 @@ L["Main"] = true
 L["Make sure you are the only person changing EP and GP. If you have multiple people changing EP and GP at the same time, for example one awarding EP and another crediting GP, you *are* going to have data loss."] = true
 L["Mass EP Award"] = true
 L["Message announced when you start a need/greed bid."] = true
-L["Min EP should be a positive number"] = true
+L["Min EP should be a positive number (>= 0)"] = true
 L["Molten Core"] = true
 L["Multiplier %d"] = true
 L["must be equal to or higher than %s"] = true
