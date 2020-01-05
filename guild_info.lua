@@ -16,6 +16,7 @@ local global_config_defs = {
     parser = tonumber,
     validator = function(v) return v >= 0 and v <= 100 end,
     error = L["Decay Percent should be a number between 0 and 100"],
+    warned = false,
     default = 0,
     change_message = "DecayPercentChanged",
   },
@@ -24,6 +25,7 @@ local global_config_defs = {
     parser = tonumber,
     validator = function(v) return v >= 0 and v <= 100 end,
     error = L["Extras Percent should be a number between 0 and 100"],
+    warned = false,
     default = 100,
     change_message = "ExtrasPercentChanged",
   },
@@ -31,7 +33,8 @@ local global_config_defs = {
     pattern = "@MIN_EP:(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 end,
-    error = L["Min EP should be a positive number"],
+    error = L["Min EP should be a positive number (>= 0)"],
+    warned = false,
     default = 0,
     change_message = "MinEPChanged",
   },
@@ -39,7 +42,8 @@ local global_config_defs = {
     pattern = "@BASE_GP:(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 end,
-    error = L["Base GP should be a positive number"],
+    error = L["Base GP should be a positive number (>= 0)"],
+    warned = false,
     default = 1,
     change_message = "BaseGPChanged",
   },
@@ -48,6 +52,7 @@ local global_config_defs = {
     parser = tonumber,
     validator = function(v) return v == 0 or v == 1  end,
     error = L["Outsiders should be 0 or 1"],
+    warned = false,
     default = 0,
     change_message = "OutsidersChanged",
   },
@@ -81,6 +86,10 @@ local function ParseGuildInfo(loc)
           v = def.parser(v)
           if v == nil or not def.validator(v) then
             Debug(def.error)
+            if not def.warned then
+              def.warned = true
+              EPGP:Print(def.error)
+            end
           else
             new_config[var] = v
           end

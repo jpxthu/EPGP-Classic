@@ -1628,7 +1628,7 @@ local function AddLootControls(frame)
     end
 end
 
-local function CreateEPGPLootFrame(self)
+local function CreateEPGPLootFrame()
   local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame)
   table.insert(SIDEFRAMES, f)
 
@@ -1984,7 +1984,7 @@ local function CreateEPGPFrameStandings()
         row.cells[3]:SetText(gp)
         local pr = 0
         if gp then
-          pr = ep / gp
+          pr = ep / math.max(1, gp)
         end
         if pr > 9999 then
           row.cells[4]:SetText(math.floor(pr))
