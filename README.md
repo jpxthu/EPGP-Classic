@@ -24,10 +24,20 @@ From "epgp (dkp reloaded)":
 - Log, export/import
 
 New added:
-- Enhancement on member list view, whisper, gear points (GP)
+- Enhancement on member list view.
+- Enhancement on whisper. More options offered in interface->EPGP.
+- Gear points (GP) scale and equation setting GUI.
 - Loot tracking and distribution module.
+
+## Resources
+
+[Chinese topic on NGA.CN](https://bbs.nga.cn/read.php?tid=19445524)
 
 ## Contribute
 
 You can help [localization](
-https://www.curseforge.com/wow/addons/epgp-classic/localization). Also welcome to correct my poor English.
+https://www.curseforge.com/wow/addons/epgp-classic/localization). Also welcome to correct my poor English. My native language is Simplified Chinese.
+
+If you are proficient in one of these languages: **German**, **Spanish**, **Latin American Spanish**, **French**, **Italian**, **Korean**, **Brazilian Portuguese**, **Russian**, **Traditional Chinese**, you can:
+- contact me to be a member of this addon project on [CurseForge](https://www.curseforge.com/wow/addons/epgp-classic), so that you can review and approve translation;
+- request PR, submit comment or issue in [GitHub](https://github.com/jpxthu/EPGP-Classic/tree/master/localization).
