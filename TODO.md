@@ -47,5 +47,10 @@
   - [x] "HandleLootWindow" (#6)
   - [x] Loot, bid, roll (#6)
   - [ ] Sync status
+  - [ ] One-key distribution (GiveMasterLoot)
 - [x] Set frame movable (#3)
 - [x] Title and version on main GUI (#2)
+
+## Language
+
+- [ ] Equation -> formula
