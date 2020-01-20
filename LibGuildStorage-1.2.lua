@@ -270,7 +270,7 @@ local function ForceShowOffline()
   return false
 end
 
-local ourRealmName = string.gsub(GetRealmName(), "%s+", "")     -- Realm name with no spaces
+local ourRealmName = GetRealmName()
 local function GetOurRealmName()
   return ourRealmName
 end
