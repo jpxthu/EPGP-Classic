@@ -36,6 +36,7 @@ libs\LibJSON-1.0\lib.xml
 libs\LibRealmInfo\LibRealmInfo.lua
 
 libs\LibEPGPChat-1.0.lua
+libs\LibLocalConstant-1.0.lua
 
 LibDebug-1.0.lua
 LibCoroutine-1.0.lua
