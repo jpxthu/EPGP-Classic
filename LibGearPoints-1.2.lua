@@ -9,6 +9,7 @@ if not lib then return end
 
 local Debug = LibStub("LibDebug-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
+local LN = LibStub("LibLocalConstant-1.0")
 
 --Used to display GP values directly on tier tokens; keys are itemIDs,
 --values are rarity, ilvl, inventory slot, and an optional boolean
@@ -722,13 +723,8 @@ function lib:GetValue(item)
 
   UpdateRecentLoot(itemLink)
 
-  local modPoints = EPGP:GetModule("points")
-  if not modPoints then
-    return nil, nil, nil, nil, nil, nil
-  end
-
   slotS1, slotC1, slotS2, slotC2, slotS3, slotC3, baseGP, standard_ilvl, ilvl_denominator =
-    modPoints:GetScale(equipLoc, itemSubClass)
+    self:GetScale(equipLoc, itemSubClass)
 
   if not slotS1 then
     return nil, nil, nil, nil, nil, nil
@@ -783,4 +779,52 @@ function lib:GetValue(item)
   Debug("%s:%d, %d, %d, %d, %s, %s", itemLink, slotGP1, slotGP2 or 0, slotGP3 or 0, level, rarity, equipLoc)
 
   return slotGP1, slotC1, slotGP2, slotC2, slotGP3, slotC3
+end
+
+local LOCAL_NAME = LN:LocalName()
+
+local switchRanged = {}
+switchRanged[LOCAL_NAME.Bow]      = "ranged"
+switchRanged[LOCAL_NAME.Gun]      = "ranged"
+switchRanged[LOCAL_NAME.Crossbow] = "ranged"
+switchRanged[LOCAL_NAME.Wand]     = "wand"
+switchRanged[LOCAL_NAME.Thrown]   = "thrown"
+
+local switchSlot = {
+  ["INVTYPE_HEAD"]            = "head",
+  ["INVTYPE_NECK"]            = "neck",
+  ["INVTYPE_SHOULDER"]        = "shoulder",
+  -- ["INVTYPE_BODY"]            = "body",
+  ["INVTYPE_CHEST"]           = "chest",
+  ["INVTYPE_ROBE"]            = "chest",
+  ["INVTYPE_WAIST"]           = "waist",
+  ["INVTYPE_LEGS"]            = "legs",
+  ["INVTYPE_FEET"]            = "feet",
+  ["INVTYPE_WRIST"]           = "wrist",
+  ["INVTYPE_HAND"]            = "hand",
+  ["INVTYPE_FINGER"]          = "finger",
+  ["INVTYPE_TRINKET"]         = "trinket",
+  ["INVTYPE_CLOAK"]           = "cloak",
+  ["INVTYPE_WEAPON"]          = "weapon",
+  ["INVTYPE_SHIELD"]          = "shield",
+  ["INVTYPE_2HWEAPON"]        = "weapon2H",
+  ["INVTYPE_WEAPONMAINHAND"]  = "weaponMainH",
+  ["INVTYPE_WEAPONOFFHAND"]   = "weaponOffH",
+  ["INVTYPE_HOLDABLE"]        = "holdable",
+  ["INVTYPE_RANGED"]          = "ranged", -- bow only
+  -- ["INVTYPE_RANGEDRIGHT"]     = "ranged", -- gun, cross-bow, wand
+  ["INVTYPE_THROWN"]          = "ranged",
+  ["INVTYPE_RELIC"]           = "relic",
+  -- ["INVTYPE_BAG"]             = "bag",
+}
+
+function lib:GetScale(slot, subClass)
+  local name = switchSlot[slot] or switchRanged[subClass]
+  local vars = EPGP:GetModule("points").db.profile
+  if name then
+    return vars[name .. "Scale1"], vars[name .. "Comment1"],
+           vars[name .. "Scale2"], vars[name .. "Comment2"],
+           vars[name .. "Scale3"], vars[name .. "Comment3"]
+  end
+  return
 end

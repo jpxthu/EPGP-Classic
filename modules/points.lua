@@ -10,34 +10,6 @@ DISPLAY_NAME.TwoHWeapon  = L["%s %s"]:format(_G.INVTYPE_2HWEAPON, _G.WEAPON)
 DISPLAY_NAME.MainHWeapon = L["%s %s"]:format(_G.INVTYPE_WEAPONMAINHAND, _G.WEAPON)
 DISPLAY_NAME.OffHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPONOFFHAND, _G.WEAPON)
 
-local switchSlot = {
-  ["INVTYPE_HEAD"]            = "head",
-  ["INVTYPE_NECK"]            = "neck",
-  ["INVTYPE_SHOULDER"]        = "shoulder",
-  -- ["INVTYPE_BODY"]            = "body",
-  ["INVTYPE_CHEST"]           = "chest",
-  ["INVTYPE_ROBE"]            = "chest",
-  ["INVTYPE_WAIST"]           = "waist",
-  ["INVTYPE_LEGS"]            = "legs",
-  ["INVTYPE_FEET"]            = "feet",
-  ["INVTYPE_WRIST"]           = "wrist",
-  ["INVTYPE_HAND"]            = "hand",
-  ["INVTYPE_FINGER"]          = "finger",
-  ["INVTYPE_TRINKET"]         = "trinket",
-  ["INVTYPE_CLOAK"]           = "cloak",
-  ["INVTYPE_WEAPON"]          = "weapon",
-  ["INVTYPE_SHIELD"]          = "shield",
-  ["INVTYPE_2HWEAPON"]        = "weapon2H",
-  ["INVTYPE_WEAPONMAINHAND"]  = "weaponMainH",
-  ["INVTYPE_WEAPONOFFHAND"]   = "weaponOffH",
-  ["INVTYPE_HOLDABLE"]        = "holdable",
-  ["INVTYPE_RANGED"]          = "ranged", -- bow only
-  -- ["INVTYPE_RANGEDRIGHT"]     = "ranged", -- gun, cross-bow, wand
-  ["INVTYPE_THROWN"]          = "ranged",
-  ["INVTYPE_RELIC"]           = "relic",
-  -- ["INVTYPE_BAG"]             = "bag",
-}
-
 local profileDefault = {
   enabled = true,
 
@@ -135,35 +107,6 @@ local profileDefault = {
 mod.dbDefaults = {
   profile = profileDefault
 }
-
-local switchRanged = {}
-local function SwitchRangedInit()
-  switchRanged[LOCAL_NAME.Bow]      = "ranged"
-  switchRanged[LOCAL_NAME.Gun]      = "ranged"
-  switchRanged[LOCAL_NAME.Crossbow] = "ranged"
-  switchRanged[LOCAL_NAME.Wand]     = "wand"
-  -- switchRanged["LE_ITEM_WEAPON_THROWN"]   = "thrown"
-end
-
-function mod:GetScale(slot, subClass)
-  if not LocalNameInit() or not self.db then
-    return nil, nil, nil, nil, nil, nil, nil, nil, nil
-  end
-  local name = switchSlot[slot] or switchRanged[subClass]
-  if name then
-    return self.db.profile[name .. "Scale1"], self.db.profile[name .. "Comment1"],
-           self.db.profile[name .. "Scale2"], self.db.profile[name .. "Comment2"],
-           self.db.profile[name .. "Scale3"], self.db.profile[name .. "Comment3"],
-           self.db.profile.baseGP,
-           self.db.profile.standardIlvl,
-           self.db.profile.ilvlDenominator
-  else
-    return nil, nil, nil, nil, nil, nil,
-           self.db.profile.baseGP,
-           self.db.profile.standardIlvl,
-           self.db.profile.ilvlDenominator
-  end
-end
 
 local function HelpPlate(desc)
   help = {
