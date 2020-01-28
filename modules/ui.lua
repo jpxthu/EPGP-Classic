@@ -597,7 +597,7 @@ local function CreateEPGPLogFrame()
   EPGP:GetModule("log"):RegisterCallback("LogChanged", LogChanged)
 end
 
-local function EPGPSideFrameGPDropDown_SetList(dropDown)
+function EPGP:ItemCacheDropDown_SetList(dropDown)
   local list = {}
   for i=1,GP:GetNumRecentItems() do
     tinsert(list, GP:GetRecentItemLink(i))
@@ -674,7 +674,7 @@ local function AddGPControls(frame)
   dropDown.button:HookScript(
     "OnMouseDown",
     function(self)
-      if not self.obj.open then EPGPSideFrameGPDropDown_SetList(self.obj) end
+      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
     end)
   dropDown.button:HookScript(
     "OnClick",
@@ -684,7 +684,7 @@ local function AddGPControls(frame)
   dropDown.button_cover:HookScript(
           "OnMouseDown",
           function(self)
-            if not self.obj.open then EPGPSideFrameGPDropDown_SetList(self.obj) end
+            if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
           end)
   dropDown.button_cover:HookScript(
           "OnClick",
@@ -1485,7 +1485,7 @@ local function AddLootControls(frame)
   dropDown.button:HookScript(
     "OnMouseDown",
     function(self)
-      if not self.obj.open then EPGPSideFrameGPDropDown_SetList(self.obj) end
+      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
     end)
   dropDown.button:HookScript(
     "OnClick",
@@ -1495,7 +1495,7 @@ local function AddLootControls(frame)
   dropDown.button_cover:HookScript(
     "OnMouseDown",
     function(self)
-      if not self.obj.open then EPGPSideFrameGPDropDown_SetList(self.obj) end
+      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
     end)
   dropDown.button_cover:HookScript(
     "OnClick",
