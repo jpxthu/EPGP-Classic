@@ -1223,6 +1223,15 @@ local function CreateEPGPSideFrame2()
   end)
 end
 
+local function LootItemIconFrameOnEnterFunc(self)
+  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", - 3, self:GetHeight() + 6)
+  GameTooltip:SetHyperlink(self:GetParent().itemLink)
+end
+
+local function LootItemIconFrameOnLeaveFunc()
+  GameTooltip:Hide()
+end
+
 local function AddLootControlItems(frame, topItem, index)
   local f = CreateFrame("Frame", nil, frame)
   f:SetPoint("LEFT")
@@ -1238,12 +1247,8 @@ local function AddLootControlItems(frame, topItem, index)
   local iconFrame = CreateFrame("Frame", nil, f)
   iconFrame:ClearAllPoints()
   iconFrame:SetAllPoints(icon)
-  iconFrame:SetScript("OnEnter",
-    function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", - 3, iconFrame:GetHeight() + 6)
-      GameTooltip:SetHyperlink(f.itemLink)
-    end)
-  iconFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+  iconFrame:SetScript("OnEnter", LootItemIconFrameOnEnterFunc)
+  iconFrame:SetScript("OnLeave", LootItemIconFrameOnLeaveFunc)
   iconFrame:EnableMouse(true)
 
   local name = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
