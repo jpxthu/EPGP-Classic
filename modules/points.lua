@@ -145,32 +145,6 @@ local function SwitchRangedInit()
   -- switchRanged["LE_ITEM_WEAPON_THROWN"]   = "thrown"
 end
 
-local initialized = false
-
-local function LocalNameSetOne(slot, id)
-  local v = select(7, GetItemInfo(id))
-  if v then
-    slot = v
-    return true
-  end
-  return false
-end
-
-local function LocalNameInit()
-  if initialized then return true end
-  if not(LocalNameSetOne(LOCAL_NAME.Bow,      17069)) then return false end -- 弓
-  if not(LocalNameSetOne(LOCAL_NAME.Gun,      17072)) then return false end -- 枪
-  if not(LocalNameSetOne(LOCAL_NAME.Crossbow, 19361)) then return false end -- 弩
-  if not(LocalNameSetOne(LOCAL_NAME.Thrown,   13173)) then return false end -- 投掷
-  if not(LocalNameSetOne(LOCAL_NAME.Wand,     17077)) then return false end -- 魔杖
-  if not(LocalNameSetOne(LOCAL_NAME.Idol,     23198)) then return false end -- 神像
-  if not(LocalNameSetOne(LOCAL_NAME.Libram,   23201)) then return false end -- 圣契
-  if not(LocalNameSetOne(LOCAL_NAME.Totem,    23200)) then return false end -- 图腾
-  initialized = true
-  SwitchRangedInit()
-  return true
-end
-
 function mod:GetScale(slot, subClass)
   if not LocalNameInit() or not self.db then
     return nil, nil, nil, nil, nil, nil, nil, nil, nil
