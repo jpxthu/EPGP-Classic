@@ -6,6 +6,7 @@ local GS = LibStub("LibGuildStorage-1.2")
 local GP = LibStub("LibGearPoints-1.2")
 local DLG = LibStub("LibDialog-1.0")
 local GUI = LibStub("AceGUI-3.0")
+local LIU = LibStub("LibItemUtils-1.0")
 
 local callbacks = EPGP.callbacks
 
@@ -1380,8 +1381,14 @@ end
 
 local function LootItemsAdd(itemLink)
   if not itemLink or itemLink == "" then return end
+  local itemId = LIU:ItemlinkToID(itemLink)
   local itemRarity = select(3, GetItemInfo(itemLink))
-  if itemRarity and itemRarity < EPGP:GetModule("distribution").db.profile.threshold then return end
+  if not EPGP.db.profile.customItems[itemId] and
+     itemRarity and
+     itemRarity < EPGP:GetModule("distribution").db.profile.threshold then
+    return
+  end
+
   if lootItem.linkMap[itemLink] then return end
   if lootItem.count >= lootItem.MAX_COUNT then
     EPGP:Print(L["Loot list is full (%d). %s will not be added into list."]:format(lootItem.MAX_COUNT, itemLink))
