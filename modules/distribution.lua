@@ -1,6 +1,11 @@
 local mod = EPGP:NewModule("distribution", "AceEvent-3.0")
 local C = LibStub("LibEPGPChat-1.0")
+local GUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local LIU = LibStub("LibItemUtils-1.0")
+
+local BUTTON_TEXT_PADDING = 15
+local BUTTON_HEIGHT = 22
 
 local callbacks = EPGP.callbacks
 
@@ -11,22 +16,14 @@ RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%d", "%(%%d+%)")
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$s", "%(%.%+%)") -- for "deDE"
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$d", "%(%%d+%)") -- for "deDE"
 
-function mod:CHAT_MSG_RAID(event, msg, sender)
+local function HandleChatMsg(event, msg, sender)
   if not EPGP:IsRLorML() then return end
   local bid = tonumber(msg)
   if not bid then return end
   EPGP:HandleBidResult(sender, bid)
 end
-  
-function mod:CHAT_MSG_RAID_LEADER(event, msg, sender)
-  self:CHAT_MSG_RAID(event, msg, sender)
-end
 
-function mod:CHAT_MSG_WHISPER(event, msg, sender)
-  self:CHAT_MSG_RAID(event, msg, sender)
-end
-
-function mod:CHAT_MSG_SYSTEM(event, msg)
+local function HandleRollMsg(event, msg)
   if not EPGP:IsRLorML() then return end
 
   local name, roll, low, high = string.match(msg, RANDOM_ROLL_PATTERN)
@@ -41,42 +38,42 @@ local function HandleBidStatusUpdate(event, status)
   if status == 1 then
     local needMedium = mod.db.profile.needMedium
     if needMedium == "RAID" then
-      mod:RegisterEvent("CHAT_MSG_RAID")
-      mod:RegisterEvent("CHAT_MSG_RAID_LEADER")
+      mod:RegisterEvent("CHAT_MSG_RAID", HandleChatMsg)
+      mod:RegisterEvent("CHAT_MSG_RAID_LEADER", HandleChatMsg)
     elseif needMedium == "WHISPER" then
-      mod:RegisterEvent("CHAT_MSG_WHISPER")
+      mod:RegisterEvent("CHAT_MSG_WHISPER", HandleChatMsg)
     end
   elseif status == 2 then
-    local bidMedium = self.db.profile.bidMedium
+    local bidMedium = mod.db.profile.bidMedium
     if bidMedium == "RAID" then
-      mod:RegisterEvent("CHAT_MSG_RAID")
-      mod:RegisterEvent("CHAT_MSG_RAID_LEADER")
+      mod:RegisterEvent("CHAT_MSG_RAID", HandleChatMsg)
+      mod:RegisterEvent("CHAT_MSG_RAID_LEADER", HandleChatMsg)
     elseif bidMedium == "WHISPER" then
-      mod:RegisterEvent("CHAT_MSG_WHISPER")
+      mod:RegisterEvent("CHAT_MSG_WHISPER", HandleChatMsg)
     end
   elseif status == 3 then
-    mod:RegisterEvent("CHAT_MSG_SYSTEM")
+    mod:RegisterEvent("CHAT_MSG_SYSTEM", HandleRollMsg)
   end
 end
 
-function mod:LootItemsAnnounce(itemLinks)
+local function LootItemsAnnounce(itemLinks)
   if not EPGP:IsRLorML() then return end
-  local medium = self.db.profile.announceMedium
+  local medium = mod.db.profile.announceMedium
   C:Announce(medium, L["Loot list: "] .. table.concat(itemLinks, " "))
 end
 
-function mod:StartBid(itemLink, method)
+local function StartBid(itemLink, method)
   if not EPGP:IsRLorML() then return end
-  local medium = self.db.profile.announceMedium
+  local medium = mod.db.profile.announceMedium
   if method == 1 then
-    local needMedium = self.db.profile.needMedium
+    local needMedium = mod.db.profile.needMedium
     if needMedium == "RAID" then
-      C:Announce(medium, itemLink .. " " .. L["Please send number to raid channel: "] .. self.db.profile.announceNeedMsg)
+      C:Announce(medium, itemLink .. " " .. L["Please send number to raid channel: "] .. mod.db.profile.announceNeedMsg)
     elseif needMedium == "WHISPER" then
-      C:Announce(medium, itemLink .. " " .. L["Please whisper number to me: "] .. self.db.profile.announceNeedMsg)
+      C:Announce(medium, itemLink .. " " .. L["Please whisper number to me: "] .. mod.db.profile.announceNeedMsg)
     end
   elseif method == 2 then
-    local bidMedium = self.db.profile.bidMedium
+    local bidMedium = mod.db.profile.bidMedium
     if bidMedium == "RAID" then
       C:Announce(medium, itemLink .. " " .. L["Please send bid value to raid channel."])
     elseif bidMedium == "WHISPER" then
@@ -85,7 +82,7 @@ function mod:StartBid(itemLink, method)
   elseif method == 3 then
     C:Announce(medium, itemLink .. " " .. L["/roll if you want this item. DO NOT roll more than one time."])
   end
-  EPGP:SetBidStatus(method, self.db.profile.resetWhenAnnounce)
+  EPGP:SetBidStatus(method, mod.db.profile.resetWhenAnnounce)
 end
 
 mod.dbDefaults = {
@@ -186,18 +183,6 @@ mod.optionsArgs = {
     },
   },
 }
-
-function mod:OnInitialize()
-  self.db = EPGP.db:RegisterNamespace("distribution", mod.dbDefaults)
-end
-
-function mod:OnEnable()
-  EPGP.RegisterCallback(self, "BidStatusUpdate", HandleBidStatusUpdate)
-end
-
-function mod:OnDisable()
-  EPGP.UnregisterAllCallbacks(self)
-end
 
 local lootItem = {
   links = {},
@@ -371,7 +356,7 @@ local function LootItemsAdd(itemLink)
   local itemRarity = select(3, GetItemInfo(itemLink))
   if not EPGP.db.profile.customItems[itemId] and
      itemRarity and
-     itemRarity < EPGP:GetModule("distribution").db.profile.threshold then
+     itemRarity < mod.db.profile.threshold then
     return
   end
 
@@ -426,17 +411,17 @@ end
 
 local function LootItemNeedButtonOnClick(bt)
   local itemLink = bt:GetParent().itemLink
-  EPGP:GetModule("distribution"):StartBid(itemLink, 1)
+  StartBid(itemLink, 1)
 end
 
 local function LootItemBidButtonOnClick(bt)
   local itemLink = bt:GetParent().itemLink
-  EPGP:GetModule("distribution"):StartBid(itemLink, 2)
+  StartBid(itemLink, 2)
 end
 
 local function LootItemRollButtonOnClick(bt)
   local itemLink = bt:GetParent().itemLink
-  EPGP:GetModule("distribution"):StartBid(itemLink, 3)
+  StartBid(itemLink, 3)
 end
 
 local function LootItemRemoveButtonOnClick(bt)
@@ -464,7 +449,9 @@ local function LootWindowHandler(event, loots)
   end
 end
 
-local function AddLootControls(frame)
+function mod:FillFrame(frame)
+  lootItem.frame = frame
+
   local dropDown = GUI:Create("Dropdown")
   dropDown:SetWidth(150)
   dropDown.frame:SetParent(frame)
@@ -558,7 +545,7 @@ local function AddLootControls(frame)
   announceButton:SetScript(
     "OnClick",
     function(self)
-      EPGP:GetModule("distribution"):LootItemsAnnounce(lootItem.links)
+      LootItemsAnnounce(lootItem.links)
     end)
 
   local lastPageButton = CreateFrame("Button", "lastPageButton", frame, "UIPanelButtonTemplate")
@@ -623,7 +610,20 @@ local function AddLootControls(frame)
     clearButton:GetHeight() +
     frame.items[1]:GetHeight() * lootItem.ITEMS_PER_PAGE)
 
-  frame.OnShow =
-    function(self)
-    end
+  LootControlsUpdate()
+end
+
+function mod:OnInitialize()
+  self.db = EPGP.db:RegisterNamespace("distribution", mod.dbDefaults)
+end
+
+function mod:OnEnable()
+  EPGP.RegisterCallback(self, "BidStatusUpdate", HandleBidStatusUpdate)
+  EPGP.RegisterCallback(self, "CorpseLootReceived", CorpseLootReceivedHandler)
+  EPGP.RegisterCallback(self, "LootWindow", LootWindowHandler)
+  LootItemsResume()
+end
+
+function mod:OnDisable()
+  EPGP.UnregisterAllCallbacks(self)
 end

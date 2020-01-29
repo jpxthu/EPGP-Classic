@@ -1238,19 +1238,16 @@ local function CreateEPGPLootFrame()
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  lootItem.frame = CreateFrame("Frame", nil, f)
-  local itemFrame = lootItem.frame
+  local itemFrame = CreateFrame("Frame", nil, f)
   itemFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   itemFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -15)
   itemFrame:SetScript("OnShow",
     function()
       if not itemFrame.initiated then
-        AddLootControls(itemFrame)
+        EPGP:GetModule("distribution"):FillFrame(itemFrame)
         f:SetWidth(itemFrame:GetWidth() + 30)
         f:SetHeight(itemFrame:GetHeight() + 30)
       end
-      LootControlsUpdate()
-      if itemFrame.OnShow then itemFrame:OnShow() end
     end)
 end
 
@@ -1710,9 +1707,6 @@ function mod:OnEnable()
     CreateEPGPFrame()
     CreateEPGPFrameStandings()
     CreateEPGPExportImportFrame()
-    EPGP.RegisterCallback(self, "CorpseLootReceived", CorpseLootReceivedHandler)
-    EPGP.RegisterCallback(self, "LootWindow", LootWindowHandler)
-    LootItemsResume()
   end
 
   HideUIPanel(EPGPFrame)
