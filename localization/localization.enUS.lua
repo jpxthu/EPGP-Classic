@@ -12,6 +12,7 @@ L["A new tier is here!  You should probably reset or rescale GP (Interface -> Op
 L["An item was disenchanted or deposited into the guild bank"] = true
 L["Announce"] = true
 L["Announce epic loot from corpses"] = true
+L["Announce EP/GP/PR when a member need/greed/bid"] = true
 L["Announce medium"] = true
 L["Announcement of EPGP actions"] = true
 L["Announce need message"] = true
@@ -53,6 +54,7 @@ L["[EPGP auto reply] "] = true
 L["EPGP decay"] = true
 L["EPGP is an in game, relational loot distribution system"] = true
 L["EPGP is using Officer Notes for data storage. Do you really want to edit the Officer Note by hand?"] = true
+L["EP/GP/PR announce medium"] = true
 L["EPGP reset"] = true
 L["EP Reason"] = true
 L["Equation"] = true

@@ -16,11 +16,27 @@ RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%d", "%(%%d+%)")
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$s", "%(%.%+%)") -- for "deDE"
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$d", "%(%%d+%)") -- for "deDE"
 
+local function PrAnnouncement(sender)
+  if not sender or sender == "" then return end
+  local prAnnounceMedium = mod.db.profile.prAnnounceMedium
+  if prAnnounceMedium == "NONE" then return end
+  local name = EPGP:GetFullCharacterName(sender)
+  local ep, gp = EPGP:GetEPGP(name)
+  if not ep or not gp then return end
+  local pr = ep / math.max(gp, 1)
+  if prAnnounceMedium == "RAID" then
+    C:Announce("RAID", "%s EP:%d GP:%d PR:%f", sender, ep, gp, pr)
+  elseif prAnnounceMedium == "WHISPER" then
+    C:Whisper(sender, "EP:%d GP:%d PR:%f", ep, gp, pr)
+  end
+end
+
 local function HandleChatMsg(event, msg, sender)
   if not EPGP:IsRLorML() then return end
   local bid = tonumber(msg)
   if not bid then return end
   EPGP:HandleBidResult(sender, bid)
+  PrAnnouncement(sender)
 end
 
 local function HandleRollMsg(event, msg)
@@ -91,6 +107,7 @@ mod.dbDefaults = {
     announceMedium = "RAID",
     needMedium = "RAID",
     bidMedium = "RAID",
+    prAnnounceMedium = "RAID",
     announceNeedMsg = "1 - " .. NEED .. " 2 - " .. GREED,
     resetWhenAnnounce = true,
     lootAutoAdd = true,
@@ -146,7 +163,18 @@ mod.optionsArgs = {
       ["WHISPER"] = CHAT_MSG_WHISPER_INFORM,
     },
   },
-  spacer1 = Spacer(13, 0.001),
+  prAnnounceMedium = {
+    order = 13,
+    type = "select",
+    name = L["EP/GP/PR announce medium"],
+    desc = L["Announce EP/GP/PR when a member need/greed/bid"],
+    values = {
+      ["NONE"] = NONE,
+      ["RAID"] = CHAT_MSG_RAID,
+      ["WHISPER"] = CHAT_MSG_WHISPER_INFORM,
+    },
+  },
+  -- spacer1 = Spacer(13, 0.001),
   announceNeedMsg = {
     order = 20,
     type = "input",
@@ -154,7 +182,7 @@ mod.optionsArgs = {
     desc = L["Message announced when you start a need/greed bid."],
     width = 100,
   },
-  spacer2 = Spacer(21, 0.001),
+  -- spacer2 = Spacer(21, 0.001),
   resetWhenAnnounce = {
     order = 30,
     type = "toggle",
@@ -162,7 +190,7 @@ mod.optionsArgs = {
     desc = L["Reset result when announce and start a bid/need/roll."],
     width = 30,
   },
-  spacer3 = Spacer(31, 0.001),
+  -- spacer3 = Spacer(31, 0.001),
   lootAutoAdd = {
     order = 40,
     type = "toggle",
