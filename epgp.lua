@@ -1020,7 +1020,11 @@ function EPGP:GROUP_ROSTER_UPDATE()
     -- everyone from the selected list.
     wipe(selected)
     selected_count = 0
-    wipe(EPGP.db.profile.selected)
+    if EPGP.db.profile.selected then
+      wipe(EPGP.db.profile.selected)
+    else
+      EPGP.db.profile.selected = {}
+    end
     EPGP.db.profile.selected_count = 0
     EPGP:SetBidStatus(0)
     -- We also need to stop any recurring EP since they should stop
