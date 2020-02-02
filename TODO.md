@@ -5,6 +5,7 @@
 - [ ] Version in TOC (remeber in each update)
 - [ ] Optimization
   - [ ] SetScript in loop and array (ui.lua, headers)
+  - [ ] CanDecayEPGP - trigger by event, not each update
 
 ## Standby
 

@@ -1014,16 +1014,16 @@ local function AddEPControls(frame, withRecurring)
           EnabledStatus(self)
         end
       end)
-  
+
     local label =
       frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     label:SetText(L["Recurring"])
     label:SetPoint("LEFT", recurring, "RIGHT")
-  
+
     local timePeriod =
       frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     timePeriod:SetJustifyH("RIGHT")
-  
+
     local incButton = CreateFrame("Button", nil, frame)
     incButton:SetNormalTexture(
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollUpButton-Up")
@@ -1033,7 +1033,7 @@ local function AddEPControls(frame, withRecurring)
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollUpButton-Disabled")
     incButton:SetWidth(24)
     incButton:SetHeight(24)
-  
+
     local decButton = CreateFrame("Button", nil, frame)
     decButton:SetNormalTexture(
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollDownButton-Up")
@@ -1043,12 +1043,12 @@ local function AddEPControls(frame, withRecurring)
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollDownButton-Disabled")
     decButton:SetWidth(24)
     decButton:SetHeight(24)
-  
+
     decButton:SetPoint("RIGHT")
     decButton:SetPoint("TOP", recurring, "TOP")
     incButton:SetPoint("RIGHT", decButton, "LEFT", 8, 0)
     timePeriod:SetPoint("RIGHT", incButton, "LEFT")
-  
+
     function frame:UpdateTimeControls()
       local period_mins = EPGP:RecurringEPPeriodMinutes()
       local fmt, val = SecondsToTimeAbbrev(period_mins * 60)
@@ -1065,7 +1065,7 @@ local function AddEPControls(frame, withRecurring)
         incButton:Enable()
       end
     end
-  
+
     incButton:SetScript(
       "OnClick",
       function(self)
@@ -1073,7 +1073,7 @@ local function AddEPControls(frame, withRecurring)
         EPGP:RecurringEPPeriodMinutes(period_mins + 1)
         self:GetParent():UpdateTimeControls()
       end)
-  
+
     decButton:SetScript(
       "OnClick",
       function(self)
@@ -1081,7 +1081,7 @@ local function AddEPControls(frame, withRecurring)
         EPGP:RecurringEPPeriodMinutes(period_mins - 1)
         self:GetParent():UpdateTimeControls()
       end)
-  
+
     frame.recurring = recurring
     frame.incButton = incButton
     frame.decButton = decButton
@@ -1169,7 +1169,7 @@ local function AddCustomGuildInfoControls(frame)
   decayPLabel:SetHeight(BUTTON_HEIGHT)
   decayPLabel:SetPoint("LEFT")
   decayPLabel:SetPoint("TOP", outsidersLabel, "BOTTOM")
-  
+
   local decayPEditBox = CreateEditBox(nil, frame)
 
   local decayPOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
@@ -1200,7 +1200,7 @@ local function AddCustomGuildInfoControls(frame)
   baseGpLabel:SetHeight(BUTTON_HEIGHT)
   baseGpLabel:SetPoint("LEFT")
   baseGpLabel:SetPoint("TOP", decayPLabel, "BOTTOM")
-  
+
   local baseGpEditBox = CreateEditBox(nil, frame)
 
   local baseGpOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
@@ -1231,7 +1231,7 @@ local function AddCustomGuildInfoControls(frame)
   minEpLabel:SetHeight(BUTTON_HEIGHT)
   minEpLabel:SetPoint("LEFT")
   minEpLabel:SetPoint("TOP", baseGpLabel, "BOTTOM")
-  
+
   local minEpEditBox = CreateEditBox(nil, frame)
 
   local minEpOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
@@ -1262,7 +1262,7 @@ local function AddCustomGuildInfoControls(frame)
   extrasPLabel:SetHeight(BUTTON_HEIGHT)
   extrasPLabel:SetPoint("LEFT")
   extrasPLabel:SetPoint("TOP", minEpLabel, "BOTTOM")
-  
+
   local extrasPEditBox = CreateEditBox(nil, frame)
 
   local extrasPOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
@@ -1344,7 +1344,7 @@ local function AddCustomGuildInfoControls(frame)
       EPGP:SetExtrasPercent(vars.extras_p_guild_info)
     end
   end
-  
+
   useCustomOption.OnShow =
     function(self)
       if vars.useCustomGuildOptions then
@@ -1378,6 +1378,79 @@ local function AddCustomGuildInfoControls(frame)
     function(self)
       useCustomOption:OnShow()
       editGuildInfoButton:OnShow()
+    end
+end
+
+local function RankCheckBoxOnClickFunc(self)
+  EPGP:SetManageRank(self.index, self:GetChecked())
+end
+
+local function AddDecayControls(frame)
+  local vars = EPGP.db.profile
+  frame.rank = {}
+
+  local selectAllButton = CreateTextButton(nil, frame, L["Select all"], true)
+  selectAllButton:SetPoint("TOPLEFT")
+  selectAllButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetManageRankAll(true)
+      for i, v in pairs(frame.rank) do
+        v:SetChecked(true)
+      end
+    end)
+  selectAllButton:Enable()
+
+  local decayButton = CreateTextButton(nil, frame, L["Decay"], true)
+  decayButton:SetPoint("LEFT", selectAllButton, "RIGHT")
+  decayButton:SetScript(
+    "OnClick",
+    function(self, button, down)
+      DLG:Spawn("EPGP_DECAY_EPGP", EPGP:GetDecayPercent())
+    end)
+  decayButton:SetScript(
+    "OnUpdate",
+    function(self)
+      if EPGP:CanDecayEPGP() then
+        self:Enable()
+      else
+        self:Disable()
+      end
+    end)
+
+  for i = 1, GuildControlGetNumRanks() do
+    local cb = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+    cb:SetWidth(20)
+    cb:SetHeight(20)
+    cb:SetPoint("LEFT")
+    if i == 1 then
+      cb:SetPoint("TOP", selectAllButton, "BOTTOM")
+    else
+      cb:SetPoint("TOP", frame.rank[i - 1], "BOTTOM")
+    end
+    cb.index = i
+    cb:SetScript("OnClick", RankCheckBoxOnClickFunc)
+    table.insert(frame.rank, cb)
+
+    local l = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    l:SetText(GuildControlGetRankName(i))
+    l:SetPoint("LEFT", cb, "RIGHT")
+  end
+
+  frame:SetHeight(
+    selectAllButton:GetHeight() +
+    frame.rank[1]:GetHeight() * #frame.rank)
+
+  frame.OnShow =
+    function(self)
+      local all = vars.manageRankAll
+      for i = 1, GuildControlGetNumRanks() do
+        if all then
+          vars.manageRank[i] = true
+        elseif vars.manageRank[i] == nil then
+          vars.manageRank[i] = false
+        end
+        frame.rank[i]:SetChecked(vars.manageRank[i])
+      end
     end
 end
 
@@ -1482,10 +1555,14 @@ local function CreateEPGPSideFrame2()
   local epFrame = CreateFrame("Frame", nil, f)
   epFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   epFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -30, -15)
-  
+
   local customFrame = CreateFrame("Frame", nil, f)
   customFrame:SetPoint("TOPLEFT", epFrame, "BOTTOMLEFT", 0, -15)
   customFrame:SetPoint("TOPRIGHT", epFrame, "BOTTOMRIGHT", 0, -15)
+
+  local decayFrame = CreateFrame("Frame", nil, f)
+  decayFrame:SetPoint("TOPLEFT", customFrame, "BOTTOMLEFT", 0, -15)
+  decayFrame:SetPoint("TOPRIGHT", customFrame, "BOTTOMRIGHT", 0, -15)
 
   f:SetScript("OnShow", function()
     if not epFrame.initiated then
@@ -1520,10 +1597,18 @@ local function CreateEPGPSideFrame2()
     if not customFrame.initiated then
       customFrame.initiated = true
       AddCustomGuildInfoControls(customFrame)
-      f:SetHeight(epFrame:GetHeight() + customFrame:GetHeight() + 45)
+    end
+    if not decayFrame.initiated then
+      decayFrame.initiated = true
+      AddDecayControls(decayFrame)
+      f:SetHeight(60 +
+        epFrame:GetHeight() +
+        customFrame:GetHeight() +
+        decayFrame:GetHeight())
     end
     if epFrame.OnShow then epFrame:OnShow() end
     if customFrame.OnShow then customFrame:OnShow() end
+    if decayFrame.OnShow then decayFrame:OnShow() end
   end)
 end
 
@@ -1712,35 +1797,12 @@ local function CreateEPGPFrameStandings()
       ToggleOnlySideFrame(EPGPLogFrame)
     end)
 
-  local decay = CreateFrame("Button", nil, main, "UIPanelButtonTemplate")
-  decay:SetNormalFontObject("GameFontNormalSmall")
-  decay:SetHighlightFontObject("GameFontHighlightSmall")
-  decay:SetDisabledFontObject("GameFontDisableSmall")
-  decay:SetHeight(BUTTON_HEIGHT)
-  decay:SetPoint("RIGHT", log, "LEFT")
-  decay:SetText(L["Decay"])
-  decay:SetWidth(decay:GetTextWidth() + BUTTON_TEXT_PADDING)
-  decay:SetScript(
-    "OnClick",
-    function(self, button, down)
-      DLG:Spawn("EPGP_DECAY_EPGP", EPGP:GetDecayPercent())
-    end)
-  decay:SetScript(
-    "OnUpdate",
-    function(self)
-      if EPGP:CanDecayEPGP() then
-        self:Enable()
-      else
-        self:Disable()
-      end
-    end)
-
   local option = CreateFrame("Button", nil, main, "UIPanelButtonTemplate")
   option:SetNormalFontObject("GameFontNormalSmall")
   option:SetHighlightFontObject("GameFontHighlightSmall")
   option:SetDisabledFontObject("GameFontDisableSmall")
   option:SetHeight(BUTTON_HEIGHT)
-  option:SetPoint("RIGHT", decay, "LEFT")
+  option:SetPoint("RIGHT", log, "LEFT")
   option:SetText(L["Options"])
   option:SetWidth(option:GetTextWidth() + BUTTON_TEXT_PADDING)
   option:SetScript(

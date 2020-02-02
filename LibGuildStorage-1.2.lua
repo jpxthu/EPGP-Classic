@@ -131,7 +131,7 @@ end
 
 function lib:GetRank(name)
   local e = cache[name]
-  if e then return e.rank end
+  if e then return e.rank, e.rankIndex end
 end
 
 function lib:GetGuildInfo()
@@ -324,8 +324,10 @@ local function Frame_OnUpdate(self, elapsed)
   Debug("Processing from %d to %d members", index, last_index)
 
   for i = index, last_index do
-
-    local name, rank, _, _, _, _, pubNote, note, _, _, class = GetGuildRosterInfo(i)
+    local name, rank, rankIndex, _, _, _, pubNote, note, _, _, class = GetGuildRosterInfo(i)
+    -- The Rank Index starts at 0, add 1 to correspond with the index
+    -- used in GuildControlGetRankName(index)
+    rankIndex = rankIndex + 1
 
     -- We use full names including the '-server' portion
     -- 2019.12.13: WOW Classic updated to 1.13.3, "Ambiguate" performs different. No server/realm if character in the same realm.
@@ -386,6 +388,7 @@ local function Frame_OnUpdate(self, elapsed)
       end
 
       entry.rank = rank
+      entry.rankIndex = rankIndex
       entry.class = class
 
       -- Mark this note as seen

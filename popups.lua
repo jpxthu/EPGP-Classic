@@ -100,7 +100,16 @@ DLG:Register("EPGP_DECAY_EPGP", {
     },
   },
   on_show = function(self, data)
-    self.text:SetFormattedText(L["Decay EP and GP by %d%%?"], data)
+    local t = L["Decay EP and GP by %d%%?"]
+    local vars = EPGP.db.profile
+    if not vars.manageRankAll then
+      for i = 1, GuildControlGetNumRanks() do
+        if vars.manageRank[i] then
+          t = t .. "\n" .. GuildControlGetRankName(i)
+        end
+      end
+    end
+    self.text:SetFormattedText(t, data)
   end,
   on_update = function(self, elapsed)
     if EPGP:CanDecayEPGP() then

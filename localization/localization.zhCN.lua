@@ -162,6 +162,7 @@ L["Resets EP and GP of all members of the guild. This will set all main toons' E
 L["Resets GP (not EP!) of all members of the guild. This will set all main toons' GP to 0. Use with care!"] = "重设所有工会成员的 GP（不是 EP）。这样做将会使所有主号的 GP 清零。请小心使用！"
 L["Resume recurring award (%s) %d EP/%s"] = "重新开始周期性奖励 (%s) %d EP/%s"
 L["Ruins of Ahn'Qiraj"] = "安其拉废墟"
+L["Select all"] = "全选"
 L["Set gear points (GP multiplier). Each slot could set up to 3 points. Each points has a custom comment."] = "设定装备分数（GP 系数）；每个部位都可以设定最多三个系数和备注。"
 L["Sets loot tracking threshold, to disable the popup on loot below this threshold quality."] = "设置拾取追踪品质阀值，拾取低于设定品质阀值的物品时禁用弹出框。"
 L["Sets the announce medium EPGP will use to announce EPGP actions."] = "设置用来通告 EPGP 操作的 EPGP 通告媒介。"

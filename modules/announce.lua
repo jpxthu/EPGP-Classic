@@ -89,7 +89,16 @@ function mod:MassEPAward(event_name, names, reason, amount,
 end
 
 function mod:Decay(event_name, decay_p)
-  mod:Announce(L["Decay of EP/GP by %d%%"], decay_p)
+  local t = L["Decay of EP/GP by %d%%"]
+  local vars = EPGP.db.profile
+  if not vars.manageRankAll then
+    for i = 1, GuildControlGetNumRanks() do
+      if vars.manageRank[i] then
+        t = t .. ", " .. GuildControlGetRankName(i)
+      end
+    end
+  end
+  mod:Announce(t, decay_p)
 end
 
 function mod:StartRecurringAward(event_name, reason, amount, mins)

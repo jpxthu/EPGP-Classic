@@ -722,17 +722,23 @@ function EPGP:DecayEPGP()
 
   local decay = self.db.profile.decay_p  * 0.01
   local reason = string.format("Decay %d%%", self.db.profile.decay_p)
+  local all = EPGP.db.profile.manageRankAll or
+              EPGP.db.profile.manageRankAll == nil
+  local manageRank = self.db.profile.manageRank
   for name,_ in pairs(ep_data) do
     local ep, gp, main = self:GetEPGP(name)
     assert(main == nil, "Corrupt alt data!")
-    local decay_ep = math.ceil(ep * decay)
-    local decay_gp = math.ceil(gp * decay)
-    decay_ep, decay_gp = AddEPGP(name, -decay_ep, -decay_gp)
-    if decay_ep ~= 0 then
-      callbacks:Fire("EPAward", name, reason, decay_ep, true)
-    end
-    if decay_gp ~= 0 then
-      callbacks:Fire("GPAward", name, reason, decay_gp, true)
+    local rankIndex = select(2, GS:GetRank(name))
+    if all or (rankIndex and manageRank[rankIndex]) then
+      local decay_ep = math.ceil(ep * decay)
+      local decay_gp = math.ceil(gp * decay)
+      decay_ep, decay_gp = AddEPGP(name, -decay_ep, -decay_gp)
+      if decay_ep ~= 0 then
+        callbacks:Fire("EPAward", name, reason, decay_ep, true)
+      end
+      if decay_gp ~= 0 then
+        callbacks:Fire("GPAward", name, reason, decay_gp, true)
+      end
     end
   end
   callbacks:Fire("Decay", self.db.profile.decay_p)
@@ -914,6 +920,25 @@ function EPGP:IncMassEPBy(reason, amount)
   end
 end
 
+function EPGP:SetManageRank(index, v)
+  self.db.profile.manageRank[index] = v
+  local all = true
+  for i = 1, GuildControlGetNumRanks() do
+    if not self.db.profile.manageRank[i] then
+      all = false
+      break
+    end
+  end
+  self.db.profile.manageRankAll = all
+end
+
+function EPGP:SetManageRankAll(v)
+  for i = 1, GuildControlGetNumRanks() do
+    self.db.profile.manageRank[i] = v
+  end
+  self.db.profile.manageRankAll = v
+end
+
 function EPGP:ReportErrors(outputFunc)
   for name, note in pairs(ignored) do
     outputFunc(L["Invalid officer note [%s] for %s (ignored)"]:format(
@@ -938,6 +963,8 @@ function EPGP:OnInitialize()
       min_ep = 0,
       base_gp = 1,
       bonus_loot_log = {},
+      manageRankAll = true,
+      manageRank = {true, true, true, true, true, true, true, true, true, true},
     }
   }
 

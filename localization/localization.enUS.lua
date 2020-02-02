@@ -143,6 +143,7 @@ L["/roll if you want this item. DO NOT roll more than one time."] = true
 L["Ruins of Ahn'Qiraj"] = true
 L["%s: %+d EP (%s) to %s"] = true
 L["%s: %+d GP (%s) to %s"] = true
+L["Select all"] = true
 L["Set gear points (GP multiplier). Each slot could set up to 3 points. Each points has a custom comment."] = true
 L["Sets loot tracking threshold, to disable the adding on loot below this threshold quality."] = true
 L["Sets loot tracking threshold, to disable the popup on loot below this threshold quality."] = true
