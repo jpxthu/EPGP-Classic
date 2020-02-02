@@ -827,6 +827,10 @@ function EPGP:BankItem(reason, undo)
   callbacks:Fire("BankedItem", GUILD_BANK, reason, 0, false, undo)
 end
 
+function EPGP:GetOutdisers()
+  return self.db.profile.outsiders
+end
+
 function EPGP:GetDecayPercent()
   return self.db.profile.decay_p
 end

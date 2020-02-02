@@ -14,6 +14,7 @@ local EPGPWEB = "http://www.epgpweb.com"
 
 local BUTTON_TEXT_PADDING = 15
 local BUTTON_HEIGHT = 22
+local EDITBOX_HEIGHT = 24
 local ROW_TEXT_PADDING = 5
 
 local function Debug(fmt, ...)
@@ -53,6 +54,46 @@ local function DisableWhileNotInRaid()
     for i, v in pairs(disableWhileNotInRaidList) do v:Enable() end
   else
     for i, v in pairs(disableWhileNotInRaidList) do v:Disable() end
+  end
+end
+
+local function CreateTextButton(name, parent, text, disable)
+  local bt = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+  bt:SetNormalFontObject("GameFontNormalSmall")
+  bt:SetHighlightFontObject("GameFontHighlightSmall")
+  bt:SetDisabledFontObject("GameFontDisableSmall")
+  bt:SetHeight(BUTTON_HEIGHT)
+  bt:SetText(text)
+  bt:SetWidth(bt:GetTextWidth() + BUTTON_TEXT_PADDING)
+  if disable then
+    bt:Disable()
+  else
+    bt:Enable()
+  end
+  return bt
+end
+
+local function CreateEditBox(name, parent)
+  local eb = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
+  eb:SetFontObject("GameFontHighlightSmall")
+  eb:SetHeight(EDITBOX_HEIGHT)
+  eb:SetAutoFocus(false)
+  return eb
+end
+
+local function EnableEditBox(eb, text)
+  eb:SetAlpha(1)
+  eb:Enable()
+  if text then
+    eb:SetText(text)
+  end
+end
+
+local function DisableEditBox(eb, text)
+  eb:SetAlpha(0.25)
+  eb:Disable()
+  if text then
+    eb:SetText(text)
   end
 end
 
@@ -850,7 +891,7 @@ local function AddEPControls(frame, withRecurring)
   dropDown:SetWidth(168)
   dropDown.frame:SetParent(frame)
   dropDown:SetPoint("TOP", reasonLabel, "BOTTOM")
-  dropDown:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  dropDown:SetPoint("LEFT", 15, 0)
   dropDown.text:SetJustifyH("LEFT")
   dropDown:SetCallback(
     "OnValueChanged",
@@ -898,7 +939,7 @@ local function AddEPControls(frame, withRecurring)
   local otherLabel =
     frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   otherLabel:SetText(OTHER)
-  otherLabel:SetPoint("LEFT", reasonLabel)
+  otherLabel:SetPoint("LEFT")
   otherLabel:SetPoint("TOP", dropDown.frame, "BOTTOM", 0, -2)
 
   local otherEditBox = CreateFrame("EditBox", "$parentEPControlOtherEditBox",
@@ -906,8 +947,8 @@ local function AddEPControls(frame, withRecurring)
   otherEditBox:SetFontObject("GameFontHighlightSmall")
   otherEditBox:SetHeight(24)
   otherEditBox:SetAutoFocus(false)
-  otherEditBox:SetPoint("LEFT", frame, "LEFT", 25, 0)
-  otherEditBox:SetPoint("RIGHT", frame, "RIGHT", -15, 0)
+  otherEditBox:SetPoint("LEFT", 25, 0)
+  otherEditBox:SetPoint("RIGHT")
   otherEditBox:SetPoint("TOP", otherLabel, "BOTTOM")
   otherEditBox:SetScript(
     "OnTextChanged",
@@ -921,7 +962,7 @@ local function AddEPControls(frame, withRecurring)
 
   local label = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   label:SetText(L["Value"])
-  label:SetPoint("LEFT", reasonLabel)
+  label:SetPoint("LEFT")
   label:SetPoint("TOP", otherEditBox, "BOTTOM")
 
   local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -931,7 +972,7 @@ local function AddEPControls(frame, withRecurring)
   button:SetHeight(BUTTON_HEIGHT)
   button:SetText(L["Award EP"])
   button:SetWidth(button:GetTextWidth() + BUTTON_TEXT_PADDING)
-  button:SetPoint("RIGHT", otherEditBox, "RIGHT")
+  button:SetPoint("RIGHT")
   button:SetPoint("TOP", label, "BOTTOM")
 
   local editBox = CreateFrame("EditBox", "$parentEPControlEditBox",
@@ -939,7 +980,7 @@ local function AddEPControls(frame, withRecurring)
   editBox:SetFontObject("GameFontHighlightSmall")
   editBox:SetHeight(24)
   editBox:SetAutoFocus(false)
-  editBox:SetPoint("LEFT", frame, "LEFT", 25, 0)
+  editBox:SetPoint("LEFT", 25, 0)
   editBox:SetPoint("RIGHT", button, "LEFT")
   editBox:SetPoint("TOP", label, "BOTTOM")
 
@@ -962,8 +1003,8 @@ local function AddEPControls(frame, withRecurring)
       CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
     recurring:SetWidth(20)
     recurring:SetHeight(20)
-    recurring:SetPoint("TOP", editBox, "BOTTOMLEFT")
-    recurring:SetPoint("LEFT", reasonLabel)
+    recurring:SetPoint("TOP", editBox, "BOTTOM")
+    recurring:SetPoint("LEFT")
     recurring:SetScript(
       "OnUpdate",
       function (self)
@@ -973,16 +1014,16 @@ local function AddEPControls(frame, withRecurring)
           EnabledStatus(self)
         end
       end)
-
+  
     local label =
       frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     label:SetText(L["Recurring"])
     label:SetPoint("LEFT", recurring, "RIGHT")
-
+  
     local timePeriod =
       frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     timePeriod:SetJustifyH("RIGHT")
-
+  
     local incButton = CreateFrame("Button", nil, frame)
     incButton:SetNormalTexture(
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollUpButton-Up")
@@ -992,7 +1033,7 @@ local function AddEPControls(frame, withRecurring)
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollUpButton-Disabled")
     incButton:SetWidth(24)
     incButton:SetHeight(24)
-
+  
     local decButton = CreateFrame("Button", nil, frame)
     decButton:SetNormalTexture(
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollDownButton-Up")
@@ -1002,12 +1043,12 @@ local function AddEPControls(frame, withRecurring)
       "Interface\\MainMenuBar\\UI-MainMenu-ScrollDownButton-Disabled")
     decButton:SetWidth(24)
     decButton:SetHeight(24)
-
-    decButton:SetPoint("RIGHT", -15, 0)
+  
+    decButton:SetPoint("RIGHT")
     decButton:SetPoint("TOP", recurring, "TOP")
     incButton:SetPoint("RIGHT", decButton, "LEFT", 8, 0)
     timePeriod:SetPoint("RIGHT", incButton, "LEFT")
-
+  
     function frame:UpdateTimeControls()
       local period_mins = EPGP:RecurringEPPeriodMinutes()
       local fmt, val = SecondsToTimeAbbrev(period_mins * 60)
@@ -1024,7 +1065,7 @@ local function AddEPControls(frame, withRecurring)
         incButton:Enable()
       end
     end
-
+  
     incButton:SetScript(
       "OnClick",
       function(self)
@@ -1032,7 +1073,7 @@ local function AddEPControls(frame, withRecurring)
         EPGP:RecurringEPPeriodMinutes(period_mins + 1)
         self:GetParent():UpdateTimeControls()
       end)
-
+  
     decButton:SetScript(
       "OnClick",
       function(self)
@@ -1040,7 +1081,7 @@ local function AddEPControls(frame, withRecurring)
         EPGP:RecurringEPPeriodMinutes(period_mins - 1)
         self:GetParent():UpdateTimeControls()
       end)
-
+  
     frame.recurring = recurring
     frame.incButton = incButton
     frame.decButton = decButton
@@ -1075,6 +1116,268 @@ local function AddEPControls(frame, withRecurring)
       if self.UpdateTimeControls then
         self:UpdateTimeControls()
       end
+    end
+end
+
+local function AddCustomGuildInfoControls(frame)
+  local vars = EPGP.db.profile
+
+  local useCustomOption = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+  useCustomOption:SetWidth(20)
+  useCustomOption:SetHeight(20)
+  useCustomOption:SetPoint("LEFT")
+  useCustomOption:SetPoint("TOP")
+
+  local t = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  t:SetText(L["Use custom global configuration"])
+  t:SetPoint("LEFT", useCustomOption, "RIGHT")
+
+  -- OUTSIDERS
+  local outsidersLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  outsidersLabel:SetText("OUTSIDERS")
+  outsidersLabel:SetHeight(BUTTON_HEIGHT)
+  outsidersLabel:SetPoint("LEFT")
+  outsidersLabel:SetPoint("TOP", useCustomOption, "BOTTOM")
+
+  local outsidersEditBox = CreateEditBox(nil, frame)
+
+  local outsidersOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
+  outsidersOkayButton:SetPoint("RIGHT")
+  outsidersOkayButton:SetPoint("TOP", useCustomOption, "BOTTOM")
+  outsidersOkayButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetOutdisers(tonumber(outsidersEditBox:GetText()))
+      outsidersEditBox:ClearFocus()
+      self:Disable()
+    end)
+
+  outsidersEditBox:SetPoint("LEFT", outsidersLabel, "RIGHT", 5, 0)
+  outsidersEditBox:SetPoint("TOPRIGHT", outsidersOkayButton, "TOPLEFT", 0, 1)
+  outsidersEditBox:SetScript("OnTextChanged",
+    function(self)
+      local v = tonumber(self:GetText())
+      if v and v ~= vars.outsiders and EPGP:ValidOutdisers(v) then
+        outsidersOkayButton:Enable()
+      else
+        outsidersOkayButton:Disable()
+      end
+    end)
+
+  -- DECAY_P
+  local decayPLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  decayPLabel:SetText("DECAY_P")
+  decayPLabel:SetHeight(BUTTON_HEIGHT)
+  decayPLabel:SetPoint("LEFT")
+  decayPLabel:SetPoint("TOP", outsidersLabel, "BOTTOM")
+  
+  local decayPEditBox = CreateEditBox(nil, frame)
+
+  local decayPOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
+  decayPOkayButton:SetPoint("RIGHT")
+  decayPOkayButton:SetPoint("TOP", outsidersLabel, "BOTTOM")
+  decayPOkayButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetDecayPercent(tonumber(decayPEditBox:GetText()))
+      decayPEditBox:ClearFocus()
+      self:Disable()
+    end)
+
+  decayPEditBox:SetPoint("LEFT", outsidersLabel, "RIGHT", 5, 0)
+  decayPEditBox:SetPoint("TOPRIGHT", decayPOkayButton, "TOPLEFT", 0, 1)
+  decayPEditBox:SetScript("OnTextChanged",
+    function(self)
+      local v = tonumber(self:GetText())
+      if v and v ~= vars.decay_p and EPGP:ValidDecayPercent(v) then
+        decayPOkayButton:Enable()
+      else
+        decayPOkayButton:Disable()
+      end
+    end)
+
+  -- BASE_GP
+  local baseGpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  baseGpLabel:SetText("BASE_GP")
+  baseGpLabel:SetHeight(BUTTON_HEIGHT)
+  baseGpLabel:SetPoint("LEFT")
+  baseGpLabel:SetPoint("TOP", decayPLabel, "BOTTOM")
+  
+  local baseGpEditBox = CreateEditBox(nil, frame)
+
+  local baseGpOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
+  baseGpOkayButton:SetPoint("RIGHT")
+  baseGpOkayButton:SetPoint("TOP", decayPLabel, "BOTTOM")
+  baseGpOkayButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetBaseGP(tonumber(baseGpEditBox:GetText()))
+      baseGpEditBox:ClearFocus()
+      self:Disable()
+    end)
+
+  baseGpEditBox:SetPoint("LEFT", outsidersLabel, "RIGHT", 5, 0)
+  baseGpEditBox:SetPoint("TOPRIGHT", baseGpOkayButton, "TOPLEFT", 0, 1)
+  baseGpEditBox:SetScript("OnTextChanged",
+    function(self)
+      local v = tonumber(self:GetText())
+      if v and v ~= vars.base_gp and EPGP:ValidBaseGP(v) then
+        baseGpOkayButton:Enable()
+      else
+        baseGpOkayButton:Disable()
+      end
+    end)
+
+  -- MIN_EP
+  local minEpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  minEpLabel:SetText("MIN_EP")
+  minEpLabel:SetHeight(BUTTON_HEIGHT)
+  minEpLabel:SetPoint("LEFT")
+  minEpLabel:SetPoint("TOP", baseGpLabel, "BOTTOM")
+  
+  local minEpEditBox = CreateEditBox(nil, frame)
+
+  local minEpOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
+  minEpOkayButton:SetPoint("RIGHT")
+  minEpOkayButton:SetPoint("TOP", baseGpLabel, "BOTTOM")
+  minEpOkayButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetMinEP(tonumber(minEpEditBox:GetText()))
+      minEpEditBox:ClearFocus()
+      self:Disable()
+    end)
+
+  minEpEditBox:SetPoint("LEFT", outsidersLabel, "RIGHT", 5, 0)
+  minEpEditBox:SetPoint("TOPRIGHT", minEpOkayButton, "TOPLEFT", 0, 1)
+  minEpEditBox:SetScript("OnTextChanged",
+    function(self)
+      local v = tonumber(self:GetText())
+      if v and v ~= vars.min_ep and EPGP:ValidMinEP(v) then
+        minEpOkayButton:Enable()
+      else
+        minEpOkayButton:Disable()
+      end
+    end)
+
+  -- EXTRAS_P
+  local extrasPLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  extrasPLabel:SetText("EXTRAS_P")
+  extrasPLabel:SetHeight(BUTTON_HEIGHT)
+  extrasPLabel:SetPoint("LEFT")
+  extrasPLabel:SetPoint("TOP", minEpLabel, "BOTTOM")
+  
+  local extrasPEditBox = CreateEditBox(nil, frame)
+
+  local extrasPOkayButton = CreateTextButton(nil, frame, _G["OKAY"], true)
+  extrasPOkayButton:SetPoint("RIGHT")
+  extrasPOkayButton:SetPoint("TOP", minEpLabel, "BOTTOM")
+  extrasPOkayButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetExtrasPercent(tonumber(extrasPEditBox:GetText()))
+      extrasPEditBox:ClearFocus()
+      self:Disable()
+    end)
+
+  extrasPEditBox:SetPoint("LEFT", outsidersLabel, "RIGHT", 5, 0)
+  extrasPEditBox:SetPoint("TOPRIGHT", extrasPOkayButton, "TOPLEFT", 0, 1)
+  extrasPEditBox:SetScript("OnTextChanged",
+    function(self)
+      local v = tonumber(self:GetText())
+      if v and v ~= vars.extras_p and EPGP:ValidExtrasPercent(v) then
+        extrasPOkayButton:Enable()
+      else
+        extrasPOkayButton:Disable()
+      end
+    end)
+
+  local editGuildInfoButton = CreateTextButton(nil, frame, L["Write into Guild Info"], true)
+  editGuildInfoButton:SetPoint("LEFT")
+  editGuildInfoButton:SetPoint("TOP", extrasPLabel, "BOTTOM")
+  editGuildInfoButton:SetScript("OnClick",
+    function(self)
+      EPGP:SetGlobalConfiguration(
+        vars.decay_p,
+        vars.extras_p,
+        vars.base_gp,
+        vars.min_ep,
+        vars.outsiders)
+      EPGP:Print(L["Guild info has been updated."])
+    end)
+  editGuildInfoButton.OnShow =
+    function(self)
+      if vars.useCustomGuildOptions then
+        self:Enable()
+      else
+        self:Disable()
+      end
+    end
+
+  local function EnableCustomGuildOptions(enable, init)
+    if enable then
+      outsidersLabel:SetAlpha(1)
+      EnableEditBox(outsidersEditBox, vars.outsiders or "")
+      decayPLabel:SetAlpha(1)
+      EnableEditBox(decayPEditBox, vars.decay_p or "")
+      baseGpLabel:SetAlpha(1)
+      EnableEditBox(baseGpEditBox, vars.base_gp or "")
+      minEpLabel:SetAlpha(1)
+      EnableEditBox(minEpEditBox, vars.min_ep or "")
+      extrasPLabel:SetAlpha(1)
+      EnableEditBox(extrasPEditBox, vars.extras_p or "")
+    else
+      outsidersLabel:SetAlpha(0.25)
+      outsidersOkayButton:Disable()
+      DisableEditBox(outsidersEditBox, vars.outsiders_guild_info or "")
+      EPGP:SetOutdisers(vars.outsiders_guild_info)
+      decayPLabel:SetAlpha(0.25)
+      decayPOkayButton:Disable()
+      DisableEditBox(decayPEditBox, vars.decay_p_guild_info or "")
+      EPGP:SetDecayPercent(vars.decay_p_guild_info)
+      baseGpLabel:SetAlpha(0.25)
+      baseGpOkayButton:Disable()
+      DisableEditBox(baseGpEditBox, vars.base_gp_guild_info or "")
+      EPGP:SetBaseGP(vars.base_gp_guild_info)
+      minEpLabel:SetAlpha(0.25)
+      minEpOkayButton:Disable()
+      DisableEditBox(minEpEditBox, vars.min_ep_guild_info or "")
+      EPGP:SetMinEP(vars.min_ep_guild_info)
+      extrasPLabel:SetAlpha(0.25)
+      extrasPOkayButton:Disable()
+      DisableEditBox(extrasPEditBox, vars.extras_p_guild_info or "")
+      EPGP:SetExtrasPercent(vars.extras_p_guild_info)
+    end
+  end
+  
+  useCustomOption.OnShow =
+    function(self)
+      if vars.useCustomGuildOptions then
+        self:SetChecked(true)
+        EnableCustomGuildOptions(true)
+      else
+        self:SetChecked(false)
+        EnableCustomGuildOptions(false)
+      end
+    end
+  useCustomOption:SetScript(
+    "OnClick",
+    function(self)
+      if self:GetChecked() then
+        editGuildInfoButton:Enable()
+        vars.useCustomGuildOptions = true
+        EnableCustomGuildOptions(true)
+      else
+        editGuildInfoButton:Disable()
+        vars.useCustomGuildOptions = false
+        EnableCustomGuildOptions(false)
+      end
+    end)
+
+  frame:SetHeight(
+    useCustomOption:GetHeight() +
+    outsidersLabel:GetHeight() * 5 +
+    editGuildInfoButton:GetHeight())
+
+  frame.OnShow =
+    function(self)
+      useCustomOption:OnShow()
+      editGuildInfoButton:OnShow()
     end
 end
 
@@ -1121,11 +1424,11 @@ local function CreateEPGPSideFrame(self)
 
   local epFrame = CreateFrame("Frame", nil, f)
   epFrame:SetPoint("TOPLEFT", gpFrame, "BOTTOMLEFT", 0, -15)
-  epFrame:SetPoint("TOPRIGHT", gpFrame, "BOTTOMRIGHT", 0, -15)
+  epFrame:SetPoint("TOPRIGHT", gpFrame, "BOTTOMRIGHT", -15, -15)
 
   f:SetScript("OnShow", function(self)
     self.title:SetText(EPGP:GetDisplayCharacterName(self.name))
-    if not epFrame.button then
+    if not gpFrame.button then
       AddGPControls(gpFrame)
       f:SetHeight(gpFrame:GetHeight() + epFrame:GetHeight() + 60)
       gpFrame.button:SetScript(
@@ -1161,8 +1464,7 @@ local function CreateEPGPSideFrame2()
 
   f:Hide()
   f:SetWidth(225)
-  f:SetHeight(165)
-  f:SetPoint("BOTTOMLEFT", EPGPFrame, "BOTTOMRIGHT", -33, 72)
+  f:SetPoint("TOPLEFT", EPGPFrame, "TOPRIGHT", -33, -6)
 
   f:SetBackdrop(
     {
@@ -1179,9 +1481,15 @@ local function CreateEPGPSideFrame2()
 
   local epFrame = CreateFrame("Frame", nil, f)
   epFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
-  epFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -15)
-  epFrame:SetScript("OnShow", function()
-    if not epFrame.button then
+  epFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -30, -15)
+  
+  local customFrame = CreateFrame("Frame", nil, f)
+  customFrame:SetPoint("TOPLEFT", epFrame, "BOTTOMLEFT", 0, -15)
+  customFrame:SetPoint("TOPRIGHT", epFrame, "BOTTOMRIGHT", 0, -15)
+
+  f:SetScript("OnShow", function()
+    if not epFrame.initiated then
+      epFrame.initiated = true
       AddEPControls(epFrame, true)
       epFrame.button:SetScript(
         "OnClick",
@@ -1209,7 +1517,13 @@ local function CreateEPGPSideFrame2()
           self:GetParent():UpdateTimeControls()
         end)
     end
+    if not customFrame.initiated then
+      customFrame.initiated = true
+      AddCustomGuildInfoControls(customFrame)
+      f:SetHeight(epFrame:GetHeight() + customFrame:GetHeight() + 45)
+    end
     if epFrame.OnShow then epFrame:OnShow() end
+    if customFrame.OnShow then customFrame:OnShow() end
   end)
 end
 
@@ -1365,14 +1679,14 @@ local function CreateEPGPFrameStandings()
   award:SetDisabledFontObject("GameFontDisableSmall")
   award:SetHeight(BUTTON_HEIGHT)
   award:SetPoint("BOTTOMLEFT")
-  award:SetText(L["Mass EP Award"])
+  award:SetText(L["Mass EP Award"] .. "/" .. L["Decay"])
   award:SetWidth(award:GetTextWidth() + BUTTON_TEXT_PADDING)
   award:SetScript(
     "OnClick",
     function()
       ToggleOnlySideFrame(EPGPSideFrame2)
     end)
-  table.insert(disableWhileNotInRaidList, award)
+  -- table.insert(disableWhileNotInRaidList, award)
 
   local loot = CreateFrame("Button", nil, main, "UIPanelButtonTemplate")
   loot:SetNormalFontObject("GameFontNormalSmall")
