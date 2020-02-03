@@ -1,3 +1,11 @@
+### v1.3.2 (2020.2.4)
+
+- Add GP multiplier for legendary items
+- Add button to reset custom items list
+- Add T2.5 and T3 items
+- Show item level in tooltip
+- Bug fixing and optimization
+
 ### v1.3.1-Beta (2020.2.3)
 
 - Export bug fix

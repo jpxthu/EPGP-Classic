@@ -7,7 +7,11 @@ local ItemUtils = LibStub("LibItemUtils-1.0")
 function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
   local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
+  local ilvl = select(4, GetItemInfo(itemlink))
 
+  if ilvl then
+    tooltip:AddLine(("ilvl: %s"):format(ilvl))
+  end
   if not gp1 then return end
   tooltip:AddLine(
     ("GP1: %d (%s)"):format(gp1, c1),

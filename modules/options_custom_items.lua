@@ -87,8 +87,8 @@ local EQUIPLOC_DATA = {
   [20] = {LOCAL_NAME.Wand, "INVTYPE_WAND"},
   [21] = {LOCAL_NAME.Thrown, "INVTYPE_THROWN"},
   [22] = {INVTYPE_RELIC, "INVTYPE_RELIC"},
-  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {"Custom Scale", "CUSTOM_SCALE"},
-  [EQUIPLOC_CUSTOM_GP_INDEX] = {"Custom GP", "CUSTOM_GP"},
+  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {L["Custom Scale"], "CUSTOM_SCALE"},
+  [EQUIPLOC_CUSTOM_GP_INDEX] = {L["Custom GP"], "CUSTOM_GP"},
 }
 
 local EQUIPLOC_NAME = {}
@@ -436,12 +436,12 @@ local function CreateAddFrame(parent)
   idF:SetPoint("LEFT", selectItemF.frame, "RIGHT")
   idF:SetScript("OnTextChanged", EditBoxIdOnValueChangedFunc)
 
-  local addButton = CreateFrame("Button", "AddButton", addFrame, "UIPanelButtonTemplate")
+  local addButton = CreateFrame("Button", nil, addFrame, "UIPanelButtonTemplate")
   addButton:SetNormalFontObject("GameFontNormalSmall")
   addButton:SetHighlightFontObject("GameFontHighlightSmall")
   addButton:SetDisabledFontObject("GameFontDisableSmall")
   addButton:SetHeight(BUTTON_HEIGHT)
-  addButton:SetText(L["Add"])
+  addButton:SetText(_G["ADD"])
   addButton:SetWidth(addButton:GetTextWidth() + BUTTON_TEXT_PADDING)
   addButton:SetPoint("BOTTOM")
   addButton:SetPoint("LEFT", idF, "RIGHT")
@@ -457,6 +457,17 @@ local function CreateAddFrame(parent)
     end)
   addButton:Disable()
   addFrame.addButton = addButton
+
+  local resetButton = CreateFrame("Button", nil, addFrame, "UIPanelButtonTemplate")
+  resetButton:SetNormalFontObject("GameFontNormalSmall")
+  resetButton:SetHighlightFontObject("GameFontHighlightSmall")
+  resetButton:SetDisabledFontObject("GameFontDisableSmall")
+  resetButton:SetHeight(BUTTON_HEIGHT)
+  resetButton:SetText(_G["RESET"])
+  resetButton:SetWidth(resetButton:GetTextWidth() + BUTTON_TEXT_PADDING)
+  resetButton:SetPoint("TOPRIGHT")
+  resetButton:Enable()
+  resetButton:SetScript("OnClick", function(self) mod:Reset() end)
 
   addFrame:SetHeight(math.max(36,
     selectText:GetHeight() + selectItemF.frame:GetHeight()))
@@ -695,7 +706,7 @@ local function UpdateItemIconLink()
   end
 end
 
-function mod:OnEnable()
+local function AddDefaultData()
   local vars = EPGP.db.profile
   if not vars.customItems then
     vars.customItems = {}
@@ -720,6 +731,17 @@ function mod:OnEnable()
   end
   UpdateItemIndex()
   UpdateItemIconLink()
+end
+
+function mod:Reset()
+  EPGP.db.profile.customItems = nil
+  AddDefaultData()
+  UpdateFrame()
+  EPGP:Print(L["Custom items list has been reseted."])
+end
+
+function mod:OnEnable()
+  AddDefaultData()
 end
 
 function mod:OnDisable()

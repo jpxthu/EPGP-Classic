@@ -1,7 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("EPGP", "enUS", true)
 if not L then return end
 
-L["Add"] = true
 L["Add loot items automatically when loot windows opened or corpse loot received."] = true
 L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."] = true
 L["Allow whisper for others"] = true
@@ -39,7 +38,10 @@ L["Comment %d"] = true
 L["Credit GP"] = true
 L["Credit GP to %s"] = true
 L["Custom announce channel name"] = true
+L["Custom GP"] = true
 L["Custom Items"] = true
+L["Custom items list has been reseted."] = true
+L["Custom Scale"] = true
 L["Decay"] = true
 L["Decay EP and GP by %d%%?"] = true
 L["Decay of EP/GP by %d%%"] = true
@@ -82,6 +84,7 @@ L["Import"] = true
 L["Importing data snapshot taken at: %s"] = true
 L["invalid input"] = true
 L["Invalid officer note [%s] for %s (ignored)"] = true
+L["Legendary Scale"] = true
 L["List errors"] = true
 L["Lists errors during officer note parsing to the default chat frame. Examples are members with an invalid officer note."] = true
 L["Loot"] = true
@@ -129,7 +132,6 @@ L["Redo"] = true
 L["Re-scale all main toons' GP to current tier?"] = true
 L["Rescale GP"] = true
 L["Rescale GP of all members of the guild. This will reduce all main toons' GP by a tier worth of value. Use with care!"] = true
-L["Reset"] = true
 L["Reset all main toons' EP and GP to 0?"] = true
 L["Reset all main toons' GP to 0?"] = true
 L["Reset EPGP"] = true

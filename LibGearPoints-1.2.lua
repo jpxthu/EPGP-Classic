@@ -30,6 +30,47 @@ local CUSTOM_ITEM_DATA = {
   [19002] = { 4, 83, "INVTYPE_NECK", nil, "Horde" },
   [19003] = { 4, 83, "INVTYPE_NECK", nil, "Alliance" },
 
+  -- Classic P5
+  [20928] = { 4, 78, "INVTYPE_SHOULDER" }, -- T2.5 shoulder, feet
+  [20932] = { 4, 78, "INVTYPE_SHOULDER" }, -- T2.5 shoulder, feet
+  [20930] = { 4, 81, "INVTYPE_HEAD" },     -- T2.5 head
+  [20926] = { 4, 81, "INVTYPE_HEAD" },     -- T2.5 head
+  [20927] = { 4, 81, "INVTYPE_LEGS" },     -- T2.5 legs
+  [20931] = { 4, 81, "INVTYPE_LEGS" },     -- T2.5 legs
+  [20929] = { 4, 81, "INVTYPE_CHEST" },    -- T2.5 chest
+  [20933] = { 4, 81, "INVTYPE_CHEST" },    -- T2.5 chest
+  [21221] = { 4, 88, "INVTYPE_NECK" },     -- 克苏恩之眼
+  [21232] = { 4, 79, "INVTYPE_WEAPON" },   -- 其拉帝王武器
+  [21237] = { 4, 79, "INVTYPE_2HWEAPON" }, -- 其拉帝王徽记
+
+  -- Classic P6
+  [22349] = { 4, 88, "INVTYPE_CHEST" },
+  [22350] = { 4, 88, "INVTYPE_CHEST" },
+  [22351] = { 4, 88, "INVTYPE_CHEST" },
+  [22352] = { 4, 88, "INVTYPE_LEGS" },
+  [22359] = { 4, 88, "INVTYPE_LEGS" },
+  [22366] = { 4, 88, "INVTYPE_LEGS" },
+  [22353] = { 4, 88, "INVTYPE_HEAD" },
+  [22360] = { 4, 88, "INVTYPE_HEAD" },
+  [22367] = { 4, 88, "INVTYPE_HEAD" },
+  [22354] = { 4, 88, "INVTYPE_SHOULDER" },
+  [22361] = { 4, 88, "INVTYPE_SHOULDER" },
+  [22368] = { 4, 88, "INVTYPE_SHOULDER" },
+  [22355] = { 4, 88, "INVTYPE_WRIST" },
+  [22362] = { 4, 88, "INVTYPE_WRIST" },
+  [22369] = { 4, 88, "INVTYPE_WRIST" },
+  [22356] = { 4, 88, "INVTYPE_WAIST" },
+  [22363] = { 4, 88, "INVTYPE_WAIST" },
+  [22370] = { 4, 88, "INVTYPE_WAIST" },
+  [22357] = { 4, 88, "INVTYPE_HAND" },
+  [22364] = { 4, 88, "INVTYPE_HAND" },
+  [22371] = { 4, 88, "INVTYPE_HAND" },
+  [22358] = { 4, 88, "INVTYPE_FEET" },
+  [22365] = { 4, 88, "INVTYPE_FEET" },
+  [22372] = { 4, 88, "INVTYPE_FEET" },
+  [22520] = { 4, 90, "INVTYPE_TRINKET" }, -- 克尔苏加德的护符匣
+  [22726] = { 5, 90, "INVTYPE_2HWEAPON" }, -- Legendary
+
   -- Tier 4
   -- [29753] = { 4, 120, "INVTYPE_CHEST" },
   -- [29754] = { 4, 120, "INVTYPE_CHEST" },
@@ -841,11 +882,12 @@ end
 
 function lib:CalculateGPFromScale(s1, s2, s3, ilvl, rarity)
   local vars = EPGP:GetModule("points").db.profile
-  
+
   local baseGP = vars.baseGP
   local standardIlvl = vars.standardIlvl
   local ilvlDenominator = vars.ilvlDenominator
   local multiplier = baseGP * 2 ^ (-standardIlvl / ilvlDenominator)
+  if rarity == 5 then multiplier = multiplier * vars.legendaryScale end
   local gpBase = multiplier * 2 ^ (ilvl / ilvlDenominator)
 
   local gp1 = (s1 and math.floor(0.5 + gpBase * s1)) or nil
@@ -857,17 +899,6 @@ end
 
 function lib:CalculateGPFromEquipLoc(equipLoc, subClass, ilvl, rarity)
   local s1, c1, s2, c2, s3, c3 = self:GetScale(equipLoc, subClass)
-  local vars = EPGP:GetModule("points").db.profile
-
-  local baseGP = vars.baseGP
-  local standardIlvl = vars.standardIlvl
-  local ilvlDenominator = vars.ilvlDenominator
-  local multiplier = baseGP * 2 ^ (-standardIlvl / ilvlDenominator)
-  local gpBase = multiplier * 2 ^ (ilvl / ilvlDenominator)
-
-  local gp1 = (s1 and math.floor(0.5 + gpBase * s1)) or nil
-  local gp2 = (s2 and math.floor(0.5 + gpBase * s2)) or nil
-  local gp3 = (s3 and math.floor(0.5 + gpBase * s3)) or nil
-
+  local gp1, gp2, gp3 = self:CalculateGPFromScale(s1, s2, s3, ilvl, rarity)
   return gp1, c1, gp2, c2, gp3, c3, s1, s2, s3
 end

@@ -9,7 +9,7 @@ local function CreateTableHeader(parent, text, width, group)
     end
     self:SetNormalTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
   end
-  
+
   local h = CreateFrame("Button", nil, parent)
   h:SetHeight(24)
 
@@ -58,6 +58,7 @@ function mod:FillFrame(f)
   EPGP:GetModule("optionsCustomItems"):FillFrame(cf.customItems)
 
   f:SetWidth(cf.customItems:GetWidth() + 82)
+  f:SetHeight(cf.customItems:GetHeight() + h.customItems:GetHeight() + 35)
 end
 
 function mod:OnEnable()
