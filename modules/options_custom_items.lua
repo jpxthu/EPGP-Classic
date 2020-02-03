@@ -5,6 +5,7 @@ local GUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")
 local LN = LibStub("LibLocalConstant-1.0")
+local LUI = LibStub("LibEPGPUI-1.0")
 
 local LOCAL_NAME = LN:LocalName()
 
@@ -286,7 +287,7 @@ local function UpdateOneItemFrame(i, id)
   f.linkF:SetText(item.link or id)
   f.rarityF:SetValue(item.rarity or RARITY_DEFAULT)
   f.ilvlF:SetText(item.ilvl or 0)
-  
+
   item.equipLocKey = item.equipLocKey or EQUIPLOC_CUSTOM_SCALE_INDEX
   item.equipLoc = EQUIPLOC_DATA[item.equipLocKey][2]
   f.equipLocF:SetValue(item.equipLocKey)
@@ -302,6 +303,12 @@ local function UpdateOneItemFrame(i, id)
     f.gp2F:SetText(item.gp2 or "")
   else
     UpdateOneItemScaleAndGP(f)
+  end
+
+  if item.default then
+    f.removeButton.icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-Undo")
+  else
+    f.removeButton.icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-LeaveItem-Opaque")
   end
   f:Show()
 end
@@ -358,6 +365,10 @@ local function ItemRemoveButtonOnClickFunc(self)
   item.equipLoc = EQUIPLOC_DATA[item.equipLocKey][2]
   f.equipLocF:SetValue(item.equipLocKey)
   UpdateOneItemScaleAndGP(f)
+  if not item.default then
+    item.default = true
+    UpdateFrame()
+  end
 end
 
 local function CreateAddFrame(parent)
@@ -449,7 +460,7 @@ local function CreateAddFrame(parent)
 
   addFrame:SetHeight(math.max(36,
     selectText:GetHeight() + selectItemF.frame:GetHeight()))
-  
+
   selectItemF:SetCallback(
     "OnValueChanged",
     function(self, event, ...)
@@ -597,22 +608,15 @@ local function AddOneItemFrame(parent, top)
   gp2F.allowBank = true
   f.gp2F = gp2F
 
-  local removeButton = CreateFrame("Button", nil, f)
-  removeButton:SetNormalFontObject("GameFontNormalSmall")
-  removeButton:SetHighlightFontObject("GameFontHighlightSmall")
-  removeButton:SetDisabledFontObject("GameFontDisableSmall")
-  removeButton:SetHeight(BUTTON_HEIGHT)
-  removeButton:SetWidth(BUTTON_HEIGHT)
-  removeButton:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
-  removeButton:SetHighlightTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Highlight")
-  removeButton:SetPushedTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Down")
+  local removeButton = LUI:CreateIconButton(nil, f, BUTTON_HEIGHT, BUTTON_HEIGHT)
   removeButton:SetPoint("LEFT", gp2F, "RIGHT")
   removeButton:SetPoint("CENTER")
   removeButton:SetScript("OnClick", ItemRemoveButtonOnClickFunc)
+  f.removeButton = removeButton
 
   f:SetHeight(math.max(36, linkF:GetHeight() + rarityF.frame:GetHeight()))
   f:Hide()
-  
+
   return f
 end
 
@@ -628,12 +632,12 @@ function mod:FillFrame(f)
   t = AddTitle(f, "Scale 2", columnWidth.scale, addFrame, t)
   t = AddTitle(f, "GP 1", columnWidth.gp, addFrame, t)
   t = AddTitle(f, "GP 2", columnWidth.gp, addFrame, t)
-  
+
   containerFrame = CreateFrame("Frame", nil, f)
   containerFrame:SetPoint("TOP", t, "BOTTOM")
   containerFrame:SetPoint("LEFT")
   containerFrame:SetWidth(columnWidthTotal + 27)
-  
+
   for i = 1, MAX_ITEMS_PER_PAGE do
     if i == 1 then
       itemFrames[1] = AddOneItemFrame(containerFrame)
@@ -655,7 +659,7 @@ function mod:FillFrame(f)
     end)
   UpdateFrame()
   scrollBar:SetScript("OnShow", UpdateFrame)
-  
+
   f:SetWidth(columnWidthTotal)
   f:SetHeight(addFrame:GetHeight() + t:GetHeight() + containerFrame:GetHeight())
 end
@@ -706,8 +710,9 @@ function mod:OnEnable()
           rarity = v[1],
           ilvl = v[2],
           equipLocKey = equipLocKey,
-          equipLoc = EQUIPLOC_DATA[equipLocKey][2]
-      }
+          equipLoc = EQUIPLOC_DATA[equipLocKey][2],
+          default = true,
+        }
       end
     else
       ci[i] = nil
