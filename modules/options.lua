@@ -58,6 +58,7 @@ function mod:FillFrame(f)
   EPGP:GetModule("optionsCustomItems"):FillFrame(cf.customItems)
 
   f:SetWidth(cf.customItems:GetWidth() + 82)
+  f:SetHeight(cf.customItems:GetHeight() + h.customItems:GetHeight() + 35)
 end
 
 function mod:OnEnable()
