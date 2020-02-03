@@ -250,11 +250,11 @@ local function CreateEPGPExportImportFrame()
         self.button2:Hide()
         self.editbox:SetText(EPGP:GetModule("log"):Export())
         self.editbox:HighlightText()
-        self.editbox:SetScript("OnTextChanged",
-                               function (self)
-                                 local text = EPGP:GetModule("log"):Export()
-                                 self:SetText(text)
-                               end)
+        -- self.editbox:SetScript("OnTextChanged",
+        --                        function (self)
+        --                          local text = EPGP:GetModule("log"):Export()
+        --                          self:SetText(text)
+        --                        end)
       end
     end)
   f:SetScript(
