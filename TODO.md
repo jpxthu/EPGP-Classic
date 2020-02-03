@@ -34,9 +34,9 @@
 - [ ] Custom items list
 - [x] `GetTime()` in recurring - need to replace to `time()` (#2)
 - [x] Multi-choice when credit GP (#2)
-  - [ ] Legendary item (ITEM_QUALITY5_DESC)
+  - [x] Legendary item (ITEM_QUALITY5_DESC) (#16)
   - [ ] Save variables
-  - [ ] Tier 3 parts
+  - [x] Tier 3 parts (#16)
   - [ ] Sync configuration
 - [x] Sub-item type - bug in some locale
 
