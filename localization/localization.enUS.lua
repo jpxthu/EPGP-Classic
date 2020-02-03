@@ -84,6 +84,7 @@ L["Import"] = true
 L["Importing data snapshot taken at: %s"] = true
 L["invalid input"] = true
 L["Invalid officer note [%s] for %s (ignored)"] = true
+L["Legendary Scale"] = true
 L["List errors"] = true
 L["Lists errors during officer note parsing to the default chat frame. Examples are members with an invalid officer note."] = true
 L["Loot"] = true

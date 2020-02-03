@@ -16,6 +16,7 @@ local profileDefault = {
   baseGP = 1000,
   standardIlvl = 66,
   ilvlDenominator = 10,
+  legendaryScale = 3,
 
   headScale1 = 1,
   headComment1 = _G.INVTYPE_HEAD,
@@ -179,6 +180,14 @@ mod.optionsArgs = {
         name = "ilvl_denominator",
         min = 1,
         max = 100,
+        step = 0.01,
+      },
+      legendaryScale = {
+        order = 5,
+        type = "range",
+        name = L["Legendary Scale"],
+        min = 1,
+        max = 10,
         step = 0.01,
       },
     },
@@ -553,6 +562,7 @@ local profileOOR = {
   baseGP = 80,
   standardIlvl = 66,
   ilvlDenominator = 10,
+  legendaryScale = 3,
 
   headScale1 = 1,
   headComment1 = _G.INVTYPE_HEAD,
