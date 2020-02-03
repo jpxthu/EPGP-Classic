@@ -1,3 +1,7 @@
+### v1.3.1-Beta (2020.2.3)
+
+- Export bug fix
+
 ### v1.3.0-Beta (2020.2.3)
 
 - UI in EPGP main frame
