@@ -9,7 +9,7 @@ local function CreateTableHeader(parent, text, width, group)
     end
     self:SetNormalTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
   end
-  
+
   local h = CreateFrame("Button", nil, parent)
   h:SetHeight(24)
 
