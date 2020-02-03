@@ -1,48 +1,14 @@
 local mod = EPGP:NewModule("points")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local LN = LibStub("LibLocalConstant-1.0")
 
-local localName = {}
-localName.Bow      = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_BOWS)
-localName.Gun      = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_GUNS)
-localName.Crossbow = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_CROSSBOW)
-localName.Thrown   = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_THROWN)
-localName.Wand     = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_WAND)
-localName.Idol     = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_IDOL)
-localName.Libram   = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_LIBRAM)
-localName.Totem    = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_TOTEM)
--- localName.Relic    = GetItemSubClassInfo(LE_ITEM_CLASS_ARMOR, LE_ITEM_ARMOR_RELIC)
-localName.OneHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPON, _G.WEAPON)
-localName.TwoHWeapon  = L["%s %s"]:format(_G.INVTYPE_2HWEAPON, _G.WEAPON)
-localName.MainHWeapon = L["%s %s"]:format(_G.INVTYPE_WEAPONMAINHAND, _G.WEAPON)
-localName.OffHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPONOFFHAND, _G.WEAPON)
+local LOCAL_NAME = LN:LocalName()
 
-local switchSlot = {
-  ["INVTYPE_HEAD"]            = "head",
-  ["INVTYPE_NECK"]            = "neck",
-  ["INVTYPE_SHOULDER"]        = "shoulder",
-  -- ["INVTYPE_BODY"]            = "body",
-  ["INVTYPE_CHEST"]           = "chest",
-  ["INVTYPE_ROBE"]            = "chest",
-  ["INVTYPE_WAIST"]           = "waist",
-  ["INVTYPE_LEGS"]            = "legs",
-  ["INVTYPE_FEET"]            = "feet",
-  ["INVTYPE_WRIST"]           = "wrist",
-  ["INVTYPE_HAND"]            = "hand",
-  ["INVTYPE_FINGER"]          = "finger",
-  ["INVTYPE_TRINKET"]         = "trinket",
-  ["INVTYPE_CLOAK"]           = "cloak",
-  ["INVTYPE_WEAPON"]          = "weapon",
-  ["INVTYPE_SHIELD"]          = "shield",
-  ["INVTYPE_2HWEAPON"]        = "weapon2H",
-  ["INVTYPE_WEAPONMAINHAND"]  = "weaponMainH",
-  ["INVTYPE_WEAPONOFFHAND"]   = "weaponOffH",
-  ["INVTYPE_HOLDABLE"]        = "holdable",
-  ["INVTYPE_RANGED"]          = "ranged", -- bow only
-  -- ["INVTYPE_RANGEDRIGHT"]     = "ranged", -- gun, cross-bow, wand
-  ["INVTYPE_THROWN"]          = "ranged",
-  ["INVTYPE_RELIC"]           = "relic",
-  -- ["INVTYPE_BAG"]             = "bag",
-}
+local DISPLAY_NAME = {}
+DISPLAY_NAME.OneHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPON, _G.WEAPON)
+DISPLAY_NAME.TwoHWeapon  = L["%s %s"]:format(_G.INVTYPE_2HWEAPON, _G.WEAPON)
+DISPLAY_NAME.MainHWeapon = L["%s %s"]:format(_G.INVTYPE_WEAPONMAINHAND, _G.WEAPON)
+DISPLAY_NAME.OffHWeapon  = L["%s %s"]:format(_G.INVTYPE_WEAPONOFFHAND, _G.WEAPON)
 
 local profileDefault = {
   enabled = true,
@@ -91,11 +57,11 @@ local profileDefault = {
   cloakComment1 = _G.INVTYPE_CLOAK,
 
   weaponScale1 = 1.5,
-  weaponComment1 = localName.MainHWeapon,
+  weaponComment1 = DISPLAY_NAME.MainHWeapon,
   weaponScale2 = 0.5,
-  weaponComment2 = localName.OffHWeapon .. " / " .. L["%s %s"]:format(L["Tank"], localName.MainHWeapon),
+  weaponComment2 = DISPLAY_NAME.OffHWeapon .. " / " .. L["%s %s"]:format(L["Tank"], DISPLAY_NAME.MainHWeapon),
   weaponScale3 = 0.25,
-  weaponComment3 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   shieldScale1 = 1.5,
   shieldComment1 = L["%s %s"]:format(L["Tank"], _G.SHIELDSLOT),
@@ -103,19 +69,19 @@ local profileDefault = {
   shieldComment2 = L["%s %s"]:format(L["Non-tank"], _G.SHIELDSLOT),
 
   weapon2HScale1 = 2,
-  weapon2HComment1 = localName.TwoHWeapon,
+  weapon2HComment1 = DISPLAY_NAME.TwoHWeapon,
   weapon2HScale2 = 0.5,
-  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], localName.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
-  weaponMainHComment1 = localName.MainHWeapon,
+  weaponMainHComment1 = DISPLAY_NAME.MainHWeapon,
   weaponMainHScale2 = 0.25,
-  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
-  weaponOffHComment1 = localName.OffHWeapon,
+  weaponOffHComment1 = DISPLAY_NAME.OffHWeapon,
   weaponOffHScale2 = 0.25,
-  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
@@ -126,10 +92,10 @@ local profileDefault = {
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 
   wandScale1 = 0.5,
-  wandComment1 = localName.Wand,
+  wandComment1 = LOCAL_NAME.Wand,
 
   thrownScale1 = 0.5,
-  thrownComment1 = localName.Thrown,
+  thrownComment1 = LOCAL_NAME.Thrown,
 
   relicScale1 = 0.667,
   relicComment1 = _G.INVTYPE_RELIC,
@@ -141,61 +107,6 @@ local profileDefault = {
 mod.dbDefaults = {
   profile = profileDefault
 }
-
-local switchRanged = {}
-local function SwitchRangedInit()
-  switchRanged[localName.Bow]      = "ranged"
-  switchRanged[localName.Gun]      = "ranged"
-  switchRanged[localName.Crossbow] = "ranged"
-  switchRanged[localName.Wand]     = "wand"
-  -- switchRanged["LE_ITEM_WEAPON_THROWN"]   = "thrown"
-end
-
-local initialized = false
-
-local function LocalNameSetOne(slot, id)
-  local v = select(7, GetItemInfo(id))
-  if v then
-    slot = v
-    return true
-  end
-  return false
-end
-
-local function LocalNameInit()
-  if initialized then return true end
-  if not(LocalNameSetOne(localName.Bow,      17069)) then return false end -- 弓
-  if not(LocalNameSetOne(localName.Gun,      17072)) then return false end -- 枪
-  if not(LocalNameSetOne(localName.Crossbow, 19361)) then return false end -- 弩
-  if not(LocalNameSetOne(localName.Thrown,   13173)) then return false end -- 投掷
-  if not(LocalNameSetOne(localName.Wand,     17077)) then return false end -- 魔杖
-  if not(LocalNameSetOne(localName.Idol,     23198)) then return false end -- 神像
-  if not(LocalNameSetOne(localName.Libram,   23201)) then return false end -- 圣契
-  if not(LocalNameSetOne(localName.Totem,    23200)) then return false end -- 图腾
-  initialized = true
-  SwitchRangedInit()
-  return true
-end
-
-function mod:GetScale(slot, subClass)
-  if not LocalNameInit() or not self.db then
-    return nil, nil, nil, nil, nil, nil, nil, nil, nil
-  end
-  local name = switchSlot[slot] or switchRanged[subClass]
-  if name then
-    return self.db.profile[name .. "Scale1"], self.db.profile[name .. "Comment1"],
-           self.db.profile[name .. "Scale2"], self.db.profile[name .. "Comment2"],
-           self.db.profile[name .. "Scale3"], self.db.profile[name .. "Comment3"],
-           self.db.profile.baseGP,
-           self.db.profile.standardIlvl,
-           self.db.profile.ilvlDenominator
-  else
-    return nil, nil, nil, nil, nil, nil,
-           self.db.profile.baseGP,
-           self.db.profile.standardIlvl,
-           self.db.profile.ilvlDenominator
-  end
-end
 
 local function HelpPlate(desc)
   help = {
@@ -477,9 +388,9 @@ mod.optionsArgs = {
   weapon = {
     order = 35,
     type = "group",
-    name = localName.OneHWeapon, -- one-handed weapon
+    name = DISPLAY_NAME.OneHWeapon, -- one-handed weapon
     args = {
-      help = HelpPlate(localName.OneHWeapon),
+      help = HelpPlate(DISPLAY_NAME.OneHWeapon),
       weaponScale1 = ScalePlate(1),
       weaponComment1 = CommentPlate(1),
       weaponScale2 = ScalePlate(2),
@@ -491,9 +402,9 @@ mod.optionsArgs = {
   weapon2H = {
     order = 36,
     type = "group",
-    name = localName.TwoHWeapon,
+    name = DISPLAY_NAME.TwoHWeapon,
     args = {
-      help = HelpPlate(localName.TwoHWeapon),
+      help = HelpPlate(DISPLAY_NAME.TwoHWeapon),
       weapon2HScale1 = ScalePlate(1),
       weapon2HComment1 = CommentPlate(1),
       weapon2HScale2 = ScalePlate(2),
@@ -505,9 +416,9 @@ mod.optionsArgs = {
   weaponMainH = {
     order = 37,
     type = "group",
-    name = localName.MainHWeapon,
+    name = DISPLAY_NAME.MainHWeapon,
     args = {
-      help = HelpPlate(localName.MainHWeapon),
+      help = HelpPlate(DISPLAY_NAME.MainHWeapon),
       weaponMainHScale1 = ScalePlate(1),
       weaponMainHComment1 = CommentPlate(1),
       weaponMainHScale2 = ScalePlate(2),
@@ -519,9 +430,9 @@ mod.optionsArgs = {
   weaponOffH = {
     order = 38,
     type = "group",
-    name = localName.OffHWeapon,
+    name = DISPLAY_NAME.OffHWeapon,
     args = {
-      help = HelpPlate(localName.OffHWeapon),
+      help = HelpPlate(DISPLAY_NAME.OffHWeapon),
       weaponOffHScale1 = ScalePlate(1),
       weaponOffHComment1 = CommentPlate(1),
       weaponOffHScale2 = ScalePlate(2),
@@ -550,9 +461,9 @@ mod.optionsArgs = {
     name = _G.INVTYPE_RANGED,
     args = {
       help = HelpPlate(L["%s, %s, %s"]:format(
-          localName.Bow,
-          localName.Gun,
-          localName.Crossbow)),
+          LOCAL_NAME.Bow,
+          LOCAL_NAME.Gun,
+          LOCAL_NAME.Crossbow)),
       rangedScale1 = ScalePlate(1),
       rangedComment1 = CommentPlate(1),
       rangedScale2 = ScalePlate(2),
@@ -564,9 +475,9 @@ mod.optionsArgs = {
   wand = {
     order = 41,
     type = "group",
-    name = localName.Wand,
+    name = LOCAL_NAME.Wand,
     args = {
-      help = HelpPlate(localName.Wand),
+      help = HelpPlate(LOCAL_NAME.Wand),
       wandScale1 = ScalePlate(1),
       wandComment1 = CommentPlate(1),
       wandScale2 = ScalePlate(2),
@@ -578,9 +489,9 @@ mod.optionsArgs = {
   thrown = {
     order = 42,
     type = "group",
-    name = localName.Thrown,
+    name = LOCAL_NAME.Thrown,
     args = {
-      help = HelpPlate(localName.Thrown),
+      help = HelpPlate(LOCAL_NAME.Thrown),
       thrownScale1 = ScalePlate(1),
       thrownComment1 = CommentPlate(1),
       thrownScale2 = ScalePlate(2),
@@ -595,9 +506,9 @@ mod.optionsArgs = {
     name = _G.INVTYPE_RELIC,
     args = {
       help = HelpPlate(L["%s, %s, %s"]:format(
-          localName.Idol,   -- 神像
-          localName.Libram, -- 圣契
-          localName.Totem)),-- 图腾
+          LOCAL_NAME.Idol,   -- 神像
+          LOCAL_NAME.Libram, -- 圣契
+          LOCAL_NAME.Totem)),-- 图腾
       relicScale1 = ScalePlate(1),
       relicComment1 = CommentPlate(1),
       relicScale2 = ScalePlate(2),
@@ -683,29 +594,29 @@ local profileOOR = {
   cloakComment1 = _G.INVTYPE_CLOAK,
 
   weaponScale1 = 1.5,
-  weaponComment1 = localName.MainHWeapon,
+  weaponComment1 = DISPLAY_NAME.MainHWeapon,
   weaponScale2 = 0.5,
-  weaponComment2 = localName.OffHWeapon,
+  weaponComment2 = DISPLAY_NAME.OffHWeapon,
   weaponScale3 = 0.15,
-  weaponComment3 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   shieldScale1 = 0.5,
   shieldComment1 = _G.SHIELDSLOT,
 
   weapon2HScale1 = 2,
-  weapon2HComment1 = localName.TwoHWeapon,
+  weapon2HComment1 = DISPLAY_NAME.TwoHWeapon,
   weapon2HScale2 = 0.3,
-  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], localName.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
-  weaponMainHComment1 = localName.MainHWeapon,
+  weaponMainHComment1 = DISPLAY_NAME.MainHWeapon,
   weaponMainHScale2 = 0.15,
-  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
-  weaponOffHComment1 = localName.OffHWeapon,
+  weaponOffHComment1 = DISPLAY_NAME.OffHWeapon,
   weaponOffHScale2 = 0.15,
-  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], localName.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
@@ -716,10 +627,10 @@ local profileOOR = {
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 
   wandScale1 = 0.3,
-  wandComment1 = localName.Wand,
+  wandComment1 = LOCAL_NAME.Wand,
 
   thrownScale1 = 0.3,
-  thrownComment1 = localName.Thrown,
+  thrownComment1 = LOCAL_NAME.Thrown,
 
   relicScale1 = 0.3,
   relicComment1 = _G.INVTYPE_RELIC,

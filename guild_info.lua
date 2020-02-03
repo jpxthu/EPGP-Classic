@@ -12,7 +12,7 @@ local AE = LibStub("AceEvent-3.0")
 -- @OUTSIDERS:[0 or 1]
 local global_config_defs = {
   decay_p = {
-    pattern = "@DECAY_P:(%d+)",
+    pattern = "@DECAY_P:%s*(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 and v <= 100 end,
     error = L["Decay Percent should be a number between 0 and 100"],
@@ -21,7 +21,7 @@ local global_config_defs = {
     change_message = "DecayPercentChanged",
   },
   extras_p = {
-    pattern = "@EXTRAS_P:(%d+)",
+    pattern = "@EXTRAS_P:%s*(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 and v <= 100 end,
     error = L["Extras Percent should be a number between 0 and 100"],
@@ -30,7 +30,7 @@ local global_config_defs = {
     change_message = "ExtrasPercentChanged",
   },
   min_ep = {
-    pattern = "@MIN_EP:(%d+)",
+    pattern = "@MIN_EP:%s*(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 end,
     error = L["Min EP should be a positive number (>= 0)"],
@@ -39,7 +39,7 @@ local global_config_defs = {
     change_message = "MinEPChanged",
   },
   base_gp = {
-    pattern = "@BASE_GP:(%d+)",
+    pattern = "@BASE_GP:%s*(%d+)",
     parser = tonumber,
     validator = function(v) return v >= 0 end,
     error = L["Base GP should be a positive number (>= 0)"],
@@ -48,7 +48,7 @@ local global_config_defs = {
     change_message = "BaseGPChanged",
   },
   outsiders = {
-    pattern = "@OUTSIDERS:(%d+)",
+    pattern = "@OUTSIDERS:%s*(%d+)",
     parser = tonumber,
     validator = function(v) return v == 0 or v == 1  end,
     error = L["Outsiders should be 0 or 1"],
@@ -98,13 +98,72 @@ local function ParseGuildInfo(loc)
     end
   end
   for var, def in pairs(global_config_defs) do
-    local old_value = EPGP.db.profile[var]
-    EPGP.db.profile[var] = new_config[var] or def.default
-    if old_value ~= EPGP.db.profile[var] then
-      Debug("%s changed from %s to %s", var, old_value or 0, EPGP.db.profile[var] or 0)
-      EPGP.callbacks:Fire(def.change_message, EPGP.db.profile[var])
+    local new_value = new_config[var] or def.default
+    EPGP.db.profile[var .. "_guild_info"] = new_value
+    if not EPGP.db.profile.useCustomGuildOptions then
+      local old_value = EPGP.db.profile[var]
+      EPGP.db.profile[var] = new_value
+      if old_value ~= new_value then
+        Debug("%s changed from %s to %s", var, old_value or 0, new_value or 0)
+        EPGP.callbacks:Fire(def.change_message, new_value)
+      end
     end
   end
+end
+
+function EPGP:SetOutdisers(v)
+  if not v then return end
+  self.db.profile.outsiders = v
+  self.callbacks:Fire(global_config_defs.outsiders.change_message, v)
+end
+
+function EPGP:SetDecayPercent(v)
+  if not v then return end
+  self.db.profile.decay_p = v
+  self.callbacks:Fire(global_config_defs.decay_p.change_message, v)
+end
+
+function EPGP:SetExtrasPercent(v)
+  if not v then return end
+  self.db.profile.extras_p = v
+  self.callbacks:Fire(global_config_defs.extras_p.change_message, v)
+end
+
+function EPGP:SetBaseGP(v)
+  if not v then return end
+  self.db.profile.base_gp = v
+  self.callbacks:Fire(global_config_defs.base_gp.change_message, v)
+end
+
+function EPGP:SetMinEP(v)
+  if not v then return end
+  self.db.profile.min_ep = v
+  self.callbacks:Fire(global_config_defs.min_ep.change_message, v)
+end
+
+function EPGP:ValidOutdisers(v)
+  if not v then return false end
+  return global_config_defs.outsiders.validator(v)
+end
+
+function EPGP:ValidDecayPercent(v)
+  if not v then return false end
+  return global_config_defs.decay_p.validator(v)
+end
+
+function EPGP:ValidExtrasPercent(v)
+  if not v then return false end
+  return global_config_defs.extras_p.validator(v)
+end
+
+function EPGP:ValidBaseGP(v)
+  if not v then return false end
+  return global_config_defs.base_gp.validator(v)
+end
+
+function EPGP:ValidMinEP(v)
+  if not v then return false end
+  return global_config_defs.min_ep.validator(v)
 end
 
 AE:RegisterEvent("GUILD_ROSTER_UPDATE", ParseGuildInfo)

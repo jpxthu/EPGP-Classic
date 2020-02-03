@@ -1,3 +1,12 @@
+### v1.3.0-Beta (2020.2.3)
+
+- UI in EPGP main frame
+  - Custom items configuration
+  - Guild global configuration (BASE_GP, etc.)
+  - Decay for selected guild ranks
+- Announce EP/GP/PR when raider need/greed/bid
+- Bug fixing and optimization
+
 ### v1.2.2 (2020.1.5)
 
 - Fix bug: nan PR with 0 GP + 0 base_gp (#9)  

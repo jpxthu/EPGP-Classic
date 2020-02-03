@@ -19,3 +19,17 @@ function lib:Announce(medium, fmt, ...)
 
   SendChatMessage(str, medium)
 end
+
+function lib:Whisper(name, fmt, ...)
+  local msg = string.format(fmt, ...)
+  local str = "EPGP:"
+  for _,s in pairs({strsplit(" ", msg)}) do
+    if #str + #s >= 250 then
+      SendChatMessage(str, "WHISPER", nil, name)
+      str = "EPGP:"
+    end
+    str = str .. " " .. s
+  end
+
+  SendChatMessage(str, "WHISPER", nil, name)
+end

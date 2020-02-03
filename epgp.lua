@@ -722,17 +722,23 @@ function EPGP:DecayEPGP()
 
   local decay = self.db.profile.decay_p  * 0.01
   local reason = string.format("Decay %d%%", self.db.profile.decay_p)
+  local all = EPGP.db.profile.manageRankAll or
+              EPGP.db.profile.manageRankAll == nil
+  local manageRank = self.db.profile.manageRank
   for name,_ in pairs(ep_data) do
     local ep, gp, main = self:GetEPGP(name)
     assert(main == nil, "Corrupt alt data!")
-    local decay_ep = math.ceil(ep * decay)
-    local decay_gp = math.ceil(gp * decay)
-    decay_ep, decay_gp = AddEPGP(name, -decay_ep, -decay_gp)
-    if decay_ep ~= 0 then
-      callbacks:Fire("EPAward", name, reason, decay_ep, true)
-    end
-    if decay_gp ~= 0 then
-      callbacks:Fire("GPAward", name, reason, decay_gp, true)
+    local rankIndex = select(2, GS:GetRank(name))
+    if all or (rankIndex and manageRank[rankIndex]) then
+      local decay_ep = math.ceil(ep * decay)
+      local decay_gp = math.ceil(gp * decay)
+      decay_ep, decay_gp = AddEPGP(name, -decay_ep, -decay_gp)
+      if decay_ep ~= 0 then
+        callbacks:Fire("EPAward", name, reason, decay_ep, true)
+      end
+      if decay_gp ~= 0 then
+        callbacks:Fire("GPAward", name, reason, decay_gp, true)
+      end
     end
   end
   callbacks:Fire("Decay", self.db.profile.decay_p)
@@ -791,7 +797,7 @@ function EPGP:CanIncGPBy(reason, amount)
   if not CanEditOfficerNote() or not GS:IsCurrentState() then
     return false
   end
-  if type(reason) ~= "string" or type(amount) ~= "number" or #reason == 0 then
+  if not amount or type(reason) ~= "string" or type(amount) ~= "number" or #reason == 0 then
     return false
   end
   if amount ~= math.floor(amount + 0.5) then
@@ -825,6 +831,10 @@ end
 
 function EPGP:BankItem(reason, undo)
   callbacks:Fire("BankedItem", GUILD_BANK, reason, 0, false, undo)
+end
+
+function EPGP:GetOutdisers()
+  return self.db.profile.outsiders
 end
 
 function EPGP:GetDecayPercent()
@@ -910,6 +920,25 @@ function EPGP:IncMassEPBy(reason, amount)
   end
 end
 
+function EPGP:SetManageRank(index, v)
+  self.db.profile.manageRank[index] = v
+  local all = true
+  for i = 1, GuildControlGetNumRanks() do
+    if not self.db.profile.manageRank[i] then
+      all = false
+      break
+    end
+  end
+  self.db.profile.manageRankAll = all
+end
+
+function EPGP:SetManageRankAll(v)
+  for i = 1, GuildControlGetNumRanks() do
+    self.db.profile.manageRank[i] = v
+  end
+  self.db.profile.manageRankAll = v
+end
+
 function EPGP:ReportErrors(outputFunc)
   for name, note in pairs(ignored) do
     outputFunc(L["Invalid officer note [%s] for %s (ignored)"]:format(
@@ -934,6 +963,8 @@ function EPGP:OnInitialize()
       min_ep = 0,
       base_gp = 1,
       bonus_loot_log = {},
+      manageRankAll = true,
+      manageRank = {true, true, true, true, true, true, true, true, true, true},
     }
   }
 
@@ -989,7 +1020,11 @@ function EPGP:GROUP_ROSTER_UPDATE()
     -- everyone from the selected list.
     wipe(selected)
     selected_count = 0
-    wipe(EPGP.db.profile.selected)
+    if EPGP.db.profile.selected then
+      wipe(EPGP.db.profile.selected)
+    else
+      EPGP.db.profile.selected = {}
+    end
     EPGP.db.profile.selected_count = 0
     EPGP:SetBidStatus(0)
     -- We also need to stop any recurring EP since they should stop
