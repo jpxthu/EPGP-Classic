@@ -797,7 +797,7 @@ function EPGP:CanIncGPBy(reason, amount)
   if not CanEditOfficerNote() or not GS:IsCurrentState() then
     return false
   end
-  if type(reason) ~= "string" or type(amount) ~= "number" or #reason == 0 then
+  if not amount or type(reason) ~= "string" or type(amount) ~= "number" or #reason == 0 then
     return false
   end
   if amount ~= math.floor(amount + 0.5) then

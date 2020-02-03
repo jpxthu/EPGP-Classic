@@ -816,7 +816,7 @@ local function AddGPControls(frame)
   button:SetScript(
     "OnUpdate",
     function(self)
-      if EPGP:CanIncGPBy(dropDown.text:GetText(), editBox:GetNumber()) then
+      if EPGP:CanIncGPBy(dropDown.text:GetText(), tonumber(editBox:GetText())) then
         self:Enable()
       else
         self:Disable()
