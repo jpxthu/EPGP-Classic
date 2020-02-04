@@ -31,7 +31,7 @@ function EPGP:SearchG(s)
 end
 
 local columnWidth = {
-  rarity      = 70,
+  rarity      = 80,
   level       = 50,
   equipLocKey = 150,
   scale       = 50,
@@ -162,6 +162,22 @@ local function UpdateOneItemScaleAndGP(f)
   end
 end
 
+local function EnableEditBox(eb, text)
+  eb:SetAlpha(1)
+  eb:Enable()
+  if text then
+    eb:SetText(text)
+  end
+end
+
+local function DisableEditBox(eb, text)
+  eb:SetAlpha(0.5)
+  eb:Disable()
+  if text then
+    eb:SetText(text)
+  end
+end
+
 local function EquipLocOnValueChangedFunc(self, event, key)
   local f = self:GetUserData("f")
   local item = EPGP.db.profile.customItems[f.id]
@@ -169,25 +185,25 @@ local function EquipLocOnValueChangedFunc(self, event, key)
   item.equipLoc = EQUIPLOC_DATA[key][2]
   if key == EQUIPLOC_CUSTOM_SCALE_INDEX then
     f.rarityF:SetDisabled(false)
-    f.ilvlF:Enable()
-    f.s1F:Enable()
-    f.s2F:Enable()
-    f.gp1F:Disable()
-    f.gp2F:Disable()
+    EnableEditBox(f.ilvlF)
+    EnableEditBox(f.s1F)
+    EnableEditBox(f.s2F)
+    DisableEditBox(f.gp1F)
+    DisableEditBox(f.gp2F)
   elseif key == EQUIPLOC_CUSTOM_GP_INDEX then
     f.rarityF:SetDisabled(true)
-    f.ilvlF:Disable()
-    f.s1F:Disable()
-    f.s2F:Disable()
-    f.gp1F:Enable()
-    f.gp2F:Enable()
+    DisableEditBox(f.ilvlF)
+    DisableEditBox(f.s1F)
+    DisableEditBox(f.s2F)
+    EnableEditBox(f.gp1F)
+    EnableEditBox(f.gp2F)
   else
     f.rarityF:SetDisabled(false)
-    f.ilvlF:Enable()
-    f.s1F:Disable()
-    f.s2F:Disable()
-    f.gp1F:Disable()
-    f.gp2F:Disable()
+    EnableEditBox(f.ilvlF)
+    DisableEditBox(f.s1F)
+    DisableEditBox(f.s2F)
+    DisableEditBox(f.gp1F)
+    DisableEditBox(f.gp2F)
   end
   UpdateOneItemScaleAndGP(f)
 end
@@ -492,6 +508,7 @@ local function AddTitle(f, name, width, top, left)
   t:SetPoint("TOP", top, "BOTTOM", 0, -ITEM_FRAME_PADDING)
   t:SetText(name)
   t:SetWidth(width)
+  t:SetJustifyH("LEFT")
   if left then
     t:SetPoint("LEFT", left, "RIGHT")
   else
@@ -639,10 +656,10 @@ function mod:FillFrame(f)
   t = AddTitle(f, _G["RARITY"], columnWidth.rarity, addFrame, t)
   t = AddTitle(f, _G["LEVEL"], columnWidth.level, addFrame, t)
   t = AddTitle(f, _G["TYPE"], columnWidth.equipLocKey, addFrame, t)
-  t = AddTitle(f, "Scale 1", columnWidth.scale, addFrame, t)
-  t = AddTitle(f, "Scale 2", columnWidth.scale, addFrame, t)
-  t = AddTitle(f, "GP 1", columnWidth.gp, addFrame, t)
-  t = AddTitle(f, "GP 2", columnWidth.gp, addFrame, t)
+  t = AddTitle(f, "Scale1", columnWidth.scale, addFrame, t)
+  t = AddTitle(f, "Scale2", columnWidth.scale, addFrame, t)
+  t = AddTitle(f, "GP1", columnWidth.gp, addFrame, t)
+  t = AddTitle(f, "GP2", columnWidth.gp, addFrame, t)
 
   containerFrame = CreateFrame("Frame", nil, f)
   containerFrame:SetPoint("TOP", t, "BOTTOM")

@@ -31,7 +31,7 @@
 - [ ] Advice reset in new tier (`EPGP_NEW_TIER`)
 - [ ] Calculate according to attributes 
   - [ ] API: `GetItemStats`, missing secondary stats
-- [ ] Custom items list
+- [x] Custom items list (#16)
 - [x] `GetTime()` in recurring - need to replace to `time()` (#2)
 - [x] Multi-choice when credit GP (#2)
   - [x] Legendary item (ITEM_QUALITY5_DESC) (#16)
