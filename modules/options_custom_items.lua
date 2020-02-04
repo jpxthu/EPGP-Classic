@@ -22,10 +22,15 @@ local containerFrame
 local itemFrames = {}
 local itemIndex = {}
 
-function EPGP:SearchG(s)
-  for i, v in pairs(_G) do
-    if v == s then
-      print(i)
+function EPGP:SearchG(s, parent, pre, lvl)
+  if not parent then parent = _G end
+  if not pre then pre = "_G." end
+  if not lvl then lvl = 0 end
+  for i, v in pairs(parent) do
+    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
+      self:SearchG(s, v, pre .. i .. ".", lvl + 1)
+    elseif v == s then
+      print(pre .. i)
     end
   end
 end
@@ -87,8 +92,8 @@ local EQUIPLOC_DATA = {
   [20] = {LOCAL_NAME.Wand, "INVTYPE_WAND"},
   [21] = {LOCAL_NAME.Thrown, "INVTYPE_THROWN"},
   [22] = {INVTYPE_RELIC, "INVTYPE_RELIC"},
-  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {L["Custom Scale"], "CUSTOM_SCALE"},
-  [EQUIPLOC_CUSTOM_GP_INDEX] = {L["Custom GP"], "CUSTOM_GP"},
+  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {_G.CUSTOM .. " Scale", "CUSTOM_SCALE"},
+  [EQUIPLOC_CUSTOM_GP_INDEX] = {_G.CUSTOM .. " GP", "CUSTOM_GP"},
 }
 
 local EQUIPLOC_NAME = {}
@@ -408,7 +413,7 @@ local function CreateAddFrame(parent)
   local selectText = addFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   selectText:SetPoint("TOP")
   selectText:SetPoint("LEFT", iconF, "RIGHT")
-  selectText:SetText(_G["CHOOSE"])
+  selectText:SetText(_G.CHOOSE)
 
   local selectItemF = GUI:Create("Dropdown")
   selectItemF:SetWidth(150)
@@ -457,7 +462,7 @@ local function CreateAddFrame(parent)
   addButton:SetHighlightFontObject("GameFontHighlightSmall")
   addButton:SetDisabledFontObject("GameFontDisableSmall")
   addButton:SetHeight(BUTTON_HEIGHT)
-  addButton:SetText(_G["ADD"])
+  addButton:SetText(_G.ADD)
   addButton:SetWidth(addButton:GetTextWidth() + BUTTON_TEXT_PADDING)
   addButton:SetPoint("BOTTOM")
   addButton:SetPoint("LEFT", idF, "RIGHT")
@@ -479,7 +484,7 @@ local function CreateAddFrame(parent)
   resetButton:SetHighlightFontObject("GameFontHighlightSmall")
   resetButton:SetDisabledFontObject("GameFontDisableSmall")
   resetButton:SetHeight(BUTTON_HEIGHT)
-  resetButton:SetText(_G["RESET"])
+  resetButton:SetText(_G.RESET)
   resetButton:SetWidth(resetButton:GetTextWidth() + BUTTON_TEXT_PADDING)
   resetButton:SetPoint("TOPRIGHT")
   resetButton:Enable()
@@ -653,9 +658,9 @@ function mod:FillFrame(f)
 
   local t = AddTitle(f, L["Icon"], 36, addFrame)
   -- t = AddTitle(f, "Name", columnWidth.name, addFrame, t)
-  t = AddTitle(f, _G["RARITY"], columnWidth.rarity, addFrame, t)
-  t = AddTitle(f, _G["LEVEL"], columnWidth.level, addFrame, t)
-  t = AddTitle(f, _G["TYPE"], columnWidth.equipLocKey, addFrame, t)
+  t = AddTitle(f, _G.RARITY, columnWidth.rarity, addFrame, t)
+  t = AddTitle(f, _G.LEVEL, columnWidth.level, addFrame, t)
+  t = AddTitle(f, _G.TYPE, columnWidth.equipLocKey, addFrame, t)
   t = AddTitle(f, "Scale1", columnWidth.scale, addFrame, t)
   t = AddTitle(f, "Scale2", columnWidth.scale, addFrame, t)
   t = AddTitle(f, "GP1", columnWidth.gp, addFrame, t)

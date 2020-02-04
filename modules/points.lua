@@ -60,35 +60,35 @@ local profileDefault = {
   weaponScale1 = 1.5,
   weaponComment1 = DISPLAY_NAME.MainHWeapon,
   weaponScale2 = 0.5,
-  weaponComment2 = DISPLAY_NAME.OffHWeapon .. " / " .. L["%s %s"]:format(L["Tank"], DISPLAY_NAME.MainHWeapon),
+  weaponComment2 = DISPLAY_NAME.OffHWeapon .. " / " .. L["%s %s"]:format(_G.TANK, DISPLAY_NAME.MainHWeapon),
   weaponScale3 = 0.25,
-  weaponComment3 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   shieldScale1 = 1.5,
-  shieldComment1 = L["%s %s"]:format(L["Tank"], _G.SHIELDSLOT),
+  shieldComment1 = L["%s %s"]:format(_G.TANK, _G.SHIELDSLOT),
   shieldScale2 = 0.5,
   shieldComment2 = L["%s %s"]:format(L["Non-tank"], _G.SHIELDSLOT),
 
   weapon2HScale1 = 2,
   weapon2HComment1 = DISPLAY_NAME.TwoHWeapon,
   weapon2HScale2 = 0.5,
-  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
   weaponMainHComment1 = DISPLAY_NAME.MainHWeapon,
   weaponMainHScale2 = 0.25,
-  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
   weaponOffHComment1 = DISPLAY_NAME.OffHWeapon,
   weaponOffHScale2 = 0.25,
-  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
 
   rangedScale1 = 2,
-  rangedComment1 = L["%s %s"]:format(L["Hunter"], _G.INVTYPE_RANGED),
+  rangedComment1 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, _G.INVTYPE_RANGED),
   rangedScale2 = 0.5,
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 
@@ -608,7 +608,7 @@ local profileOOR = {
   weaponScale2 = 0.5,
   weaponComment2 = DISPLAY_NAME.OffHWeapon,
   weaponScale3 = 0.15,
-  weaponComment3 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponComment3 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   shieldScale1 = 0.5,
   shieldComment1 = _G.SHIELDSLOT,
@@ -616,23 +616,23 @@ local profileOOR = {
   weapon2HScale1 = 2,
   weapon2HComment1 = DISPLAY_NAME.TwoHWeapon,
   weapon2HScale2 = 0.3,
-  weapon2HComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.TwoHWeapon),
+  weapon2HComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.TwoHWeapon),
 
   weaponMainHScale1 = 1.5,
   weaponMainHComment1 = DISPLAY_NAME.MainHWeapon,
   weaponMainHScale2 = 0.15,
-  weaponMainHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponMainHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   weaponOffHScale1 = 0.5,
   weaponOffHComment1 = DISPLAY_NAME.OffHWeapon,
   weaponOffHScale2 = 0.15,
-  weaponOffHComment2 = L["%s %s"]:format(L["Hunter"], DISPLAY_NAME.OneHWeapon),
+  weaponOffHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
 
   holdableScale1 = 0.5,
   holdableComment1 = _G.INVTYPE_HOLDABLE,
 
   rangedScale1 = 2,
-  rangedComment1 = L["%s %s"]:format(L["Hunter"], _G.INVTYPE_RANGED),
+  rangedComment1 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, _G.INVTYPE_RANGED),
   rangedScale2 = 0.3,
   rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
 

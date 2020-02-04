@@ -47,7 +47,7 @@ end
 
 function mod:FillFrame(f)
   local h = {}
-  h.customItems = CreateTableHeader(f, L["Custom Items"], nil, h)
+  h.customItems = CreateTableHeader(f, L["%s %s"]:format(_G.CUSTOM, _G.ITEMS), nil, h)
   h.customItems:SetPoint("TOPLEFT", 15, -15)
 
   local cf = {}
