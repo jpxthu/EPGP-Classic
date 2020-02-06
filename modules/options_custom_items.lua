@@ -17,21 +17,27 @@ local ITEM_FRAME_HEIGHT = 41 + ITEM_FRAME_PADDING
 local CUSTOM_ITEM_DATA = GP:GetCustomItemsDefault()
 local MAX_ITEMS_PER_PAGE = 10
 
+local frame
 local addFrame
 local containerFrame
 local itemFrames = {}
 local itemIndex = {}
 
-function EPGP:SearchG(s)
-  for i, v in pairs(_G) do
-    if v == s then
-      print(i)
+function EPGP:SearchG(s, parent, pre, lvl)
+  if not parent then parent = _G end
+  if not pre then pre = "_G." end
+  if not lvl then lvl = 0 end
+  for i, v in pairs(parent) do
+    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
+      self:SearchG(s, v, pre .. i .. ".", lvl + 1)
+    elseif v == s then
+      print(pre .. i)
     end
   end
 end
 
 local columnWidth = {
-  rarity      = 70,
+  rarity      = 80,
   level       = 50,
   equipLocKey = 150,
   scale       = 50,
@@ -87,8 +93,8 @@ local EQUIPLOC_DATA = {
   [20] = {LOCAL_NAME.Wand, "INVTYPE_WAND"},
   [21] = {LOCAL_NAME.Thrown, "INVTYPE_THROWN"},
   [22] = {INVTYPE_RELIC, "INVTYPE_RELIC"},
-  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {L["Custom Scale"], "CUSTOM_SCALE"},
-  [EQUIPLOC_CUSTOM_GP_INDEX] = {L["Custom GP"], "CUSTOM_GP"},
+  [EQUIPLOC_CUSTOM_SCALE_INDEX] = {_G.CUSTOM .. " Scale", "CUSTOM_SCALE"},
+  [EQUIPLOC_CUSTOM_GP_INDEX] = {_G.CUSTOM .. " GP", "CUSTOM_GP"},
 }
 
 local EQUIPLOC_NAME = {}
@@ -162,6 +168,22 @@ local function UpdateOneItemScaleAndGP(f)
   end
 end
 
+local function EnableEditBox(eb, text)
+  eb:SetAlpha(1)
+  eb:Enable()
+  if text then
+    eb:SetText(text)
+  end
+end
+
+local function DisableEditBox(eb, text)
+  eb:SetAlpha(0.5)
+  eb:Disable()
+  if text then
+    eb:SetText(text)
+  end
+end
+
 local function EquipLocOnValueChangedFunc(self, event, key)
   local f = self:GetUserData("f")
   local item = EPGP.db.profile.customItems[f.id]
@@ -169,25 +191,25 @@ local function EquipLocOnValueChangedFunc(self, event, key)
   item.equipLoc = EQUIPLOC_DATA[key][2]
   if key == EQUIPLOC_CUSTOM_SCALE_INDEX then
     f.rarityF:SetDisabled(false)
-    f.ilvlF:Enable()
-    f.s1F:Enable()
-    f.s2F:Enable()
-    f.gp1F:Disable()
-    f.gp2F:Disable()
+    EnableEditBox(f.ilvlF)
+    EnableEditBox(f.s1F)
+    EnableEditBox(f.s2F)
+    DisableEditBox(f.gp1F)
+    DisableEditBox(f.gp2F)
   elseif key == EQUIPLOC_CUSTOM_GP_INDEX then
     f.rarityF:SetDisabled(true)
-    f.ilvlF:Disable()
-    f.s1F:Disable()
-    f.s2F:Disable()
-    f.gp1F:Enable()
-    f.gp2F:Enable()
+    DisableEditBox(f.ilvlF)
+    DisableEditBox(f.s1F)
+    DisableEditBox(f.s2F)
+    EnableEditBox(f.gp1F)
+    EnableEditBox(f.gp2F)
   else
     f.rarityF:SetDisabled(false)
-    f.ilvlF:Enable()
-    f.s1F:Disable()
-    f.s2F:Disable()
-    f.gp1F:Disable()
-    f.gp2F:Disable()
+    EnableEditBox(f.ilvlF)
+    DisableEditBox(f.s1F)
+    DisableEditBox(f.s2F)
+    DisableEditBox(f.gp1F)
+    DisableEditBox(f.gp2F)
   end
   UpdateOneItemScaleAndGP(f)
 end
@@ -392,7 +414,7 @@ local function CreateAddFrame(parent)
   local selectText = addFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   selectText:SetPoint("TOP")
   selectText:SetPoint("LEFT", iconF, "RIGHT")
-  selectText:SetText(_G["CHOOSE"])
+  selectText:SetText(_G.CHOOSE)
 
   local selectItemF = GUI:Create("Dropdown")
   selectItemF:SetWidth(150)
@@ -441,7 +463,7 @@ local function CreateAddFrame(parent)
   addButton:SetHighlightFontObject("GameFontHighlightSmall")
   addButton:SetDisabledFontObject("GameFontDisableSmall")
   addButton:SetHeight(BUTTON_HEIGHT)
-  addButton:SetText(_G["ADD"])
+  addButton:SetText(_G.ADD)
   addButton:SetWidth(addButton:GetTextWidth() + BUTTON_TEXT_PADDING)
   addButton:SetPoint("BOTTOM")
   addButton:SetPoint("LEFT", idF, "RIGHT")
@@ -463,7 +485,7 @@ local function CreateAddFrame(parent)
   resetButton:SetHighlightFontObject("GameFontHighlightSmall")
   resetButton:SetDisabledFontObject("GameFontDisableSmall")
   resetButton:SetHeight(BUTTON_HEIGHT)
-  resetButton:SetText(_G["RESET"])
+  resetButton:SetText(_G.RESET)
   resetButton:SetWidth(resetButton:GetTextWidth() + BUTTON_TEXT_PADDING)
   resetButton:SetPoint("TOPRIGHT")
   resetButton:Enable()
@@ -492,6 +514,7 @@ local function AddTitle(f, name, width, top, left)
   t:SetPoint("TOP", top, "BOTTOM", 0, -ITEM_FRAME_PADDING)
   t:SetText(name)
   t:SetWidth(width)
+  t:SetJustifyH("LEFT")
   if left then
     t:SetPoint("LEFT", left, "RIGHT")
   else
@@ -631,18 +654,19 @@ local function AddOneItemFrame(parent, top)
   return f
 end
 
-function mod:FillFrame(f)
+function mod:FillFrame(f, parent)
+  frame = f
   CreateAddFrame(f)
 
   local t = AddTitle(f, L["Icon"], 36, addFrame)
   -- t = AddTitle(f, "Name", columnWidth.name, addFrame, t)
-  t = AddTitle(f, _G["RARITY"], columnWidth.rarity, addFrame, t)
-  t = AddTitle(f, _G["LEVEL"], columnWidth.level, addFrame, t)
-  t = AddTitle(f, _G["TYPE"], columnWidth.equipLocKey, addFrame, t)
-  t = AddTitle(f, "Scale 1", columnWidth.scale, addFrame, t)
-  t = AddTitle(f, "Scale 2", columnWidth.scale, addFrame, t)
-  t = AddTitle(f, "GP 1", columnWidth.gp, addFrame, t)
-  t = AddTitle(f, "GP 2", columnWidth.gp, addFrame, t)
+  t = AddTitle(f, _G.RARITY, columnWidth.rarity, addFrame, t)
+  t = AddTitle(f, _G.LEVEL, columnWidth.level, addFrame, t)
+  t = AddTitle(f, _G.TYPE, columnWidth.equipLocKey, addFrame, t)
+  t = AddTitle(f, "Scale1", columnWidth.scale, addFrame, t)
+  t = AddTitle(f, "Scale2", columnWidth.scale, addFrame, t)
+  t = AddTitle(f, "GP1", columnWidth.gp, addFrame, t)
+  t = AddTitle(f, "GP2", columnWidth.gp, addFrame, t)
 
   containerFrame = CreateFrame("Frame", nil, f)
   containerFrame:SetPoint("TOP", t, "BOTTOM")
@@ -671,8 +695,13 @@ function mod:FillFrame(f)
   UpdateFrame()
   scrollBar:SetScript("OnShow", UpdateFrame)
 
-  f:SetWidth(columnWidthTotal)
-  f:SetHeight(addFrame:GetHeight() + t:GetHeight() + containerFrame:GetHeight())
+  f.OnShowFunc = function()
+    local width = columnWidthTotal
+    local height = addFrame:GetHeight() + t:GetHeight() + containerFrame:GetHeight() + ITEM_FRAME_PADDING
+    f:SetWidth(width)
+    f:SetHeight(height)
+    parent.UpdateSize(width + 52, height)
+  end
 end
 
 local function UpdateItemIconLinkOne(id)
@@ -731,6 +760,13 @@ local function AddDefaultData()
   end
   UpdateItemIndex()
   UpdateItemIconLink()
+end
+
+function mod:Reload()
+  UpdateItemIndex()
+  if frame and frame:IsShown() then
+    UpdateFrame()
+  end
 end
 
 function mod:Reset()

@@ -3,7 +3,7 @@
 ## Title: EPGP Classic
 ## Notes: Effort Points/Gear Points Loot System
 ## Author: jpxthu (Maintainer)
-## Version: v1.3.2
+## Version: v1.4.0
 ## SavedVariables: EPGP_DB
 ## OptionalDeps: LibRealmInfo
 ## X-Category: Guild
@@ -35,11 +35,12 @@ libs\LibDialog-1.0\lib.xml
 libs\LibJSON-1.0\lib.xml
 libs\LibRealmInfo\LibRealmInfo.lua
 
+libs\LibDebug-1.0.lua
 libs\LibEPGPChat-1.0.lua
 libs\LibEPGPUI-1.0.lua
 libs\LibLocalConstant-1.0.lua
+libs\LibUtils.lua
 
-LibDebug-1.0.lua
 LibCoroutine-1.0.lua
 LibItemUtils-1.0.lua
 LibGearPoints-1.2.lua
@@ -64,6 +65,7 @@ modules\loot.lua
 modules\options_custom_items.lua
 modules\options.lua
 modules\points.lua
+modules\sync.lua
 modules\ui.lua
 modules\warnings.lua
 modules\whisper.lua

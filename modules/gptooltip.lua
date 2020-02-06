@@ -2,16 +2,20 @@ local mod = EPGP:NewModule("gptooltip", "AceHook-3.0")
 
 local GP = LibStub("LibGearPoints-1.2")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local LUI = LibStub("LibEPGPUI-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
 
 function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
   local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
-  local ilvl = select(4, GetItemInfo(itemlink))
 
-  if ilvl then
-    tooltip:AddLine(("ilvl: %s"):format(ilvl))
+  if mod.db.profile.ilvl then
+    local ilvl = select(4, GetItemInfo(itemlink))
+    if ilvl then
+      tooltip:AddLine(("ilvl: %s"):format(ilvl))
+    end
   end
+
   if not gp1 then return end
   tooltip:AddLine(
     ("GP1: %d (%s)"):format(gp1, c1),
@@ -30,6 +34,7 @@ mod.dbDefaults = {
   profile = {
     enabled = true,
     threshold = 4, -- Epic
+    ilvl = false,
   }
 }
 
@@ -65,6 +70,12 @@ mod.optionsArgs = {
       info.handler.db.profile.threshold = itemQuality
       GP:SetQualityThreshold(itemQuality)
     end,
+  },
+  spacer1 = LUI:OptionsSpacer(11, 0.001),
+  ilvl = {
+    order = 20,
+    type = "toggle",
+    name = L["Show item level"],
   },
 }
 

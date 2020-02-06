@@ -1,3 +1,9 @@
+### v1.4.0 (2020.2.6)
+
+- Add switch of showing ilvl. Default closed.
+- Add settings sync feature
+- UI improvement
+
 ### v1.3.2 (2020.2.4)
 
 - Add GP multiplier for legendary items

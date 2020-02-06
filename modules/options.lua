@@ -2,15 +2,31 @@ local mod = EPGP:NewModule("options")
 
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 
-local function CreateTableHeader(parent, text, width, group)
-  local function TableHeaderOnClickFunc(self)
-    for i, h in pairs(group) do
-      h:SetNormalTexture(nil)
-    end
-    self:SetNormalTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
-  end
+local headers = {}
+local frames = {}
 
+local function TableHeaderOnClickFunc(self)
+  for i, h in pairs(headers) do
+    local index = h.index
+    local f = frames[index]
+    if index == self.index then
+      h:SetNormalTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
+      if f then
+        f:Show()
+        if f.OnShowFunc then f:OnShowFunc() end
+      end
+    else
+      h:SetNormalTexture(nil)
+      if f then
+        f:Hide()
+      end
+    end
+  end
+end
+
+local function CreateTableHeader(parent, text, index)
   local h = CreateFrame("Button", nil, parent)
+  h.index = index
   h:SetHeight(24)
 
   local tl = h:CreateTexture(nil, "BACKGROUND")
@@ -37,28 +53,39 @@ local function CreateTableHeader(parent, text, width, group)
   h:SetNormalFontObject("GameFontHighlightSmall")
   h:SetText(text)
   -- h:GetFontString():SetJustifyH(justifyH)
-  h:SetWidth(width or (h:GetTextWidth() + 20))
+  h:SetWidth(h:GetTextWidth() + 20)
   h:SetHighlightTexture(
     "Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight", "ADD")
   h:SetScript("OnClick", TableHeaderOnClickFunc)
 
-  return h
+  if #headers == 0 then
+    h:SetPoint("TOPLEFT", 15, -15)
+  else
+    h:SetPoint("LEFT", headers[#headers], "RIGHT")
+  end
+  table.insert(headers, h)
 end
 
 function mod:FillFrame(f)
-  local h = {}
-  h.customItems = CreateTableHeader(f, L["Custom Items"], nil, h)
-  h.customItems:SetPoint("TOPLEFT", 15, -15)
+  CreateTableHeader(f, L["%s %s"]:format(_G.CUSTOM, _G.ITEMS), "customItems")
+  CreateTableHeader(f, "Sync", "sync")
 
-  local cf = {}
-  cf.customItems = CreateFrame("FRAME", "CustomItemsFrame", f)
-  cf.customItems:SetPoint("TOPLEFT", h.customItems, "BOTTOMLEFT", 0, -5)
-  -- cf.customItems:SetPoint("BOTTOM", f, "BOTTOM", -15-27, 15)
-  -- cf.customItems:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -15-27, 15)
-  EPGP:GetModule("optionsCustomItems"):FillFrame(cf.customItems)
+  frames.customItems = CreateFrame("FRAME", "CustomItemsFrame", f)
+  frames.customItems:SetPoint("TOPLEFT", headers[1], "BOTTOMLEFT", 0, -5)
+  EPGP:GetModule("optionsCustomItems"):FillFrame(frames.customItems, f)
 
-  f:SetWidth(cf.customItems:GetWidth() + 82)
-  f:SetHeight(cf.customItems:GetHeight() + h.customItems:GetHeight() + 35)
+  frames.sync = CreateFrame("FRAME", "CustomItemsFrame", f)
+  frames.sync:SetPoint("TOPLEFT", headers[1], "BOTTOMLEFT", 0, -5)
+  EPGP:GetModule("sync"):FillFrame(frames.sync, f)
+
+  f.UpdateSize = function(width, height)
+    f:SetWidth(width + 30)
+    f:SetHeight(height + headers[1]:GetHeight() + 35)
+  end
+
+  f.OnShowFunc = function()
+    TableHeaderOnClickFunc(headers[1])
+  end
 end
 
 function mod:OnEnable()
