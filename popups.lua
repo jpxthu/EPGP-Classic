@@ -324,3 +324,34 @@ DLG:Register("EPGP_NEW_TIER", {
   hide_on_escape = true,
   show_while_dead = true,
 })
+
+DLG:Register("EPGP_SETTINGS_RECEIVED", {
+  on_show = function(self, data)
+    local t = "Received EPGP settings synced from \"%s\". Override local settings?\nClick \"%s\" to accept settings from \"%s\" without asking."
+    t = format(t, data, "Trust", data)
+    self.text:SetText(t)
+  end,
+  buttons = {
+    {
+      text = _G.ACCEPT,
+      on_click = function(self, data)
+        local mod = EPGP:GetModule("sync")
+        local name = data
+        print(name)
+        print(type(name))
+        mod:AcceptSettings(name)
+      end,
+    },
+    {
+      text = "Trust",
+      on_click = function(self, data)
+        local mod = EPGP:GetModule("sync")
+        mod:AcceptSettings(data)
+        mod:AddTrustList(data)
+      end,
+    },
+    {
+      text = _G.CANCEL,
+    },
+  }
+})

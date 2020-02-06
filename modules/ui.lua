@@ -1668,7 +1668,7 @@ local function CreateEPGPOptionsFrame()
         f.initiated = true
         EPGP:GetModule("options"):FillFrame(f)
       end
-      -- if f.OnShow then f:OnShow() end
+      if f.OnShowFunc then f:OnShowFunc() end
     end)
 end
 

@@ -65,6 +65,7 @@ modules\loot.lua
 modules\options_custom_items.lua
 modules\options.lua
 modules\points.lua
+modules\sync.lua
 modules\ui.lua
 modules\warnings.lua
 modules\whisper.lua

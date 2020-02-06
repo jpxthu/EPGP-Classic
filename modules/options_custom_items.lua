@@ -17,6 +17,7 @@ local ITEM_FRAME_HEIGHT = 41 + ITEM_FRAME_PADDING
 local CUSTOM_ITEM_DATA = GP:GetCustomItemsDefault()
 local MAX_ITEMS_PER_PAGE = 10
 
+local frame
 local addFrame
 local containerFrame
 local itemFrames = {}
@@ -653,7 +654,8 @@ local function AddOneItemFrame(parent, top)
   return f
 end
 
-function mod:FillFrame(f)
+function mod:FillFrame(f, parent)
+  frame = f
   CreateAddFrame(f)
 
   local t = AddTitle(f, L["Icon"], 36, addFrame)
@@ -693,8 +695,13 @@ function mod:FillFrame(f)
   UpdateFrame()
   scrollBar:SetScript("OnShow", UpdateFrame)
 
-  f:SetWidth(columnWidthTotal)
-  f:SetHeight(addFrame:GetHeight() + t:GetHeight() + containerFrame:GetHeight())
+  f.OnShowFunc = function()
+    local width = columnWidthTotal
+    local height = addFrame:GetHeight() + t:GetHeight() + containerFrame:GetHeight() + ITEM_FRAME_PADDING
+    f:SetWidth(width)
+    f:SetHeight(height)
+    parent.UpdateSize(width + 52, height)
+  end
 end
 
 local function UpdateItemIconLinkOne(id)
@@ -753,6 +760,13 @@ local function AddDefaultData()
   end
   UpdateItemIndex()
   UpdateItemIconLink()
+end
+
+function mod:Reload()
+  UpdateItemIndex()
+  if frame and frame:IsShown() then
+    UpdateFrame()
+  end
 end
 
 function mod:Reset()
