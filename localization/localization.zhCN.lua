@@ -171,6 +171,7 @@ L["Sets the medium EPGP will use to collect bid results from members."] = "设�
 L["Sets the medium EPGP will use to collect need/greed results from members."] = "设定 EPGP 收集团队成员需求/贪婪信息的渠道。"
 L["Settings sent from trusted members will be accepted without asking."] = "来自信任成员的设置会被自动同步，不需要经过询问。"
 L["Show everyone"] = "显示所有人"
+L["Show item level"] = "显示物品等级"
 L["Slots"] = "部位"
 L["Some english word"] = "一些英语"
 L["Some english word that doesn't exist"] = "一些不存在的英语"

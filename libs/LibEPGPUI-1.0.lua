@@ -38,3 +38,12 @@ function lib:CreateTextButton(name, parent, text, disable)
   end
   return bt
 end
+
+function lib:OptionsSpacer(o, height)
+  return {
+    type = "description",
+    order = o,
+    name = " ",
+    fontSize = "small",
+  }
+end

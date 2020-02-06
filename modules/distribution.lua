@@ -3,6 +3,7 @@ local C = LibStub("LibEPGPChat-1.0")
 local GUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")
+local LUI = LibStub("LibEPGPUI-1.0")
 
 local BUTTON_TEXT_PADDING = 15
 local BUTTON_HEIGHT = 22
@@ -115,15 +116,6 @@ mod.dbDefaults = {
   }
 }
 
-local function Spacer(o, height)
-  return {
-    type = "description",
-    order = o,
-    name = " ",
-    fontSize = "small",
-  }
-end
-
 mod.optionsName = L["Distribution"]
 mod.optionsDesc = L["Collect bid/roll message to help sorting"]
 mod.optionsArgs = {
@@ -174,7 +166,7 @@ mod.optionsArgs = {
       ["WHISPER"] = CHAT_MSG_WHISPER_INFORM,
     },
   },
-  -- spacer1 = Spacer(13, 0.001),
+  -- spacer1 = LUI:OptionsSpacer(13, 0.001),
   announceNeedMsg = {
     order = 20,
     type = "input",
@@ -182,7 +174,7 @@ mod.optionsArgs = {
     desc = L["Message announced when you start a need/greed bid."],
     width = 100,
   },
-  -- spacer2 = Spacer(21, 0.001),
+  -- spacer2 = LUI:OptionsSpacer(21, 0.001),
   resetWhenAnnounce = {
     order = 30,
     type = "toggle",
@@ -190,14 +182,14 @@ mod.optionsArgs = {
     desc = L["Reset result when announce and start a bid/need/roll."],
     width = 30,
   },
-  -- spacer3 = Spacer(31, 0.001),
+  -- spacer3 = LUI:OptionsSpacer(31, 0.001),
   lootAutoAdd = {
     order = 40,
     type = "toggle",
     name = L["Track loot items"],
     desc = L["Add loot items automatically when loot windows opened or corpse loot received."],
   },
-  spacer4 = Spacer(41, 0.001),
+  spacer4 = LUI:OptionsSpacer(41, 0.001),
   threshold = {
     order = 50,
     type = "select",

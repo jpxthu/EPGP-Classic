@@ -154,6 +154,7 @@ L["'%s' - expected 'RRGGBB' or 'r g b'."] = true
 L["[%s] has been added into trust list."] = true
 L["[%s] has been updated."] = true
 L["Show everyone"] = true
+L["Show item level"] = true
 L["'%s' - Invalid Keybinding."] = true
 L["%s is added to the award list"] = true
 L["%s is already in the award list"] = true
