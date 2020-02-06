@@ -1,6 +1,7 @@
 local mod = EPGP:NewModule("points")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LN = LibStub("LibLocalConstant-1.0")
+local Utils = LibStub("LibUtils-1.0")
 
 local LOCAL_NAME = LN:LocalName()
 
@@ -651,7 +652,7 @@ local profileOOR = {
 
 function mod:CheckGuildConfig(guild, realm)
   if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
-    mod.db.profile = profileOOR
+    Utils:CopyTable(profileOOR, mod.db.profile)
   end
 end
 
