@@ -7,6 +7,7 @@ local GP = LibStub("LibGearPoints-1.2")
 local DLG = LibStub("LibDialog-1.0")
 local GUI = LibStub("AceGUI-3.0")
 local LIU = LibStub("LibItemUtils-1.0")
+local LUI = LibStub("LibEPGPUI-1.0")
 
 local callbacks = EPGP.callbacks
 
@@ -55,22 +56,6 @@ local function DisableWhileNotInRaid()
   else
     for i, v in pairs(disableWhileNotInRaidList) do v:Disable() end
   end
-end
-
-local function CreateTextButton(name, parent, text, disable)
-  local bt = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
-  bt:SetNormalFontObject("GameFontNormalSmall")
-  bt:SetHighlightFontObject("GameFontHighlightSmall")
-  bt:SetDisabledFontObject("GameFontDisableSmall")
-  bt:SetHeight(BUTTON_HEIGHT)
-  bt:SetText(text)
-  bt:SetWidth(bt:GetTextWidth() + BUTTON_TEXT_PADDING)
-  if disable then
-    bt:Disable()
-  else
-    bt:Enable()
-  end
-  return bt
 end
 
 local function CreateEditBox(name, parent)
@@ -1141,7 +1126,7 @@ local function AddCustomGuildInfoControls(frame)
 
   local outsidersEditBox = CreateEditBox(nil, frame)
 
-  local outsidersOkayButton = CreateTextButton(nil, frame, _G.OKAY, true)
+  local outsidersOkayButton = LUI:CreateTextButton(nil, frame, _G.OKAY, true)
   outsidersOkayButton:SetPoint("RIGHT")
   outsidersOkayButton:SetPoint("TOP", useCustomOption, "BOTTOM")
   outsidersOkayButton:SetScript("OnClick",
@@ -1172,7 +1157,7 @@ local function AddCustomGuildInfoControls(frame)
 
   local decayPEditBox = CreateEditBox(nil, frame)
 
-  local decayPOkayButton = CreateTextButton(nil, frame, _G.OKAY, true)
+  local decayPOkayButton = LUI:CreateTextButton(nil, frame, _G.OKAY, true)
   decayPOkayButton:SetPoint("RIGHT")
   decayPOkayButton:SetPoint("TOP", outsidersLabel, "BOTTOM")
   decayPOkayButton:SetScript("OnClick",
@@ -1203,7 +1188,7 @@ local function AddCustomGuildInfoControls(frame)
 
   local baseGpEditBox = CreateEditBox(nil, frame)
 
-  local baseGpOkayButton = CreateTextButton(nil, frame, _G.OKAY, true)
+  local baseGpOkayButton = LUI:CreateTextButton(nil, frame, _G.OKAY, true)
   baseGpOkayButton:SetPoint("RIGHT")
   baseGpOkayButton:SetPoint("TOP", decayPLabel, "BOTTOM")
   baseGpOkayButton:SetScript("OnClick",
@@ -1234,7 +1219,7 @@ local function AddCustomGuildInfoControls(frame)
 
   local minEpEditBox = CreateEditBox(nil, frame)
 
-  local minEpOkayButton = CreateTextButton(nil, frame, _G.OKAY, true)
+  local minEpOkayButton = LUI:CreateTextButton(nil, frame, _G.OKAY, true)
   minEpOkayButton:SetPoint("RIGHT")
   minEpOkayButton:SetPoint("TOP", baseGpLabel, "BOTTOM")
   minEpOkayButton:SetScript("OnClick",
@@ -1265,7 +1250,7 @@ local function AddCustomGuildInfoControls(frame)
 
   local extrasPEditBox = CreateEditBox(nil, frame)
 
-  local extrasPOkayButton = CreateTextButton(nil, frame, _G.OKAY, true)
+  local extrasPOkayButton = LUI:CreateTextButton(nil, frame, _G.OKAY, true)
   extrasPOkayButton:SetPoint("RIGHT")
   extrasPOkayButton:SetPoint("TOP", minEpLabel, "BOTTOM")
   extrasPOkayButton:SetScript("OnClick",
@@ -1287,7 +1272,7 @@ local function AddCustomGuildInfoControls(frame)
       end
     end)
 
-  local editGuildInfoButton = CreateTextButton(nil, frame, L["Write into Guild Info"], true)
+  local editGuildInfoButton = LUI:CreateTextButton(nil, frame, L["Write into Guild Info"], true)
   editGuildInfoButton:SetPoint("LEFT")
   editGuildInfoButton:SetPoint("TOP", extrasPLabel, "BOTTOM")
   editGuildInfoButton:SetScript("OnClick",
@@ -1389,7 +1374,7 @@ local function AddDecayControls(frame)
   local vars = EPGP.db.profile
   frame.rank = {}
 
-  local selectAllButton = CreateTextButton(nil, frame, L["Select all"], true)
+  local selectAllButton = LUI:CreateTextButton(nil, frame, L["Select all"], true)
   selectAllButton:SetPoint("TOPLEFT")
   selectAllButton:SetScript("OnClick",
     function(self)
@@ -1400,7 +1385,7 @@ local function AddDecayControls(frame)
     end)
   selectAllButton:Enable()
 
-  local decayButton = CreateTextButton(nil, frame, L["Decay"], true)
+  local decayButton = LUI:CreateTextButton(nil, frame, L["Decay"], true)
   decayButton:SetPoint("LEFT", selectAllButton, "RIGHT")
   decayButton:SetScript(
     "OnClick",

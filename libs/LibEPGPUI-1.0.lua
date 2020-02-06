@@ -4,6 +4,9 @@ local MINOR_VERSION = 10000
 local lib, oldMinor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
 
+local BUTTON_HEIGHT = 22
+local BUTTON_TEXT_PADDING = 15
+
 function lib:CreateIconButton(name, parent, height, width, texture)
   local button = CreateFrame("Button", name, parent)
   button:SetHeight(height)
@@ -18,4 +21,20 @@ function lib:CreateIconButton(name, parent, height, width, texture)
   button.icon:SetAllPoints(button)
 
   return button
+end
+
+function lib:CreateTextButton(name, parent, text, disable)
+  local bt = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+  bt:SetNormalFontObject("GameFontNormalSmall")
+  bt:SetHighlightFontObject("GameFontHighlightSmall")
+  bt:SetDisabledFontObject("GameFontDisableSmall")
+  bt:SetHeight(BUTTON_HEIGHT)
+  bt:SetText(text)
+  bt:SetWidth(bt:GetTextWidth() + BUTTON_TEXT_PADDING)
+  if disable then
+    bt:Disable()
+  else
+    bt:Enable()
+  end
+  return bt
 end
