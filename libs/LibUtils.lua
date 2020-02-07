@@ -6,6 +6,19 @@ if not lib then return end
 
 local Debug = LibStub("LibDebug-1.0")
 
+function EPGPSearchG(s, parent, pre, lvl)
+  if not parent then parent = _G end
+  if not pre then pre = "_G." end
+  if not lvl then lvl = 0 end
+  for i, v in pairs(parent) do
+    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
+      EPGPSearchG(s, v, pre .. i .. ".", lvl + 1)
+    elseif v == s then
+      print(pre .. i)
+    end
+  end
+end
+
 local function copyTable(src, dest)
   for i, v in pairs(src) do
     if type(v) == "table" then

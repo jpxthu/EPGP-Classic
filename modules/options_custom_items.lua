@@ -23,19 +23,6 @@ local containerFrame
 local itemFrames = {}
 local itemIndex = {}
 
-function EPGP:SearchG(s, parent, pre, lvl)
-  if not parent then parent = _G end
-  if not pre then pre = "_G." end
-  if not lvl then lvl = 0 end
-  for i, v in pairs(parent) do
-    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
-      self:SearchG(s, v, pre .. i .. ".", lvl + 1)
-    elseif v == s then
-      print(pre .. i)
-    end
-  end
-end
-
 local columnWidth = {
   rarity      = 80,
   level       = 50,
