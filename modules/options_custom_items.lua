@@ -1,6 +1,6 @@
 local mod = EPGP:NewModule("optionsCustomItems")
 
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local GUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")

@@ -1,5 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local Debug = LibStub("LibDebug-1.0")
 local DLG = LibStub("LibDialog-1.0")
 local LLN = LibStub("LibLootNotify-1.0")
@@ -46,13 +46,6 @@ function EPGP:SetupOptions()
         name = L["Reset only GP"],
         desc = L["Resets GP (not EP!) of all members of the guild. This will set all main toons' GP to 0. Use with care!"],
         func = function() DLG:Spawn("EPGP_RESET_GP") end,
-      },
-      rescale = {
-        order = 1003,
-        type = "execute",
-        name = L["Rescale GP"],
-        desc = L["Rescale GP of all members of the guild. This will reduce all main toons' GP by a tier worth of value. Use with care!"],
-        func = function() DLG:Spawn("EPGP_RESCALE_GP") end,
       },
     },
   }

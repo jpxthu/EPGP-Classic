@@ -1,5 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local DLG = LibStub("LibDialog-1.0")
 
 DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
@@ -171,18 +171,20 @@ DLG:Register("EPGP_RESET_GP", {
 })
 
 DLG:Register("EPGP_RESCALE_GP", {
-  text = L["Re-scale all main toons' GP to current tier?"],
   buttons = {
     {
       text = _G.ACCEPT,
       on_click = function(self, data, reason)
-        EPGP:RescaleGP()
+        EPGP:RescaleGP(data)
       end,
     },
     {
       text = _G.CANCEL,
     },
   },
+  on_show = function(self, data)
+    self.text:SetFormattedText(L["Re-scale all main toons' GP to current tier?"] .. "(+%d)", data)
+  end,
   on_update = function(self, elapsed)
     if EPGP:CanResetEPGP() then
       self.buttons[1]:Enable()
