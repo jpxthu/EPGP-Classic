@@ -1144,7 +1144,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
     end
   else
     local guild = GetGuildInfo("player") or ""
-    local realm = GetRealmName()
+    -- local realm = GetRealmName()
     if #guild == 0 then
       GuildRoster()
     else
@@ -1172,7 +1172,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
           EPGP:CancelRecurringEP()
         end
 
-        EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
+        -- EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
         EPGP:ResumeBidResult()
       end
     end

@@ -672,9 +672,9 @@ local profileOOR = {
 }
 
 function mod:CheckGuildConfig(guild, realm)
-  if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
-    Utils:CopyTable(profileOOR, mod.db.profile)
-  end
+  -- if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
+  --   Utils:CopyTable(profileOOR, mod.db.profile)
+  -- end
 end
 
 function mod:OnInitialize()
