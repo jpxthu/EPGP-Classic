@@ -1,3 +1,7 @@
+### v1.4.1 (2020.2.9)
+
+- New tier guide and UI: reset/rescale GP
+
 ### v1.4.0 (2020.2.6)
 
 - Add switch of showing ilvl. Default closed.
