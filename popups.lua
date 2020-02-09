@@ -303,7 +303,9 @@ DLG:Register("EPGP_LOOTMASTER_ASK_TRACKING", {
 
 DLG:Register("EPGP_NEW_VERSION", {
   text = "|cFFFFFF00EPGP " .. EPGP.version .. "|r\n" ..
-    L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"], -- /script EPGP.db.profile.last_version = nil
+    L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"] .. "\n\n" ..
+    L["%s %s"]:format(L["[%s] is comming!"]:format(L["Blackwing Lair"]), L["You should probably: increase standard_ilvl, reset or rescale GP."]) .. "\n" ..
+    string.format("(%s -> %s -> EPGP -> %s / %s)", _G.UIOPTIONS_MENU, _G.ADDONS, L["Gear Points"], L["Rescale GP"]), -- /script EPGP.db.profile.last_version = nil
   icon = [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]],
   buttons = {
     {
@@ -316,7 +318,8 @@ DLG:Register("EPGP_NEW_VERSION", {
 
 DLG:Register("EPGP_NEW_TIER", {
   text = "|cFFFFFF00EPGP " .. EPGP.version .. "|r\n" ..
-    L["A new tier is here!  You should probably reset or rescale GP (Interface -> Options -> AddOns -> EPGP)!"], -- /script EPGP.db.profile.last_tier = nil
+    L["%s %s"]:format(L["A new tier is here!"], L["You should probably: increase standard_ilvl, reset or rescale GP."]) .. "\n" ..
+    string.format("(%s -> %s -> EPGP -> %s / %s)", _G.UIOPTIONS_MENU, _G.ADDONS, L["Gear Points"], L["Rescale GP"]), -- /script EPGP.db.profile.last_tier = nil
   icon = [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]],
   buttons = {
     {
