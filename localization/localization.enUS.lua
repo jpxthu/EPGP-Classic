@@ -41,6 +41,7 @@ L["Credit GP to %s"] = true
 L["Custom announce channel name"] = true
 L["Custom items list has been reseted."] = true
 L["Decay"] = true
+L["DECAY_P_DESC"] = "Decay percentage"
 L["Decay EP and GP by %d%%?"] = true
 L["Decay of EP/GP by %d%%"] = true
 L["Decay Percent should be a number between 0 and 100"] = true
@@ -61,6 +62,7 @@ L["Equation"] = true
 L["expected number"] = true
 L["Export"] = true
 L["Export Detail"] = true
+L["EXTRAS_P_DESC"] = "EP award percentage of standby members"
 L["Extras Percent should be a number between 0 and 100"] = true
 L["Gear Points"] = true
 L["Global configuration"] = true
@@ -107,6 +109,10 @@ L["on"] = true
 L["Only display GP values for items at or above this quality."] = true
 L["Open the configuration options"] = true
 L["Open the debug window"] = true
+L["OUTSIDERS_DESC"] = [=[1. Assume you have a raid member [A] and not in your guild.
+2. Choose or create an alt in guild -- any class, any name, any level. Assume [B].
+3. Set B's public guild note: \"ext:A-realm\". \"realm\" is A's realm name.
+4. EPGP will be recorded in B's (or B's main's) officer note."]=]
 L["Outsiders should be 0 or 1"] = true
 L["Paste import data here"] = true
 L["Personal Action Log"] = true
