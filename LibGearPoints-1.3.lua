@@ -1,7 +1,7 @@
 -- A library to compute Gear Points for items as described in
 
-local MAJOR_VERSION = "LibGearPoints-1.2"
-local MINOR_VERSION = 10200
+local MAJOR_VERSION = "LibGearPoints-1.3"
+local MINOR_VERSION = 10300
 
 local lib, oldMinor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
@@ -9,6 +9,61 @@ if not lib then return end
 local Debug = LibStub("LibDebug-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
 local LN = LibStub("LibLocalConstant-1.0")
+
+-- Return recommended parameters
+function lib:GetRecommendIlvlParams(version, levelCap)
+  -- 0.06973 is our coefficient so that ilvl 359 chests cost exactly
+  -- 1000gp.  In 4.2 and higher, we renormalize to make ilvl 378
+  -- chests cost 1000.  Repeat ad infinitum!
+  local standardIlvl
+  local standardIlvlLastTier
+  local standardIlvlNextTier
+  local ilvlDenominator = 26 -- how much ilevel difference from standard affects cost, higher values mean less effect
+  local version = version or select(4, GetBuildInfo())
+  local levelCap = levelCap or MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
+
+  if version <= 11303 then
+    standardIlvl = 66
+    standardIlvlLastTier = nil
+    standardIlvlNextTier = 76
+    ilvlDenominator = 10
+  elseif version < 20200 then
+    standardIlvl = 76
+    standardIlvlLastTier = 66
+    standardIlvlNextTier = 86
+    ilvlDenominator = 10
+  -- elseif version < 40200 then
+  --   standardIlvl = 359
+  -- elseif version < 40300 then
+  --   standardIlvl = 378
+  -- elseif version < 50200 then
+  --   standardIlvl = 496
+  -- elseif version < 50400 then
+  --   standardIlvl = 522
+  -- elseif version < 60000 or levelCap == 90 then
+  --   standardIlvl = 553
+  -- elseif version < 60200 then
+  --   standardIlvl = 680
+  --   ilvlDenominator = 30
+  -- elseif version < 70000 then
+  --   standardIlvl = 710 -- HFC HC
+  --   ilvlDenominator = 30
+  -- elseif version < 70200 then
+  --   standardIlvl = 890 -- The Nighthold HC
+  --   ilvlDenominator = 30
+  -- elseif version < 70300 then
+  --   standardIlvl = 915 -- Tomb of Sargeras HC
+  --   ilvlDenominator = 30
+  -- elseif version < 80000 then
+  --   standardIlvl = 945 -- Antorus, the Burning Throne HC
+  --   ilvlDenominator = 30
+  -- else
+  --   standardIlvl = 370 -- Uldir
+  --   ilvlDenominator = 32
+  end
+
+  return standardIlvl, standardIlvlLastTier, standardIlvlNextTier, ilvlDenominator
+end
 
 -- Used to display GP values directly on tier tokens; keys are itemIDs,
 -- values are:
@@ -21,8 +76,11 @@ local LN = LibStub("LibLocalConstant-1.0")
 -- 5. faction (Horde/Alliance), string
 local CUSTOM_ITEM_DATA = {
   -- Classic P2
+  [17204] = { 5, 80, "INVTYPE_2HWEAPON" },
   [18422] = { 4, 74, "INVTYPE_NECK", nil, "Horde" }, -- Head of Onyxia
   [18423] = { 4, 74, "INVTYPE_NECK", nil, "Alliance" }, -- Head of Onyxia
+  [18563] = { 5, 80, "INVTYPE_WEAPON" }, -- Legendary Sward
+  [18564] = { 5, 80, "INVTYPE_WEAPON" }, -- Legendary Sward
   [18646] = { 4, 75, "INVTYPE_2HWEAPON" }, -- The Eye of Divinity
   [18703] = { 4, 75, "INVTYPE_RANGED" }, -- Ancient Petrified Leaf
 
@@ -788,46 +846,6 @@ function lib:GetValue(item)
   -- local extra_gp = 0
   -- for _, value in pairs(itemBonuses) do
   --   extra_gp = extra_gp + (ITEM_BONUS_GP[value] or 0)
-  -- end
-
-  -- 0.06973 is our coefficient so that ilvl 359 chests cost exactly
-  -- 1000gp.  In 4.2 and higher, we renormalize to make ilvl 378
-  -- chests cost 1000.  Repeat ad infinitum!
-  -- local standard_ilvl
-  -- local ilvl_denominator = 26 -- how much ilevel difference from standard affects cost, higher values mean less effect
-  -- local version = select(4, GetBuildInfo())
-  -- local level_cap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
-  -- if version < 20200 then
-  --   standard_ilvl = 66
-  --   ilvl_denominator = 10
-  -- elseif version < 40200 then
-  --   standard_ilvl = 359
-  -- elseif version < 40300 then
-  --   standard_ilvl = 378
-  -- elseif version < 50200 then
-  --   standard_ilvl = 496
-  -- elseif version < 50400 then
-  --   standard_ilvl = 522
-  -- elseif version < 60000 or level_cap == 90 then
-  --   standard_ilvl = 553
-  -- elseif version < 60200 then
-  --   standard_ilvl = 680
-  --   ilvl_denominator = 30
-  -- elseif version < 70000 then
-  --   standard_ilvl = 710 -- HFC HC
-  --   ilvl_denominator = 30
-  -- elseif version < 70200 then
-  --   standard_ilvl = 890 -- The Nighthold HC
-  --   ilvl_denominator = 30
-  -- elseif version < 70300 then
-  --   standard_ilvl = 915 -- Tomb of Sargeras HC
-  --   ilvl_denominator = 30
-  -- elseif version < 80000 then
-  --   standard_ilvl = 945 -- Antorus, the Burning Throne HC
-  --   ilvl_denominator = 30
-  -- else
-  --   standard_ilvl = 370 -- Uldir
-  --   ilvl_denominator = 32
   -- end
 end
 

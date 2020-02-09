@@ -1,6 +1,6 @@
 local mod = EPGP:NewModule("optionsCustomItems")
 
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local GUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")
@@ -22,19 +22,6 @@ local addFrame
 local containerFrame
 local itemFrames = {}
 local itemIndex = {}
-
-function EPGP:SearchG(s, parent, pre, lvl)
-  if not parent then parent = _G end
-  if not pre then pre = "_G." end
-  if not lvl then lvl = 0 end
-  for i, v in pairs(parent) do
-    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
-      self:SearchG(s, v, pre .. i .. ".", lvl + 1)
-    elseif v == s then
-      print(pre .. i)
-    end
-  end
-end
 
 local columnWidth = {
   rarity      = 80,

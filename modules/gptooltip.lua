@@ -1,6 +1,6 @@
 local mod = EPGP:NewModule("gptooltip", "AceHook-3.0")
 
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LUI = LibStub("LibEPGPUI-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")

@@ -214,7 +214,7 @@ mod.optionsArgs = {
         name = L["Protect Time (sec)"],
         type = "range",
         min = 0,
-        max = 1800,
+        max = 18000,
         step = 1
       },
     },

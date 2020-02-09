@@ -7,13 +7,20 @@ if not lib then return end
 local BUTTON_HEIGHT = 22
 local BUTTON_TEXT_PADDING = 15
 
-function lib:CreateIconButton(name, parent, height, width, texture)
+function lib:CreateIconButton(name, parent, height, width, texture, heighlight, push)
   local button = CreateFrame("Button", name, parent)
   button:SetHeight(height)
   button:SetWidth(width)
-  button:SetHighlightTexture("Interface\\Buttons\\YellowOrange64_faded")
-  button:SetPushedTexture("Interface\\Buttons\\YELLOWORANGE64")
   button:SetAlpha(0.25)
+  if heighlight then
+    button:SetHighlightTexture(heighlight)
+    if push then
+      button:SetPushedTexture(push)
+    end
+  else
+    button:SetHighlightTexture("Interface\\Buttons\\YellowOrange64_faded")
+    button:SetPushedTexture("Interface\\Buttons\\YELLOWORANGE64")
+  end
 
   button.icon = parent:CreateTexture(nil, "BACKGROUND")
   button.icon:SetTexture(texture)
@@ -21,6 +28,18 @@ function lib:CreateIconButton(name, parent, height, width, texture)
   button.icon:SetAllPoints(button)
 
   return button
+end
+
+function lib:TextTooltipShow(self, text)
+  GameTooltip_SetDefaultAnchor(GameTooltip, self)
+  GameTooltip:AddLine(text)
+  GameTooltip:ClearAllPoints()
+  GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT")
+  GameTooltip:Show()
+end
+
+function lib:TextTooltipHide(self)
+  GameTooltip:Hide()
 end
 
 function lib:CreateTextButton(name, parent, text, disable)

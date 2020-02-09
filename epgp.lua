@@ -139,7 +139,7 @@ Debug:EnableDebugging()
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local GS = LibStub("LibGuildStorage-1.2")
 local DLG = LibStub("LibDialog-1.0")
-local GPLib = LibStub("LibGearPoints-1.2")
+local GPLib = LibStub("LibGearPoints-1.3")
 
 EPGP = LibStub("AceAddon-3.0"):NewAddon(
   "EPGP", "AceEvent-3.0", "AceConsole-3.0")
@@ -645,16 +645,19 @@ end
 function EPGP:ResetEPGP()
   assert(EPGP:CanResetEPGP())
 
+  local baseGP = EPGP:GetBaseGP()
+
   local zero_note = EncodeNote(0, 0)
   for name,_ in pairs(ep_data) do
     GS:SetNote(name, zero_note)
     local ep, gp, main = self:GetEPGP(name)
+    local actual_gp = gp - baseGP
     assert(main == nil, "Corrupt alt data!")
     if ep > 0 then
       callbacks:Fire("EPAward", name, "Reset", -ep, true)
     end
-    if gp > 0 then
-      callbacks:Fire("GPAward", name, "Reset", -gp, true)
+    if actual_gp > 0 then
+      callbacks:Fire("GPAward", name, "Reset", -actual_gp, true)
     end
   end
   callbacks:Fire("EPGPReset")
@@ -663,13 +666,15 @@ end
 function EPGP:ResetGP()
   assert(EPGP:CanResetEPGP())
 
+  local baseGP = EPGP:GetBaseGP()
+
   for i = 1, EPGP:GetNumMembers() do
-    m = EPGP:GetMember(i)
-    local ep, gp, main = EPGP:GetEPGP(m)
-    actual_gp = gp - EPGP:GetBaseGP()
+    local name = EPGP:GetMember(i)
+    local ep, gp, main = EPGP:GetEPGP(name)
+    local actual_gp = gp - baseGP
     if main == nil and actual_gp > 0 then
       local delta = -actual_gp
-      EPGP:IncGPBy(m, "GP Reset", delta, true, false)
+      EPGP:IncGPBy(name, "GP Reset", delta, true, false)
       if delta > 0 then
         callbacks:Fire("GPAward", name, "GP Reset", delta, true)
       end
@@ -678,30 +683,21 @@ function EPGP:ResetGP()
   callbacks:Fire("GPReset")
 end
 
-function EPGP:RescaleGP()
+function EPGP:RescaleGP(decay)
   assert(EPGP:CanResetEPGP())
 
-  for i = 1, EPGP:GetNumMembers() do
-    m = EPGP:GetMember(i)
-    local ep, gp, main = EPGP:GetEPGP(m)
-    actual_gp = gp - EPGP:GetBaseGP()
-    if main == nil and actual_gp > 0 then
-      local decay_ilvl
-      local ilvl_denominator = 26
-      local version = select(4, GetBuildInfo())
-      local level_cap = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
-      if version < 60000 or level_cap == 90 then
-        decay_ilvl = 26
-      elseif version < 60200 then
-        decay_ilvl = 10
-        ilvl_denominator = 30
-      else
-        decay_ilvl = 30
-        ilvl_denominator = 30
-      end
+  local decayIlvl = decay
+  local ilvlDenominator = EPGP:GetModule("points").db.profile.ilvlDenominator
+  local ratio = 2 ^ (-decayIlvl / ilvlDenominator) - 1
+  local baseGP = EPGP:GetBaseGP()
 
-      local delta = -(actual_gp - actual_gp / 2 ^ (decay_ilvl/ilvl_denominator))
-      EPGP:IncGPBy(m, "GP Rescale", delta, true, false)
+  for i = 1, EPGP:GetNumMembers() do
+    local name = EPGP:GetMember(i)
+    local ep, gp, main = EPGP:GetEPGP(name)
+    local actual_gp = gp - baseGP
+    if main == nil and actual_gp > 0 then
+      local delta = actual_gp * ratio
+      EPGP:IncGPBy(name, "GP Rescale", delta, true, false)
       if delta > 0 then
         callbacks:Fire("GPAward", name, "GP Decay", delta, true)
       end
@@ -1148,7 +1144,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
     end
   else
     local guild = GetGuildInfo("player") or ""
-    local realm = GetRealmName()
+    -- local realm = GetRealmName()
     if #guild == 0 then
       GuildRoster()
     else
@@ -1176,7 +1172,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
           EPGP:CancelRecurringEP()
         end
 
-        EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
+        -- EPGP:GetModule("points"):CheckGuildConfig(guild, realm)
         EPGP:ResumeBidResult()
       end
     end

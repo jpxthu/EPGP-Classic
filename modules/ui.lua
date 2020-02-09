@@ -3,7 +3,7 @@
 local mod = EPGP:NewModule("ui")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local GS = LibStub("LibGuildStorage-1.2")
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local DLG = LibStub("LibDialog-1.0")
 local GUI = LibStub("AceGUI-3.0")
 local LIU = LibStub("LibItemUtils-1.0")
@@ -1148,6 +1148,15 @@ local function AddCustomGuildInfoControls(frame)
       end
     end)
 
+  local outsidersTip = LUI:CreateIconButton(nil, frame, 32, 32,
+    "Interface\\COMMON\\help-i",
+    "Interface\\Calendar\\EventNotificationGlow")
+  outsidersTip:SetPoint("LEFT", outsidersOkayButton, "RIGHT", -5, 0)
+  outsidersTip:SetScript("OnEnter", function(self)
+    LUI:TextTooltipShow(self, L["OUTSIDERS_DESC"])
+  end)
+  outsidersTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
+
   -- DECAY_P
   local decayPLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
   decayPLabel:SetText("DECAY_P")
@@ -1178,6 +1187,15 @@ local function AddCustomGuildInfoControls(frame)
         decayPOkayButton:Disable()
       end
     end)
+
+  local decayPTip = LUI:CreateIconButton(nil, frame, 32, 32,
+    "Interface\\COMMON\\help-i",
+    "Interface\\Calendar\\EventNotificationGlow")
+  decayPTip:SetPoint("LEFT", decayPOkayButton, "RIGHT", -5, 0)
+  decayPTip:SetScript("OnEnter", function(self)
+    LUI:TextTooltipShow(self, L["DECAY_P_DESC"])
+  end)
+  decayPTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
 
   -- BASE_GP
   local baseGpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1271,6 +1289,15 @@ local function AddCustomGuildInfoControls(frame)
         extrasPOkayButton:Disable()
       end
     end)
+
+  local extrasPTip = LUI:CreateIconButton(nil, frame, 32, 32,
+    "Interface\\COMMON\\help-i",
+    "Interface\\Calendar\\EventNotificationGlow")
+  extrasPTip:SetPoint("LEFT", extrasPOkayButton, "RIGHT", -5, 0)
+  extrasPTip:SetScript("OnEnter", function(self)
+    LUI:TextTooltipShow(self, L["EXTRAS_P_DESC"])
+  end)
+  extrasPTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
 
   local editGuildInfoButton = LUI:CreateTextButton(nil, frame, L["Write into Guild Info"], true)
   editGuildInfoButton:SetPoint("LEFT")

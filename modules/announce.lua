@@ -2,7 +2,7 @@ local mod = EPGP:NewModule("announce")
 local AC = LibStub("AceComm-3.0")
 
 local Debug = LibStub("LibDebug-1.0")
-local GP = LibStub("LibGearPoints-1.2")
+local GP = LibStub("LibGearPoints-1.3")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 
 local SendChatMessage = _G.SendChatMessage

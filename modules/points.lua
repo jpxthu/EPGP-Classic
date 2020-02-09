@@ -1,5 +1,6 @@
 local mod = EPGP:NewModule("points")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local GP = LibStub("LibGearPoints-1.3")
 local LN = LibStub("LibLocalConstant-1.0")
 local Utils = LibStub("LibUtils-1.0")
 
@@ -110,9 +111,9 @@ mod.dbDefaults = {
   profile = profileDefault
 }
 
-local function HelpPlate(desc)
+local function HelpPlate(desc, order)
   help = {
-    order = 1,
+    order = order or 1,
     type = "description",
     name = desc,
     fontSize = "medium",
@@ -141,6 +142,25 @@ local function CommentPlate(index)
     order = index * 2 + 1,
   }
   return commentPlate
+end
+
+local function RecommendParamsString()
+  local s = ""
+  local standardIlvl, _, _, ilvlDenominator = GP:GetRecommendIlvlParams()
+
+  if standardIlvl then
+    s = s .. string.format("standard_ilvl = %d  ", standardIlvl)
+  end
+
+  if standardIlvl then
+    s = s .. string.format("ilvl_denominator = %d", ilvlDenominator)
+  end
+
+  if s ~= "" then
+    s = L["Recommend value in current tier:"] .. "\n" .. s
+  end
+
+  return s
 end
 
 mod.optionsName = L["Gear Points"]
@@ -191,6 +211,7 @@ mod.optionsArgs = {
         max = 10,
         step = 0.01,
       },
+      recommend = HelpPlate(RecommendParamsString(), 6)
     },
   },
 
@@ -651,9 +672,9 @@ local profileOOR = {
 }
 
 function mod:CheckGuildConfig(guild, realm)
-  if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
-    Utils:CopyTable(profileOOR, mod.db.profile)
-  end
+  -- if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
+  --   Utils:CopyTable(profileOOR, mod.db.profile)
+  -- end
 end
 
 function mod:OnInitialize()
