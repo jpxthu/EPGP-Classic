@@ -1,3 +1,8 @@
+### v1.4.2 (2020.2.11)
+
+- UI authority limitation
+- Change UI layout to avoid buttons overlap (#21)
+
 ### v1.4.1 (2020.2.9)
 
 - Add some popup tips to global vars (#18)
