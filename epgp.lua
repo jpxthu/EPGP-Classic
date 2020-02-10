@@ -1246,10 +1246,18 @@ function EPGP:OnEnable()
       UpdateFrame.GroupRosterUpdated = true
       UpdateFrame:SetScript("OnUpdate", UpdateFrameOnUpdate)
     end)
+
+  local canEditOfficerNoteStatus
   self:RegisterEvent("GUILD_ROSTER_UPDATE",
     function()
       UpdateFrame.GuildRosterUpdated = true
       UpdateFrame:SetScript("OnUpdate", UpdateFrameOnUpdate)
+
+      local temp = CanEditOfficerNote()
+      if temp ~= canEditOfficerNoteStatus then
+        self.callbacks:Fire("AuthorityChanged", temp)
+        canEditOfficerNoteStatus = temp
+      end
     end)
 
   GuildRoster()

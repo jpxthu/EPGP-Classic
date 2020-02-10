@@ -17,6 +17,23 @@ RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%d", "%(%%d+%)")
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$s", "%(%.%+%)") -- for "deDE"
 RANDOM_ROLL_PATTERN = RANDOM_ROLL_PATTERN:gsub("%%%d%$d", "%(%%d+%)") -- for "deDE"
 
+local function UISetEnabled(w, enabled)
+  if enabled then
+    w:Enable()
+    w:SetAlpha(1)
+  else
+    w:Disable()
+    w:SetAlpha(0.5)
+  end
+end
+
+local disableWhileNoAuthority = {}
+local function AuthorityChangedCallbackFunc(callback, authority)
+  for i, v in pairs(disableWhileNoAuthority) do
+    UISetEnabled(v, authority)
+  end
+end
+
 local function PrAnnouncement(sender)
   if not sender or sender == "" then return end
   local prAnnounceMedium = mod.db.profile.prAnnounceMedium
@@ -225,6 +242,8 @@ local function LootItemIconFrameOnLeaveFunc()
 end
 
 local function AddLootControlItems(frame, topItem, index)
+  local authority = CanEditOfficerNote()
+
   local f = CreateFrame("Frame", nil, frame)
   f:SetPoint("LEFT")
   f:SetPoint("RIGHT")
@@ -247,7 +266,7 @@ local function AddLootControlItems(frame, topItem, index)
   name:SetPoint("TOP")
   name:SetPoint("LEFT", icon, "RIGHT")
 
-  local needButton = CreateFrame("Button", "needButton", f)
+  local needButton = CreateFrame("Button", nil, f)
   needButton:SetNormalFontObject("GameFontNormalSmall")
   needButton:SetHighlightFontObject("GameFontHighlightSmall")
   needButton:SetDisabledFontObject("GameFontDisableSmall")
@@ -258,8 +277,10 @@ local function AddLootControlItems(frame, topItem, index)
   needButton:SetPushedTexture("Interface\\CURSOR\\OPENHAND")
   needButton:SetPoint("LEFT", icon, "RIGHT")
   needButton:SetPoint("BOTTOM")
+  UISetEnabled(needButton, authority)
+  table.insert(disableWhileNoAuthority, needButton)
 
-  local bidButton = CreateFrame("Button", "bidButton", f)
+  local bidButton = CreateFrame("Button", nil, f)
   bidButton:SetNormalFontObject("GameFontNormalSmall")
   bidButton:SetHighlightFontObject("GameFontHighlightSmall")
   bidButton:SetDisabledFontObject("GameFontDisableSmall")
@@ -270,8 +291,10 @@ local function AddLootControlItems(frame, topItem, index)
   bidButton:SetPushedTexture("Interface\\Buttons\\UI-GroupLoot-Coin-Down")
   bidButton:SetPoint("LEFT", needButton, "RIGHT")
   bidButton:SetPoint("BOTTOM", 0, -2)
+  UISetEnabled(bidButton, authority)
+  table.insert(disableWhileNoAuthority, bidButton)
 
-  local rollButton = CreateFrame("Button", "rollButton", f)
+  local rollButton = CreateFrame("Button", nil, f)
   rollButton:SetNormalFontObject("GameFontNormalSmall")
   rollButton:SetHighlightFontObject("GameFontHighlightSmall")
   rollButton:SetDisabledFontObject("GameFontDisableSmall")
@@ -282,8 +305,10 @@ local function AddLootControlItems(frame, topItem, index)
   rollButton:SetPushedTexture("Interface\\Buttons\\UI-GroupLoot-Dice-Down")
   rollButton:SetPoint("LEFT", bidButton, "RIGHT")
   rollButton:SetPoint("BOTTOM", 0, -1)
+  UISetEnabled(rollButton, authority)
+  table.insert(disableWhileNoAuthority, rollButton)
 
-  local bankButton = CreateFrame("Button", "bankButton", f)
+  local bankButton = CreateFrame("Button", nil, f)
   bankButton:SetNormalFontObject("GameFontNormalSmall")
   bankButton:SetHighlightFontObject("GameFontHighlightSmall")
   bankButton:SetDisabledFontObject("GameFontDisableSmall")
@@ -294,8 +319,10 @@ local function AddLootControlItems(frame, topItem, index)
   bankButton:SetPushedTexture("Interface\\MINIMAP\\Minimap_chest_normal")
   bankButton:SetPoint("LEFT", rollButton, "RIGHT")
   bankButton:SetPoint("BOTTOM", 0, -1)
+  UISetEnabled(bankButton, authority)
+  table.insert(disableWhileNoAuthority, bankButton)
 
-  local removeButton = CreateFrame("Button", "removeButton", f)
+  local removeButton = CreateFrame("Button", nil, f)
   removeButton:SetNormalFontObject("GameFontNormalSmall")
   removeButton:SetHighlightFontObject("GameFontHighlightSmall")
   removeButton:SetDisabledFontObject("GameFontDisableSmall")
@@ -306,6 +333,7 @@ local function AddLootControlItems(frame, topItem, index)
   removeButton:SetPushedTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Down")
   removeButton:SetPoint("LEFT", bankButton, "RIGHT")
   removeButton:SetPoint("BOTTOM")
+  removeButton:Enable()
 
   f.index = index
   f.icon = icon
@@ -638,6 +666,7 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
+  EPGP.RegisterCallback(self, "AuthorityChanged", AuthorityChangedCallbackFunc)
   EPGP.RegisterCallback(self, "BidStatusUpdate", HandleBidStatusUpdate)
   EPGP.RegisterCallback(self, "CorpseLootReceived", CorpseLootReceivedHandler)
   EPGP.RegisterCallback(self, "LootWindow", LootWindowHandler)
