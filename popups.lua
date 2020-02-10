@@ -332,8 +332,8 @@ DLG:Register("EPGP_NEW_TIER", {
 
 DLG:Register("EPGP_SETTINGS_RECEIVED", {
   on_show = function(self, data)
-    local t = "Received EPGP settings synced from \"%s\". Override local settings?\nClick \"%s\" to accept settings from \"%s\" without asking."
-    t = format(t, data, "Trust", data)
+    local t = L["SETTINGS_RECEIVED_POPUP_TEXT"]
+    t = format(t, data, L["Trust"], data)
     self.text:SetText(t)
   end,
   buttons = {
@@ -348,7 +348,7 @@ DLG:Register("EPGP_SETTINGS_RECEIVED", {
       end,
     },
     {
-      text = "Trust",
+      text = L["Trust"],
       on_click = function(self, data)
         local mod = EPGP:GetModule("sync")
         mod:AcceptSettings(data)
