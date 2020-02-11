@@ -978,10 +978,13 @@ local function AddEPControls(frame, withRecurring)
     if (not withRecurring or UnitInRaid("player")) and
        EPGP:CanIncEPBy(reason, amount) then
       self:Enable()
+      self:SetAlpha(1)
     else
       self:Disable()
+      self:SetAlpha(self.disabledAlpha)
     end
   end
+  button.disabledAlpha = 1
   button:SetScript("OnUpdate", EnabledStatus)
 
   if withRecurring then
@@ -991,6 +994,7 @@ local function AddEPControls(frame, withRecurring)
     recurring:SetHeight(20)
     recurring:SetPoint("TOP", editBox, "BOTTOM")
     recurring:SetPoint("LEFT")
+    recurring.disabledAlpha = 0.5
     recurring:SetScript(
       "OnUpdate",
       function (self)
