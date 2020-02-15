@@ -22,7 +22,7 @@ function lib:GetRecommendIlvlParams(version, levelCap)
   local version = version or select(4, GetBuildInfo())
   local levelCap = levelCap or MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
 
-  if version <= 11303 then
+  if version < 11303 then
     standardIlvl = 66
     standardIlvlLastTier = nil
     standardIlvlNextTier = 76

@@ -691,34 +691,45 @@ function mod:FillFrame(f, parent)
   end
 end
 
-local function UpdateItemIconLinkOne(id)
-  local item = EPGP.db.profile.customItems[id]
-  if not item.texture then
-    local _, itemLink, _, _, _, _, _, _, _, itemTexture = GetItemInfo(id)
-    if itemLink then
-      item.link = itemLink
-      item.texture = itemTexture
-    elseif not item.link then
-      item.link = id
-      return false
-    end
+local function UpdateItemIconLinkOne(item, id)
+  local _, itemLink, _, _, _, _, _, _, _, itemTexture = GetItemInfo(id)
+  if itemLink then
+    item.link = itemLink
+    item.texture = itemTexture
+    return true
+  elseif not item.link then
+    item.link = id
+    return false
   end
-  return true
+end
+
+local function EmptyFunc()
 end
 
 local function UpdateItemIconLink()
   local customItems = EPGP.db.profile.customItems
-  local lastUnupgradedId = nil
+  local needUpgradeIds = {}
+  local updated = false
   for id, v in pairs(customItems) do
-    if not UpdateItemIconLinkOne(id) then
-      lastUnupgradedId = id
+    if not v.texture then
+      if UpdateItemIconLinkOne(v, id) then
+        updated = true
+      else
+        table.insert(needUpgradeIds, id)
+      end
     end
   end
-  if lastUnupgradedId then
-    LIU:CacheItem(lastUnupgradedId, UpdateItemIconLink)
-    if containerFrame and containerFrame:IsShown() then
-      UpdateFrame()
+
+  if updated and containerFrame and containerFrame:IsShown() then
+    UpdateFrame()
+  end
+
+  local count = #needUpgradeIds
+  if count > 0 then
+    for i = 1, count - 1 do
+      LIU:CacheItem(needUpgradeIds[i], EmptyFunc)
     end
+    LIU:CacheItem(needUpgradeIds[count], UpdateItemIconLink)
   end
 end
 

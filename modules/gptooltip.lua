@@ -7,6 +7,7 @@ local ItemUtils = LibStub("LibItemUtils-1.0")
 
 function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
+  if not itemlink then return end
   local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
 
   if mod.db.profile.ilvl then

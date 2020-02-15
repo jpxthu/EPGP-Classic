@@ -675,18 +675,17 @@ function EPGP:ResetGP()
     if main == nil and actual_gp > 0 then
       local delta = -actual_gp
       EPGP:IncGPBy(name, "GP Reset", delta, true, false)
-      if delta > 0 then
-        callbacks:Fire("GPAward", name, "GP Reset", delta, true)
-      end
     end
   end
   callbacks:Fire("GPReset")
 end
 
 function EPGP:RescaleGP(decay)
+  if not decay then return end
+  local decayIlvl = tonumber(decay)
+  if not decayIlvl then return end
   assert(EPGP:CanResetEPGP())
 
-  local decayIlvl = decay
   local ilvlDenominator = EPGP:GetModule("points").db.profile.ilvlDenominator
   local ratio = 2 ^ (-decayIlvl / ilvlDenominator) - 1
   local baseGP = EPGP:GetBaseGP()
@@ -698,12 +697,31 @@ function EPGP:RescaleGP(decay)
     if main == nil and actual_gp > 0 then
       local delta = actual_gp * ratio
       EPGP:IncGPBy(name, "GP Rescale", delta, true, false)
-      if delta > 0 then
-        callbacks:Fire("GPAward", name, "GP Decay", delta, true)
-      end
     end
   end
   callbacks:Fire("GPRescale")
+end
+
+function EPGP:AdjustGP(value)
+  if not value then return end
+  local v = tonumber(value)
+  if not v or v == 0 then return end
+  assert(EPGP:CanResetEPGP())
+
+  local baseGP = EPGP:GetBaseGP()
+
+  for i = 1, EPGP:GetNumMembers() do
+    local name = EPGP:GetMember(i)
+    local ep, gp, main = EPGP:GetEPGP(name)
+    local actual_gp = gp - baseGP
+    if main == nil then
+      local delta = math.max(v, -actual_gp)
+      if delta ~= 0 then
+        EPGP:IncGPBy(name, "GP Adjust", delta, true, false)
+      end
+    end
+  end
+  callbacks:Fire("GPAdjust")
 end
 
 function EPGP:CanDecayEPGP()
