@@ -88,6 +88,28 @@ mod.optionsArgs = {
     name = L["Reset GP"],
     func = function() DLG:Spawn("EPGP_RESET_GP") end,
   },
+
+  adjustGpHeader = {
+    order = 21,
+    type = "header",
+    name = L["Mass Adjust GP"],
+  },
+  adjustGpHelp = HelpPlate(L["MASS_ADJUST_GP_DESC"], 22),
+  adjustGpValue = {
+    order = 23,
+    type = "input",
+    name = L["Value"],
+    pattern = "^-?[1-9]%d*$",
+    usage = L["should be a none-zero integer"],
+  },
+  adjustGpButton = {
+    order = 24,
+    type = "execute",
+    name = L["Mass Adjust GP"],
+    func = function()
+      DLG:Spawn("EPGP_MASS_ADJUST_GP", mod.db.profile.adjustGpValue)
+    end,
+  },
 }
 
 function mod:OnInitialize()

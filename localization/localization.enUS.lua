@@ -3,6 +3,7 @@ if not L then return end
 
 L["Accepting settings from [%s]..."] = true
 L["Add loot items automatically when loot windows opened or corpse loot received."] = true
+L["Adjust all main toons' GP?"] = true
 L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."] = true
 L["Allow whisper for others"] = true
 L["Alts"] = true
@@ -93,6 +94,8 @@ L["Loot list is full (%d). %s will not be added into list."] = true
 L["Loot tracking threshold"] = true
 L["Main"] = true
 L["Make sure you are the only person changing EP and GP. If you have multiple people changing EP and GP at the same time, for example one awarding EP and another crediting GP, you *are* going to have data loss."] = true
+L["MASS_ADJUST_GP_DESC"] = "Adjust GP of all members of the guild. Add or reduce GP for everyone. You may need to do this before transfer from CEPGP."
+L["Mass Adjust GP"] = true
 L["Mass EP Award"] = true
 L["Message announced when you start a need/greed bid."] = true
 L["Min EP should be a positive number (>= 0)"] = true
@@ -166,6 +169,7 @@ L["[%s] has been added into trust list."] = true
 L["[%s] has been updated."] = true
 L["Show everyone"] = true
 L["Show item level"] = true
+L["should be a none-zero integer"] = true
 L["should be a positive integer"] = true
 L["'%s' - Invalid Keybinding."] = true
 L["%s is added to the award list"] = true

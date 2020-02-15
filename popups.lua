@@ -183,7 +183,33 @@ DLG:Register("EPGP_RESCALE_GP", {
     },
   },
   on_show = function(self, data)
-    self.text:SetFormattedText(L["Re-scale all main toons' GP to current tier?"] .. "(+%d)", data)
+    self.text:SetFormattedText(L["Re-scale all main toons' GP to current tier?"] .. " (+%d)", data)
+  end,
+  on_update = function(self, elapsed)
+    if EPGP:CanResetEPGP() then
+      self.buttons[1]:Enable()
+    else
+      self.buttons[1]:Disable()
+    end
+  end,
+  hide_on_escape = true,
+  show_while_dead = true,
+})
+
+DLG:Register("EPGP_MASS_ADJUST_GP", {
+  buttons = {
+    {
+      text = _G.ACCEPT,
+      on_click = function(self, data, reason)
+        EPGP:AdjustGP(data)
+      end,
+    },
+    {
+      text = _G.CANCEL,
+    },
+  },
+  on_show = function(self, data)
+    self.text:SetFormattedText(L["Adjust all main toons' GP?"] .. " (%d)", data)
   end,
   on_update = function(self, elapsed)
     if EPGP:CanResetEPGP() then
