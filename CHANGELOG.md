@@ -1,3 +1,10 @@
+### v1.4.3 (2020.2.15)
+
+- Mass adjust GP
+- Update standard ilvl of Phase 3
+- Custom items UI improvement
+- Bug fix
+
 ### v1.4.2 (2020.2.11)
 
 - UI authority limitation
