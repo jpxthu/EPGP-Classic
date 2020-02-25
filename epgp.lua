@@ -695,7 +695,7 @@ function EPGP:RescaleGP(decay)
     local ep, gp, main = EPGP:GetEPGP(name)
     local actual_gp = gp - baseGP
     if main == nil and actual_gp > 0 then
-      local delta = actual_gp * ratio
+      local delta = math.ceil(actual_gp * ratio)
       EPGP:IncGPBy(name, "GP Rescale", delta, true, false)
     end
   end
