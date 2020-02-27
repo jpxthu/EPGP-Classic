@@ -5,6 +5,18 @@ local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LUI = LibStub("LibEPGPUI-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
 
+local function TooltipAddGpLine(tooltip, i, gp, c)
+  if not gp then return false end
+  local c = c or ""
+  if gp == 0 and c == "" then return false end
+  local s = ("GP%d: %d"):format(i, gp)
+  if c ~= "" then
+    s = s .. " (" .. c .. ")"
+  end
+  tooltip:AddLine(s, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+  return true
+end
+
 function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
   if not itemlink then return end
@@ -17,18 +29,9 @@ function OnTooltipSetItem(tooltip, ...)
     end
   end
 
-  if not gp1 then return end
-  tooltip:AddLine(
-    ("GP1: %d (%s)"):format(gp1, c1),
-    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
-  if not gp2 then return end
-  tooltip:AddLine(
-    ("GP2: %d (%s)"):format(gp2, c2),
-    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
-  if not gp3 then return end
-  tooltip:AddLine(
-    ("GP3: %d (%s)"):format(gp3, c3),
-    NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+  if not TooltipAddGpLine(tooltip, 1, gp1, c1) then return end
+  if not TooltipAddGpLine(tooltip, 2, gp2, c2) then return end
+  if not TooltipAddGpLine(tooltip, 3, gp3, c3) then return end
 end
 
 mod.dbDefaults = {
