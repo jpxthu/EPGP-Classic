@@ -1664,6 +1664,7 @@ local function CreateEPGPLootFrame()
         f:SetWidth(itemFrame:GetWidth() + 30)
         f:SetHeight(itemFrame:GetHeight() + 30)
       end
+      itemFrame.autoPop:OnShow()
     end)
 end
 
@@ -2083,6 +2084,14 @@ local function CreateEPGPFrameStandings()
       FauxScrollFrame_OnVerticalScroll(
         self, value, rowFrame.rowHeight, UpdateStandings)
     end)
+end
+
+function EPGP:ShowDistrubutionFrame()
+  if not EPGPFrame then return end
+  if not EPGPFrame:IsShown() then
+    ShowUIPanel(EPGPFrame)
+  end
+  ToggleOnlySideFrame(EPGPLootFrame)
 end
 
 local function OnEvent(self, event, ...)

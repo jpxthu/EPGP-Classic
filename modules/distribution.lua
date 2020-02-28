@@ -400,13 +400,6 @@ end
 
 local function LootItemsAdd(itemLink)
   if not itemLink or itemLink == "" then return end
-  local itemId = LIU:ItemlinkToID(itemLink)
-  local itemRarity = select(3, GetItemInfo(itemLink))
-  if not EPGP.db.profile.customItems[itemId] and
-     itemRarity and
-     itemRarity < mod.db.profile.threshold then
-    return
-  end
 
   if lootItem.linkMap[itemLink] then return end
   if lootItem.count >= lootItem.MAX_COUNT then
@@ -483,27 +476,68 @@ local function LootItemBankButtonOnClick(bt)
   LootItemRemoveButtonOnClick(bt)
 end
 
+local function ItemPassRarityThreshold(itemLink)
+  if not itemLink then return false end
+
+  local itemId = LIU:ItemlinkToID(itemLink)
+  if not itemId then return false end
+  if EPGP.db.profile.customItems[itemId] then return true end
+
+  local itemRarity = select(3, GetItemInfo(itemLink))
+  if not itemRarity then return false end
+  if itemRarity < mod.db.profile.threshold then return false end
+
+  return true
+end
+
 local function CorpseLootReceivedHandler(event, itemLink)
   if not EPGP:IsRLorML() then return end
   if not itemLink or itemLink == "" then return end
+  if not ItemPassRarityThreshold(itemLink) then return end
   LootItemsAdd(itemLink)
 end
 
 local function LootWindowHandler(event, loots)
   if not EPGP:IsRLorML() then return end
   if not loots then return end
+  local added = false
   for i, itemLink in pairs(loots) do
-    LootItemsAdd(itemLink)
+    if ItemPassRarityThreshold(itemLink) then
+      LootItemsAdd(itemLink)
+      added = true
+    end
+  end
+  if added and mod.db.profile.autoPop then
+    EPGP:ShowDistrubutionFrame()
   end
 end
 
 function mod:FillFrame(frame)
   lootItem.frame = frame
 
+  local autoPop = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+  autoPop:SetWidth(20)
+  autoPop:SetHeight(20)
+  autoPop:SetPoint("TOPLEFT")
+  autoPop.OnShow =
+    function(w)
+      w:SetChecked(mod.db.profile.autoPop or false)
+    end
+  autoPop:SetScript(
+    "OnClick",
+    function(w)
+      mod.db.profile.autoPop = w:GetChecked()
+    end)
+  frame.autoPop = autoPop
+
+  local autoPopLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  autoPopLabel:SetText(L["Auto popup"])
+  autoPopLabel:SetPoint("LEFT", autoPop, "RIGHT", 0, 2)
+
   local dropDown = GUI:Create("Dropdown")
   dropDown:SetWidth(150)
   dropDown.frame:SetParent(frame)
-  dropDown:SetPoint("TOPLEFT")
+  dropDown:SetPoint("TOPLEFT", autoPop, "BOTTOMLEFT")
   dropDown.text:SetJustifyH("LEFT")
   dropDown:SetCallback(
     "OnValueChanged",
@@ -654,6 +688,7 @@ function mod:FillFrame(frame)
     dropDown.frame:GetWidth() + addButton:GetWidth() + 15,
     clearButton:GetWidth() + resetButton:GetWidth() + announceButton:GetWidth() + nextPageButton:GetWidth() * 2))
   frame:SetHeight(
+    autoPop:GetHeight() +
     math.max(dropDown.frame:GetHeight(), addButton:GetHeight()) +
     clearButton:GetHeight() +
     frame.items[1]:GetHeight() * lootItem.ITEMS_PER_PAGE)
