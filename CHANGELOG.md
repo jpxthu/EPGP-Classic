@@ -1,3 +1,10 @@
+### v1.4.4 (2020.2.29)
+
+- Auto popup distribution frame when looting
+- Items with 0 scale and blank comment won't display
+- Export detail log
+- Bug fix
+
 ### v1.4.3 (2020.2.15)
 
 - Mass adjust GP

@@ -52,6 +52,7 @@ L["Announce when someone in your raid wins something good with bonus roll"] = "�
 L["Announce when:"] = "何时通告："
 L["Announcement of EPGP actions"] = "EPGP 操作通告"
 L["Announces EPGP actions to the specified medium."] = "通告 EPGP 操作至指定媒介。"
+L["Auto popup"] = "自动弹出"
 L["Automatic boss tracking"] = "自动追踪首领"
 L["Automatic boss tracking by means of a popup to mass award EP to the raid and standby when a boss is killed."] = "自动追踪首领，在击杀首领后弹窗群体奖励 EP 给团队成员及待命人员。"
 L["Automatic handling of the standby list through whispers when in raid. When this is enabled, the standby list is cleared after each reward."] = "团队活动中通过密语自动处理待命名单。如启用，每次奖励后待命名单将被清空。"

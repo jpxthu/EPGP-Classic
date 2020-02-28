@@ -255,10 +255,38 @@ function mod:Export()
 end
 
 function mod:ExportDetail()
+  local base_gp = EPGP:GetBaseGP()
+
   local l = ""
+  l = l .. "#\ttimestamp\t" .. tostring(GetTimestamp()) .. "\n"
+  l = l .. "#\tversion\t" .. EPGP.version .. "\n"
+  l = l .. "#\tinterface\t" .. tostring(select(4, GetBuildInfo())) .. "\n\n"
+
+  l = l .. "#\tregion\t" .. GetRegion() .. "\n"
+  l = l .. "#\trealm\t" .. GetRealmName() .. "\n"
+  l = l .. "#\tguild\t" .. select(1, GetGuildInfo("player")) .. "\n"
+  l = l .. "#\tbase_gp\t" .. base_gp .. "\n"
+  l = l .. "#\tmin_ep\t" .. EPGP:GetMinEP() .. "\n"
+  l = l .. "#\tdecay_p\t" .. EPGP:GetDecayPercent() .. "\n"
+  l = l .. "#\textras_p\t" .. EPGP:GetExtrasPercent() .. "\n"
+  l = l .. "#\toutsiders\t" .. EPGP:GetOutdisers() .. "\n\n"
+
+  l = l .. "#\troster\tname,ep,gp,class\n"
+  local roster = EPGP:ExportRosterDetail()
+  for i, v in pairs(roster) do
+    local name, ep, gp, class = unpack(v)
+    l = l .. string.format("%s\t%d\t%d\t%s\n", name, ep, gp, class)
+  end
+
+  l = l .. "\n#\tlog\ttimestamp,type,name,reason,value\n"
   for i, record in ipairs(self.db.profile.log) do
     local timestamp, kind, name, reason, amount = unpack(record)
-    l = l .. tostring(timestamp) .. "\t" .. tostring(kind) .. "\t" .. tostring(name) .. "\t" .. tostring(reason) .. "\t" .. tostring(amount) .. "\n"
+    local str = string.format("%d\t%s\t%s\t%s\t%s",
+      timestamp, kind, name, reason, tostring(amount))
+    if string.match(reason, "item[%-?%d:]+") then
+      str = str .. "\t" .. string.gsub(reason, "|", "||")
+    end
+    l = l .. str .. "\n"
   end
 
   return l

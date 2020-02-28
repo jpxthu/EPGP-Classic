@@ -476,6 +476,19 @@ function EPGP:ExportRoster()
   return t
 end
 
+function EPGP:ExportRosterDetail()
+  local base_gp = self.db.profile.base_gp
+  local t = {}
+  for name,_ in pairs(ep_data) do
+    local ep, gp, main = self:GetEPGP(name)
+    if ep ~= 0 or gp ~= base_gp then
+      local class = EPGP:GetClass(name)
+      table.insert(t, {name, ep, gp, class})
+    end
+  end
+  return t
+end
+
 function EPGP:ImportRoster(t, new_base_gp)
   -- This ugly hack is because EncodeNote reads base_gp to encode the
   -- GP properly. So we reset it to what we get passed, and then we
@@ -695,7 +708,7 @@ function EPGP:RescaleGP(decay)
     local ep, gp, main = EPGP:GetEPGP(name)
     local actual_gp = gp - baseGP
     if main == nil and actual_gp > 0 then
-      local delta = actual_gp * ratio
+      local delta = math.ceil(actual_gp * ratio)
       EPGP:IncGPBy(name, "GP Rescale", delta, true, false)
     end
   end

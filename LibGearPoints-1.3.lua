@@ -889,13 +889,16 @@ local switchEquipLoc = {
 
 function lib:GetScale(equipLoc, subClass)
   local name = switchEquipLoc[equipLoc] or switchRanged[subClass]
-  local vars = EPGP:GetModule("points").db.profile
   if name then
-    return vars[name .. "Scale1"], vars[name .. "Comment1"],
-           vars[name .. "Scale2"], vars[name .. "Comment2"],
-           vars[name .. "Scale3"], vars[name .. "Comment3"]
+    local vars = EPGP:GetModule("points").db.profile
+    local s1 = vars[name .. "Scale1"] or 0; local c1 = vars[name .. "Comment1"] or ""
+    local s2 = vars[name .. "Scale2"] or 0; local c2 = vars[name .. "Comment2"] or ""
+    local s3 = vars[name .. "Scale3"] or 0; local c3 = vars[name .. "Comment3"] or ""
+    if s1 == 0 and c1 == "" then s1 = nil; c1 = nil; end
+    if s2 == 0 and c2 == "" then s2 = nil; c2 = nil; end
+    if s3 == 0 and c3 == "" then s3 = nil; c3 = nil; end
+    return s1, c1, s2, c2, s3, c3
   end
-  return
 end
 
 function lib:CalculateGPFromScale(s1, s2, s3, ilvl, rarity)
