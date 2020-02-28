@@ -47,7 +47,8 @@
 - [ ] Loot
   - [x] "HandleLootWindow" (#6)
   - [x] Loot, bid, roll (#6)
-  - [ ] Sync status
+  - [x] Sync status (#17)
+  - [x] Auto popup when looting (#27)
   - [ ] One-key distribution (GiveMasterLoot)
 - [x] Set frame movable (#3)
 - [x] Title and version on main GUI (#2)
