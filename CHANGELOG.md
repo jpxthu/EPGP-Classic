@@ -1,3 +1,7 @@
+### v1.4.5 (2020.3.15)
+
+- Detail log adjust for new online EPGP system
+
 ### v1.4.4 (2020.2.29)
 
 - Auto popup distribution frame when looting
