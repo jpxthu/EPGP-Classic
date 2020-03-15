@@ -483,7 +483,7 @@ function EPGP:ExportRosterDetail()
     local ep, gp, main = self:GetEPGP(name)
     if ep ~= 0 or gp ~= base_gp then
       local class = EPGP:GetClass(name)
-      table.insert(t, {name, ep, gp, class})
+      table.insert(t, {name, ep, gp - base_gp, class})
     end
   end
   return t

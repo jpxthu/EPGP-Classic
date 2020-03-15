@@ -215,7 +215,8 @@ local function CreateEPGPExportImportFrame()
                                function (self) self:GetParent():Hide() end)
         self.editbox:SetScript("OnTextChanged", nil)
       elseif self.exportDetail then
-        self.help:SetText("This is just for test now. You can export this to TSV.")
+        self.help:SetText(L["EXPORT_DETAIL_DESC"] .. "\n" ..
+                          "https://epgp.dj173.com - " .. _G.ZHCN .. " - " .. L["Web & WeChat Mini Program"])
         self.button1:Show()
         self.button1:SetText(CLOSE)
         self.button1:SetPoint("CENTER", self, "CENTER")
@@ -1807,7 +1808,7 @@ local function CreateEPGPFrameStandings()
   log:SetDisabledFontObject("GameFontDisableSmall")
   log:SetHeight(BUTTON_HEIGHT)
   log:SetPoint("BOTTOMRIGHT")
-  log:SetText(GUILD_BANK_LOG)
+  log:SetText(L["Logs"])
   log:SetWidth(log:GetTextWidth() + BUTTON_TEXT_PADDING)
   log:SetScript(
     "OnClick",
