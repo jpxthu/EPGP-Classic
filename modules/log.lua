@@ -259,7 +259,8 @@ function mod:ExportDetail()
 
   local l = ""
   l = l .. "#\ttimestamp\t" .. tostring(GetTimestamp()) .. "\n"
-  l = l .. "#\tversion\t" .. EPGP.version .. "\n"
+  l = l .. "#\tversion\t" .. "v1.0" .. "\n"
+  l = l .. "#\taddon\t" .. EPGP.version .. "\n"
   l = l .. "#\tinterface\t" .. tostring(select(4, GetBuildInfo())) .. "\n\n"
 
   l = l .. "#\tregion\t" .. GetRegion() .. "\n"
