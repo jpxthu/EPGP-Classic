@@ -136,6 +136,7 @@
 
 local Debug = LibStub("LibDebug-1.0")
 Debug:EnableDebugging()
+local ItemUtils = LibStub("LibItemUtils-1.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local GS = LibStub("LibGuildStorage-1.2")
 local DLG = LibStub("LibDialog-1.0")
@@ -853,6 +854,9 @@ function EPGP:IncGPBy(name, reason, amount, mass, undo)
     callbacks:Fire("GPAward", name, reason, amount, mass, undo)
   end
 
+  if not ItemUtils:ItemlinkToID(reason) then
+    self.db.profile.last_awards[reason] = amount
+  end
   return main or name
 end
 

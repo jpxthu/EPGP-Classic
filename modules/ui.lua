@@ -614,10 +614,15 @@ local function CreateEPGPLogFrame()
   EPGP:GetModule("log"):RegisterCallback("LogChanged", LogChanged)
 end
 
-function EPGP:ItemCacheDropDown_SetList(dropDown)
+function EPGP:ItemCacheDropDown_SetList(dropDown, extra)
   local list = {}
   for i=1,GP:GetNumRecentItems() do
     tinsert(list, GP:GetRecentItemLink(i))
+  end
+  if extra then
+    for i = 1, #extra do
+      table.insert(list, extra[i])
+    end
   end
   local empty = #list == 0
   if empty then list[1] = EMPTY end
@@ -665,6 +670,28 @@ local function AddGPControls(frame)
     function(self, event, ...)
       local parent = self.frame:GetParent()
       local itemLink = self.text:GetText()
+
+      if itemLink == OTHER then
+        parent.otherLabel:SetAlpha(1)
+        parent.otherEditBox:SetAlpha(1)
+        -- parent.otherEditBox:EnableKeyboard(true)
+        -- parent.otherEditBox:EnableMouse(true)
+        parent.otherEditBox:SetFocus()
+        reason = parent.otherEditBox:GetText()
+        local last_award = EPGP.db.profile.last_awards[reason]
+        if last_award then
+          parent.editBox:SetText(last_award)
+        end
+
+        return
+      end
+
+      parent.otherLabel:SetAlpha(0.25)
+      parent.otherEditBox:SetAlpha(0.25)
+      -- parent.otherEditBox:EnableKeyboard(false)
+      -- parent.otherEditBox:EnableMouse(false)
+      parent.otherEditBox:ClearFocus()
+
       if itemLink and itemLink ~= "" then
         gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemLink)
         if gp1 then
@@ -688,10 +715,11 @@ local function AddGPControls(frame)
         parent.editBox:HighlightText()
       end
     end)
+
   dropDown.button:HookScript(
     "OnMouseDown",
     function(self)
-      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
+      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj, {OTHER}) end
     end)
   dropDown.button:HookScript(
     "OnClick",
@@ -699,26 +727,50 @@ local function AddGPControls(frame)
       if self.obj.open then self.obj.pullout:SetWidth(285) end
     end)
   dropDown.button_cover:HookScript(
-          "OnMouseDown",
-          function(self)
-            if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj) end
-          end)
+    "OnMouseDown",
+    function(self)
+      if not self.obj.open then EPGP:ItemCacheDropDown_SetList(self.obj, {OTHER}) end
+    end)
   dropDown.button_cover:HookScript(
-          "OnClick",
-          function(self)
-            if self.obj.open then self.obj.pullout:SetWidth(285) end
-          end)
+    "OnClick",
+    function(self)
+      if self.obj.open then self.obj.pullout:SetWidth(285) end
+    end)
   dropDown:SetCallback(
     "OnEnter",
     function(self)
       local itemLink = self.text:GetText()
-      if itemLink then
+      if itemLink and itemLink ~= OTHER then
         local anchor = self.open and self.pullout.frame or self.frame:GetParent()
         GameTooltip:SetOwner(anchor, "ANCHOR_RIGHT", 5)
         GameTooltip:SetHyperlink(itemLink)
       end
     end)
   dropDown:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+
+  local otherLabel =
+    frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  otherLabel:SetText(OTHER)
+  otherLabel:SetPoint("LEFT")
+  otherLabel:SetPoint("TOP", dropDown.frame, "BOTTOM", 0, -2)
+
+  local otherEditBox = CreateFrame("EditBox", "$parentEPControlOtherEditBox",
+                                   frame, "InputBoxTemplate")
+  otherEditBox:SetFontObject("GameFontHighlightSmall")
+  otherEditBox:SetHeight(24)
+  otherEditBox:SetAutoFocus(false)
+  otherEditBox:SetPoint("LEFT", 25, 0)
+  otherEditBox:SetPoint("RIGHT", dropDown.frame, "RIGHT")
+  otherEditBox:SetPoint("TOP", otherLabel, "BOTTOM")
+  otherEditBox:SetScript(
+    "OnTextChanged",
+    function(self)
+      local last_award =
+        EPGP.db.profile.last_awards[self:GetText()]
+      if last_award then
+        frame.editBox:SetText(last_award)
+      end
+    end)
 
   local gpButton1 = CreateFrame("Button", "gpButton1", frame, "UIPanelButtonTemplate")
   gpButton1:SetNormalFontObject("GameFontNormalSmall")
@@ -727,8 +779,8 @@ local function AddGPControls(frame)
   gpButton1:SetHeight(BUTTON_HEIGHT)
   gpButton1:SetText("GP1:")
   gpButton1:SetWidth(gpButton1:GetTextWidth() + BUTTON_TEXT_PADDING)
-  gpButton1:SetPoint("TOP", dropDown.frame, "BOTTOM", 0, -2)
-  gpButton1:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton1:SetPoint("TOP", otherEditBox, "BOTTOM")
+  gpButton1:SetPoint("LEFT", 15, 0)
   gpButton1:Disable()
 
   local gpButton2 = CreateFrame("Button", "gpButton2", frame, "UIPanelButtonTemplate")
@@ -739,7 +791,7 @@ local function AddGPControls(frame)
   gpButton2:SetText("GP2:")
   gpButton2:SetWidth(gpButton2:GetTextWidth() + BUTTON_TEXT_PADDING)
   gpButton2:SetPoint("TOP", gpButton1, "BOTTOM")
-  gpButton2:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton2:SetPoint("LEFT", 15, 0)
   gpButton2:Disable()
 
   local gpButton3 = CreateFrame("Button", "gpButton3", frame, "UIPanelButtonTemplate")
@@ -750,7 +802,7 @@ local function AddGPControls(frame)
   gpButton3:SetText("GP3:")
   gpButton3:SetWidth(gpButton3:GetTextWidth() + BUTTON_TEXT_PADDING)
   gpButton3:SetPoint("TOP", gpButton2, "BOTTOM")
-  gpButton3:SetPoint("LEFT", frame, "LEFT", 15, 0)
+  gpButton3:SetPoint("LEFT", 15, 0)
   gpButton3:Disable()
 
   local label =
@@ -766,7 +818,7 @@ local function AddGPControls(frame)
   button:SetHeight(BUTTON_HEIGHT)
   button:SetText(L["Credit GP"])
   button:SetWidth(button:GetTextWidth() + BUTTON_TEXT_PADDING)
-  button:SetPoint("RIGHT", dropDown.frame, "RIGHT", 0, 0)
+  button:SetPoint("RIGHT", dropDown.frame, "RIGHT")
   button:SetPoint("TOP", label, "BOTTOM")
 
   local editBox = CreateFrame("EditBox", "$parentGPControlEditBox",
@@ -811,6 +863,8 @@ local function AddGPControls(frame)
 
   frame:SetHeight(
     reasonLabel:GetHeight() +
+    otherLabel:GetHeight() +
+    otherEditBox:GetHeight() +
     gpButton1:GetHeight() * 3 +
     dropDown.frame:GetHeight() +
     label:GetHeight() +
@@ -819,6 +873,8 @@ local function AddGPControls(frame)
   frame.reasonLabel = reasonLabel
   frame.dropDown = dropDown
   frame.label = label
+  frame.otherLabel = otherLabel
+  frame.otherEditBox = otherEditBox
   frame.gpButton1 = gpButton1
   frame.gpButton2 = gpButton2
   frame.gpButton3 = gpButton3
@@ -827,12 +883,14 @@ local function AddGPControls(frame)
 
   frame.OnShow =
     function(self)
-      self.editBox:SetText("")
-      self.dropDown:SetValue(nil)
-      self.dropDown.frame:Show()
-      SetButtonText(self.gpButton1, "GP1:", false)
-      SetButtonText(self.gpButton2, "GP2:", false)
-      SetButtonText(self.gpButton3, "GP3:", false)
+      editBox:SetText("")
+      dropDown:SetValue(nil)
+      dropDown.frame:Show()
+      otherLabel:SetAlpha(0.25)
+      otherEditBox:SetAlpha(0.25)
+      SetButtonText(gpButton1, "GP1:", false)
+      SetButtonText(gpButton2, "GP2:", false)
+      SetButtonText(gpButton3, "GP3:", false)
     end
 end
 
@@ -1525,9 +1583,12 @@ local function CreateEPGPSideFrame(self)
       gpFrame.button:SetScript(
         "OnClick",
         function(self)
-          EPGP:IncGPBy(f.name,
-                       gpFrame.dropDown.text:GetText(),
-                       gpFrame.editBox:GetNumber())
+          local itemLink = gpFrame.dropDown.text:GetText()
+          if itemLink == OTHER then
+            itemLink = gpFrame.otherEditBox:GetText()
+          end
+          local amount = gpFrame.editBox:GetNumber()
+          EPGP:IncGPBy(f.name, itemLink, amount)
         end)
     end
     if not epFrame.button then
