@@ -1,3 +1,8 @@
+### v1.4.6 (2020.3.28)
+
+- Enable custom GP reason
+- Update TOC version
+
 ### v1.4.5 (2020.3.15)
 
 - Detail log adjust for new online EPGP system
