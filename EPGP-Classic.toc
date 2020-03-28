@@ -1,4 +1,4 @@
-## Interface: 11303
+## Interface: 11304
 ## X-Min-Interface: 11302
 ## Title: EPGP Classic
 ## Notes: Effort Points/Gear Points Loot System

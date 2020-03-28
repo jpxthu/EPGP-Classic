@@ -18,7 +18,7 @@
 ## Log
 
 - [x] Can not export to EPGP website (#4 #5)
-- [ ] Export and upload to server
+- [x] Export and upload to server (#28)
 - [x] Figure out: recording from other EPGP users (`ACEComm`)
 - [ ] Undo selected log
 
@@ -28,7 +28,7 @@
 
 ## Gear points (GP)
 
-- [ ] Advice reset in new tier (`EPGP_NEW_TIER`)
+- [x] Advice reset in new tier (`EPGP_NEW_TIER`)
 - [ ] Calculate according to attributes 
   - [ ] API: `GetItemStats`, missing secondary stats
 - [x] Custom items list (#16)
@@ -42,7 +42,7 @@
 
 ## UI
 
-- [ ] Localization
+- [x] Localization
   - [x] Copy from `EPGP (dkp reloaded)` (only valid on Curseforge)
 - [ ] Loot
   - [x] "HandleLootWindow" (#6)
