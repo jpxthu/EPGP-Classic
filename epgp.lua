@@ -1021,6 +1021,12 @@ function EPGP:OnInitialize()
     self.db.global.last_version = EPGP.version
     DLG:Spawn("EPGP_NEW_VERSION")
   end
+
+  if GetLocale() == "zhCN" then
+    ConsoleExec("portal TW")
+    SetCVar("profanityFilter", "0")
+    Debug("Disable profanity filter of zhCN client.")
+  end
 end
 
 function EPGP:PLAYER_ENTERING_WORLD()
