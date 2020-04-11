@@ -1,3 +1,7 @@
+### v1.4.7 (2020.4.11)
+
+- Disable profanity filter of zhCN client
+
 ### v1.4.6 (2020.3.28)
 
 - Enable custom GP reason
