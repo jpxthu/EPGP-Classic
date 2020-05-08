@@ -73,9 +73,14 @@ L["Credit GP to %s"] = "给 %s 增加 GP"
 L["Custom announce channel name"] = "自定义通告频道名称"
 L["Custom items list has been reseted."] = "自定义物品列表已被重置。"
 L["Decay"] = "衰减"
+L["Decay BASE_GP should be 0 or 1"] = "衰减 BASE_GP 应为 0 或 1"
 L["Decay EP and GP by %d%%?"] = "衰减 %d%% 的 EP 和 GP ?"
 L["Decay of EP/GP by %d%%"] = "EP 和 GP 衰减 %d%%"
 L["Decay Percent should be a number between 0 and 100"] = "Decay（衰减）百分比应介于 0 至 100 之间"
+L["DECAY_BASE_GP_DESC"] = [=[衰减时计算 BASE_GP。
+如果选中（默认，衰减更快）：decay_gp = (gp + BASE_GP) * DECAY_P / 100
+如果不选中：decay_gp = gp * DECAY_P / 100]=]
+L["DECAY_BASE_GP_TEXT"] = "衰减 BASE_GP"
 L["DECAY_P_DESC"] = "衰减百分比"
 L["default"] = "默认"
 L["Distribution"] = "分配"

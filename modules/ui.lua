@@ -66,20 +66,32 @@ local function CreateEditBox(name, parent)
   return eb
 end
 
-local function EnableEditBox(eb, text)
+local function EnableEditBox(eb, v)
   eb:SetAlpha(1)
   eb:Enable()
-  if text then
-    eb:SetText(text)
+  if v then
+    eb:SetText(v)
   end
 end
 
-local function DisableEditBox(eb, text)
+local function DisableEditBox(eb, v)
   eb:SetAlpha(0.25)
   eb:Disable()
-  if text then
-    eb:SetText(text)
+  if v then
+    eb:SetText(v)
   end
+end
+
+local function EnableSelectBox(sb, v)
+  sb:SetAlpha(1)
+  sb:Enable()
+  sb:SetChecked(v)
+end
+
+local function DisableSelectBox(sb, v)
+  sb:SetAlpha(0.25)
+  sb:Disable()
+  sb:SetChecked(v)
 end
 
 local function CreateEPGPFrame()
@@ -1220,6 +1232,7 @@ local function AddCustomGuildInfoControls(frame)
     LUI:TextTooltipShow(self, L["OUTSIDERS_DESC"])
   end)
   outsidersTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
+  -- OUTSIDERS END
 
   -- DECAY_P
   local decayPLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1260,6 +1273,7 @@ local function AddCustomGuildInfoControls(frame)
     LUI:TextTooltipShow(self, L["DECAY_P_DESC"])
   end)
   decayPTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
+  -- DECAY_P END
 
   -- BASE_GP
   local baseGpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1291,6 +1305,7 @@ local function AddCustomGuildInfoControls(frame)
         baseGpOkayButton:Disable()
       end
     end)
+  -- BASE_GP END
 
   -- MIN_EP
   local minEpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1322,6 +1337,7 @@ local function AddCustomGuildInfoControls(frame)
         minEpOkayButton:Disable()
       end
     end)
+  -- MIN_EP END
 
   -- EXTRAS_P
   local extrasPLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1362,10 +1378,38 @@ local function AddCustomGuildInfoControls(frame)
     LUI:TextTooltipShow(self, L["EXTRAS_P_DESC"])
   end)
   extrasPTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
+  -- EXTRAS_P END
+
+  -- DECAY_BASE_GP
+  local decayBaseGp = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+  decayBaseGp:SetWidth(20)
+  decayBaseGp:SetHeight(20)
+  decayBaseGp:SetPoint("LEFT")
+  decayBaseGp:SetPoint("TOP", extrasPLabel, "BOTTOM")
+  decayBaseGp:SetScript("OnClick",
+    function(self)
+      EPGP:SetDecayBaseGp(self:GetChecked() and 1 or 0)
+    end)
+
+  local decayBaseGpLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  decayBaseGpLabel:SetText(L["DECAY_BASE_GP_TEXT"])
+  decayBaseGpLabel:SetHeight(BUTTON_HEIGHT)
+  decayBaseGpLabel:SetPoint("LEFT", decayBaseGp, "RIGHT")
+
+  local decayBaseGpTip = LUI:CreateIconButton(nil, frame, 32, 32,
+    "Interface\\COMMON\\help-i",
+    "Interface\\Calendar\\EventNotificationGlow")
+  decayBaseGpTip:SetPoint("RIGHT", 27, 0)
+  decayBaseGpTip:SetPoint("CENTER", decayBaseGp, "CENTER")
+  decayBaseGpTip:SetScript("OnEnter", function(self)
+    LUI:TextTooltipShow(self, L["DECAY_BASE_GP_DESC"])
+  end)
+  decayBaseGpTip:SetScript("OnLeave", function(self) LUI:TextTooltipHide(self) end)
+  -- DECAY_BASE_GP END
 
   local editGuildInfoButton = LUI:CreateTextButton(nil, frame, L["Write into Guild Info"], true)
   editGuildInfoButton:SetPoint("LEFT")
-  editGuildInfoButton:SetPoint("TOP", extrasPLabel, "BOTTOM")
+  editGuildInfoButton:SetPoint("TOP", decayBaseGpLabel, "BOTTOM")
   editGuildInfoButton:SetScript("OnClick",
     function(self)
       EPGP:SetGlobalConfiguration(
@@ -1373,7 +1417,8 @@ local function AddCustomGuildInfoControls(frame)
         vars.extras_p,
         vars.base_gp,
         vars.min_ep,
-        vars.outsiders)
+        vars.outsiders,
+        vars.decay_base_gp)
       EPGP:Print(L["Guild info has been updated."])
     end)
   editGuildInfoButton.OnShow =
@@ -1397,6 +1442,8 @@ local function AddCustomGuildInfoControls(frame)
       EnableEditBox(minEpEditBox, vars.min_ep or "")
       extrasPLabel:SetAlpha(1)
       EnableEditBox(extrasPEditBox, vars.extras_p or "")
+      decayBaseGpLabel:SetAlpha(1)
+      EnableSelectBox(decayBaseGp, vars.decay_base_gp == 1)
     else
       outsidersLabel:SetAlpha(0.25)
       outsidersOkayButton:Disable()
@@ -1418,6 +1465,9 @@ local function AddCustomGuildInfoControls(frame)
       extrasPOkayButton:Disable()
       DisableEditBox(extrasPEditBox, vars.extras_p_guild_info or "")
       EPGP:SetExtrasPercent(vars.extras_p_guild_info)
+      decayBaseGpLabel:SetAlpha(0.25)
+      DisableSelectBox(decayBaseGp, vars.decay_base_gp_guild_info == 1)
+      EPGP:SetDecayBaseGp(vars.decay_base_gp_guild_info)
     end
   end
 
@@ -1448,6 +1498,7 @@ local function AddCustomGuildInfoControls(frame)
   frame:SetHeight(
     useCustomOption:GetHeight() +
     outsidersLabel:GetHeight() * 5 +
+    decayBaseGp:GetHeight() +
     editGuildInfoButton:GetHeight())
 
   frame.OnShow =
