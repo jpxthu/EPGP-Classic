@@ -332,7 +332,7 @@ local function Frame_OnUpdate(self, elapsed)
     -- We use full names including the '-server' portion
     -- 2019.12.13: WOW Classic updated to 1.13.3, "Ambiguate" performs different. No server/realm if character in the same realm.
     -- https://wow.gamepedia.com/API_Ambiguate
-    local name = GetFullCharacterName(Ambiguate(name, "mail"))
+    local name = GetFullCharacterName(name)
 
     -- Start of outsiders patch
     if OUTSIDERSENABLED then
@@ -340,6 +340,7 @@ local function Frame_OnUpdate(self, elapsed)
       local holder
       if extName then
         -- the name is now the note and the external name is the new name.
+        extName = GetFullCharacterName(extName)
         local entry = cache[extName]
         if not entry then
           entry = {}
