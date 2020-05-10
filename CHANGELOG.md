@@ -1,3 +1,7 @@
+### v1.4.9 (2020.5.10)
+
+- Bug fix: can not get external EPGP (jpxthu/RCLootCouncil_EPGP_Classic#1)
+
 ### v1.4.8 (2020.5.10)
 
 - Add option: decay BASE_GP or not
