@@ -748,16 +748,22 @@ end
 function EPGP:DecayEPGP()
   assert(EPGP:CanDecayEPGP())
 
+  local base_gp = self.db.profile.base_gp
   local decay = self.db.profile.decay_p  * 0.01
+  local decay_base_gp = self.db.profile.decay_base_gp == 1
   local reason = string.format("Decay %d%%", self.db.profile.decay_p)
-  local all = EPGP.db.profile.manageRankAll or
-              EPGP.db.profile.manageRankAll == nil
+  local all = self.db.profile.manageRankAll or
+              self.db.profile.manageRankAll == nil
   local manageRank = self.db.profile.manageRank
+
   for name,_ in pairs(ep_data) do
     local ep, gp, main = self:GetEPGP(name)
     assert(main == nil, "Corrupt alt data!")
     local rankIndex = select(2, GS:GetRank(name))
     if all or (rankIndex and manageRank[rankIndex]) then
+      if not decay_base_gp then
+        gp = gp - base_gp
+      end
       local decay_ep = math.ceil(ep * decay)
       local decay_gp = math.ceil(gp * decay)
       decay_ep, decay_gp = AddEPGP(name, -decay_ep, -decay_gp)
@@ -884,15 +890,15 @@ function EPGP:GetMinEP()
   return self.db.profile.min_ep
 end
 
-function EPGP:SetGlobalConfiguration(decay_p, extras_p, base_gp, min_ep, outsiders)
+function EPGP:GetDecayBaseGp()
+  return self.db.profile.decay_base_gp
+end
+
+function EPGP:SetGlobalConfiguration(decay_p, extras_p, base_gp, min_ep, outsiders, decay_base_gp)
   local guild_info = GS:GetGuildInfo()
   epgp_stanza = string.format(
-    "-EPGP-\n@DECAY_P:%d\n@EXTRAS_P:%s\n@MIN_EP:%d\n@BASE_GP:%d\n@OUTSIDERS:%d\n-EPGP-",
-    decay_p or DEFAULT_DECAY_P,
-    extras_p or DEFAULT_EXTRAS_P,
-    min_ep or DEFAULT_MIN_EP,
-    base_gp or DEFAULT_BASE_GP,
-    outsiders or DEFAULT_OUTSIDERS)
+    "-EPGP-\n@DECAY_P:%d\n@EXTRAS_P:%s\n@MIN_EP:%d\n@BASE_GP:%d\n@OUTSIDERS:%d\n@DECAY_BASE_GP:%d\n-EPGP-",
+    decay_p, extras_p, min_ep, base_gp, outsiders, decay_base_gp)
 
   -- If we have a global configuration stanza we need to replace it
   Debug("epgp_stanza:\n%s", epgp_stanza)

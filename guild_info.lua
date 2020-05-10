@@ -56,6 +56,15 @@ local global_config_defs = {
     default = 0,
     change_message = "OutsidersChanged",
   },
+  decay_base_gp = {
+    pattern = "@DECAY_BASE_GP:%s*(%d+)",
+    parser = tonumber,
+    validator = function(v) return v == 0 or v == 1  end,
+    error = L["Decay BASE_GP should be 0 or 1"],
+    warned = false,
+    default = 1,
+    change_message = "DecayBaseGpChanged",
+  },
 }
 
 local function ParseGuildInfo(loc)
@@ -139,6 +148,12 @@ function EPGP:SetMinEP(v)
   if not v then return end
   self.db.profile.min_ep = v
   self.callbacks:Fire(global_config_defs.min_ep.change_message, v)
+end
+
+function EPGP:SetDecayBaseGp(v)
+  if not v then return end
+  self.db.profile.decay_base_gp = v
+  self.callbacks:Fire(global_config_defs.decay_base_gp.change_message, v)
 end
 
 function EPGP:ValidOutdisers(v)

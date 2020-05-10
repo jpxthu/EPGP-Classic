@@ -43,6 +43,11 @@ L["Credit GP to %s"] = true
 L["Custom announce channel name"] = true
 L["Custom items list has been reseted."] = true
 L["Decay"] = true
+L["DECAY_BASE_GP_DESC"] = [=[Calculate BASE_GP when decay.
+If selected (default, decay faster): decay_gp = (gp + BASE_GP) * DECAY_P / 100.
+If unselected: decay_gp = gp * DECAY_P / 100.]=]
+L["DECAY_BASE_GP_TEXT"] = "Decay BASE_GP"
+L["Decay BASE_GP should be 0 or 1"] = true
 L["DECAY_P_DESC"] = "Decay percentage"
 L["Decay EP and GP by %d%%?"] = true
 L["Decay of EP/GP by %d%%"] = true
@@ -118,7 +123,7 @@ L["Open the debug window"] = true
 L["OUTSIDERS_DESC"] = [=[1. Assume you have a raid member [A] and not in your guild.
 2. Choose or create an alt in guild -- any class, any name, any level. Assume [B].
 3. Set B's public guild note: \"ext:A-realm\". \"realm\" is A's realm name.
-4. EPGP will be recorded in B's (or B's main's) officer note."]=]
+4. EPGP will be recorded in B's (or B's main's) officer note.]=]
 L["Outsiders should be 0 or 1"] = true
 L["Paste import data here"] = true
 L["Personal Action Log"] = true
