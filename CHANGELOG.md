@@ -1,3 +1,7 @@
+### v1.4.8 (2020.5.10)
+
+- Add option: decay BASE_GP or not
+
 ### v1.4.7 (2020.4.11)
 
 - Disable profanity filter of zhCN client
