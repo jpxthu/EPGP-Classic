@@ -1,3 +1,7 @@
+### v1.4.9 (2020.5.10)
+
+- 错误修正：无法获取公会外部成员的 EPGP (jpxthu/RCLootCouncil_EPGP_Classic#1)
+
 ### v1.4.8 (2020.5.10)
 
 - 添加选项，可以选择是否衰减 BASE_GP
