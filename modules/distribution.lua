@@ -42,8 +42,8 @@ local function PrAnnouncement(sender)
   local ep, gp = EPGP:GetEPGP(name)
   if not ep or not gp then return end
   local pr = ep / math.max(gp, 1)
-  if prAnnounceMedium == "RAID" then
-    C:Announce("RAID", "%s EP:%d GP:%d PR:%f", sender, ep, gp, pr)
+  if prAnnounceMedium == "RAID" or prAnnounceMedium == "OFFICER" then
+    C:Announce(prAnnounceMedium, "%s EP:%d GP:%d PR:%f", sender, ep, gp, pr)
   elseif prAnnounceMedium == "WHISPER" then
     C:Whisper(sender, "EP:%d GP:%d PR:%f", ep, gp, pr)
   end
@@ -181,6 +181,7 @@ mod.optionsArgs = {
       ["NONE"] = NONE,
       ["RAID"] = CHAT_MSG_RAID,
       ["WHISPER"] = CHAT_MSG_WHISPER_INFORM,
+      ["OFFICER"] = CHAT_MSG_OFFICER,
     },
   },
   -- spacer1 = LUI:OptionsSpacer(13, 0.001),
