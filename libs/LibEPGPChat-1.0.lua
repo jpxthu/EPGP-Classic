@@ -20,6 +20,10 @@ function lib:Announce(medium, fmt, ...)
   SendChatMessage(str, medium)
 end
 
+function lib:Interp(s, tab)
+  return (s:gsub('($%b{})', function(w) return tab[w:sub(3, -2)] or w end))
+end
+
 function lib:Whisper(name, fmt, ...)
   local msg = string.format(fmt, ...)
   local str = "EPGP:"

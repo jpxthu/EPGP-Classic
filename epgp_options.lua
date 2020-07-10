@@ -5,6 +5,7 @@ local DLG = LibStub("LibDialog-1.0")
 local LLN = LibStub("LibLootNotify-1.0")
 
 function EPGP:SetupOptions()
+  self.firstOpen = true
   local options = {
     name = "EPGP",
     type = "group",
@@ -103,6 +104,11 @@ function EPGP:ProcessCommand(str)
   str = str:gsub("%%t", UnitName("target") or "notarget")
   local command, nextpos = self:GetArgs(str, 1)
   if command == "config" then
+    if self.firstOpen then
+      -- long standing WOW interface bug where the config does not open the first time you execute it
+      self.firstOpen = false
+      InterfaceOptionsFrame_OpenToCategory("EPGP")
+    end
     InterfaceOptionsFrame_OpenToCategory("EPGP")
   elseif command == "debug" then
     Debug:Toggle()
