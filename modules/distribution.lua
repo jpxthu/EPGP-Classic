@@ -34,7 +34,7 @@ local function AuthorityChangedCallbackFunc(callback, authority)
   end
 end
 
-local function PrAnnouncement(sender)
+local function PrAnnouncement(sender, bid)
   if not sender or sender == "" then return end
   local prAnnounceMedium = mod.db.profile.prAnnounceMedium
   if prAnnounceMedium == "NONE" then return end
@@ -42,10 +42,11 @@ local function PrAnnouncement(sender)
   local ep, gp = EPGP:GetEPGP(name)
   if not ep or not gp then return end
   local pr = ep / math.max(gp, 1)
+  local msg = C:Interp(mod.db.profile.prAnnounceMsgFmt, {ep = ep, gp = gp, pr = pr, bid = bid, char = sender})
   if prAnnounceMedium == "RAID" or prAnnounceMedium == "OFFICER" then
-    C:Announce(prAnnounceMedium, "%s EP:%d GP:%d PR:%f", sender, ep, gp, pr)
+    C:Announce(prAnnounceMedium, msg)
   elseif prAnnounceMedium == "WHISPER" then
-    C:Whisper(sender, "EP:%d GP:%d PR:%f", ep, gp, pr)
+    C:Whisper(sender, msg)
   end
 end
 
@@ -54,7 +55,7 @@ local function HandleChatMsg(event, msg, sender)
   local bid = tonumber(msg)
   if not bid then return end
   EPGP:HandleBidResult(sender, bid)
-  PrAnnouncement(sender)
+  PrAnnouncement(sender, bid)
 end
 
 local function HandleRollMsg(event, msg)
@@ -127,6 +128,7 @@ mod.dbDefaults = {
     bidMedium = "RAID",
     prAnnounceMedium = "RAID",
     announceNeedMsg = "1 - " .. NEED .. " 2 - " .. GREED,
+    prAnnounceMsgFmt = "${char} EP:${ep} GP:${gp} PR:${pr}",
     resetWhenAnnounce = true,
     lootAutoAdd = true,
     threshold = 4,
@@ -183,6 +185,13 @@ mod.optionsArgs = {
       ["WHISPER"] = CHAT_MSG_WHISPER_INFORM,
       ["OFFICER"] = CHAT_MSG_OFFICER,
     },
+  },
+  prAnnounceMsgFmt = {
+    order = 14,
+    type = "input",
+    name = L["EP/GP/PR announce text"],
+    desc = L["Default:\n${char} EP:${ep} GP:${gp} PR:${pr}\n\nAdditional Variables:\n${bid}"],
+    width = 100 ,
   },
   -- spacer1 = LUI:OptionsSpacer(13, 0.001),
   announceNeedMsg = {
