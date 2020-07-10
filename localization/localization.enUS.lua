@@ -233,3 +233,5 @@ L["Write into Guild Info"] = true
 L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"] = true
 L["You may need to deselect \"Show only members\" on EPGP web after uploading."] = true
 L["You should probably: increase standard_ilvl, reset or rescale GP."] = true
+L["Automatic EP Reward"] = true
+L["Automatically reward EP to the raid after a boss kill. Requires DBM"] = true

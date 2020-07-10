@@ -456,6 +456,13 @@ local function ParseGuildNote(callback, name, note)
   GS:SetOutsidersEnabled(EPGP.db.profile.outsiders == 1)
 end
 
+function EPGP:IsRL()
+  if UnitInRaid("player") then
+    if IsInRaid() and UnitIsGroupLeader("player") then return true end
+  end
+  return false
+end
+
 function EPGP:IsRLorML()
   if UnitInRaid("player") then
     local loot_method, ml_party_id, ml_raid_id = GetLootMethod()
