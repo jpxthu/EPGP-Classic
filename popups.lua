@@ -14,7 +14,13 @@ DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
       end,
     },
     {
-      text = _G.CANCEL,
+      text = "Discounted Item", --Dynamically replaced
+      on_click = function(self, data, reason)
+        local gp = tonumber(self.editboxes[1]:GetText())
+        local discountPrice = EPGP:GetModule("distribution").db.profile.discountPrice;
+        gp = math.floor((gp or 0) * (1 - discountPrice / 100))
+        EPGP:IncGPBy(data.name, data.item, gp)
+      end,
     },
     {
       text = _G.GUILD_BANK,
@@ -29,6 +35,18 @@ DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
     },
   },
   on_show = function(self, data)
+    local discountPrice = tonumber(EPGP:GetModule("distribution").db.profile.discountPrice)
+    local discountButton = self.buttons[2]
+    if discountPrice >= 100 then
+      discountButton:SetText(L["Free Item"])
+      discountButton:Show()
+    elseif discountPrice <= 0 then
+      -- Same as ACCEPT
+      discountButton:Hide()
+    else
+      discountButton:SetText(L["Discount %d%s"]:format(discountPrice, "%"))
+      discountButton:Show()
+    end
     local text = ("\n"..L["Credit GP to %s"].."\n"):format(data.item)
     local edit = ""
     self.icon:SetTexture(data.icon)
@@ -79,8 +97,10 @@ DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
     local gp = tonumber(self.editboxes[1]:GetText())
     if EPGP:CanIncGPBy(self.data.item, gp) then
       self.buttons[1]:Enable()
+      self.buttons[2]:Enable()
     else
       self.buttons[1]:Disable()
+      self.buttons[2]:Disable()
     end
   end,
   hide_on_escape = true,

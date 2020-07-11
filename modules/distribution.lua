@@ -132,6 +132,7 @@ mod.dbDefaults = {
     resetWhenAnnounce = true,
     lootAutoAdd = true,
     threshold = 4,
+    discountPrice = 50,
   }
 }
 
@@ -216,9 +217,29 @@ mod.optionsArgs = {
     name = L["Track loot items"],
     desc = L["Add loot items automatically when loot windows opened or corpse loot received."],
   },
-  spacer4 = LUI:OptionsSpacer(41, 0.001),
+  spacer3 = LUI:OptionsSpacer(41, 0.001),
+  -- enableDiscountPrice = {
+  --   order = 50,
+  --   type = "toggle",
+  --   name = "Use Discount Price",
+  --   desc = "Enable/Disable the Discount Price options",
+  --   get = function(info) return mod.db.profile.enableDiscountPrice end,
+  --   set = function(info, value)
+  --     mod.db.profile.enableDiscountPrice = value
+  --   end
+  -- },
+  discountPrice = {
+    order = 51,
+    type = "range",
+    name = L["Discount Item Percent"],
+    desc = L["The % discount applied to the 'Discount Item' loot option\n100 = Free Item\n0=Full Cost Item"],
+    min = 0,
+    max = 100,
+    step = 5,
+  },
+  spacer4 = LUI:OptionsSpacer(51, 0.001),
   threshold = {
-    order = 50,
+    order = 60,
     type = "select",
     name = L["Loot tracking threshold"],
     desc = L["Sets loot tracking threshold, to disable the adding on loot below this threshold quality."],
