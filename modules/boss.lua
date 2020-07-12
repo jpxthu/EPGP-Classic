@@ -18,7 +18,7 @@ mod.dbDefaults = {
 
 local function ShowPopup(event_name, boss_name)
   while (in_combat or DLG:ActiveDialog("EPGP_BOSS_DEAD") or
-          DLG:ActiveDialog("EPGP_BOSS_ATTEMPT")) do
+         DLG:ActiveDialog("EPGP_BOSS_ATTEMPT")) do
     Coroutine:Sleep(0.1)
   end
 
