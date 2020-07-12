@@ -47,27 +47,44 @@ local function EncounterAttempt(event_name, encounter_id)
 
   local encounter = Encounters:GetEncounter(encounter_id)
 
-  if CanEditOfficerNote() and EPGP:IsRLorML() then
-    if mod.db.profile.autoreward then
-      ep = mod:GetEncounterEP(encounter_id)
-      if ep ~= nil and encounter.name ~= nil and ep > 0 then
-        EPGP:IncMassEPBy(encounter.name, ep)
+  if type(encounter) == "table" then
+    if CanEditOfficerNote() and EPGP:IsRLorML() then
+      if mod.db.profile.autoreward then
+        ep = mod:GetEncounterEP(encounter_id)
+        if type(ep) == "number" and ep > 0 then
+          if event_name == "kill" or event_name == "DBM_Kill" or event_name == "BossKilled" then
+            EPGP:IncMassEPBy(encounter.name, ep)
+          elseif event_name == "wipe" or event_name == "DBM_Wipe" and mod.db.profile.wipedetection then
+            -- Todo: Decide if auto wipe reward should be a thing (maybe with reduced EP?)
+            -- For now just fallback to manual entry
+            Coroutine:RunAsync(ShowPopup, event_name, encounter.name)
+          end
+        end
+      else
+        Coroutine:RunAsync(ShowPopup, event_name, encounter.name)
       end
-    else
-      Coroutine:RunAsync(ShowPopup, event_name, encounter.name)
     end
+  else
+    -- Fallback to manual entry if unknown encounter
+    Coroutine:RunAsync(ShowPopup, event_name, L['Unknown encounter'])
   end
 end
 
+-- Template for EP values in UI configuration
 local function EncounterPlate(encounter_id, order)
   local encounter = Encounters:GetEncounter(encounter_id)
-  encounterPlate = {
-    name = encounter.name,
-    type = "input",
-    order = order,
-    arg = encounter_id
-  }
-  return encounterPlate
+  if type(encounter) == "table" then
+    encounterPlate = {
+      name = encounter.name,
+      type = "input",
+      pattern = "^[1-9]%d*$",
+      order = order,
+      arg = encounter_id
+    }
+    return encounterPlate
+  else
+    return {}
+  end
 end
 
 function mod:PLAYER_REGEN_DISABLED()
@@ -79,7 +96,24 @@ function mod:PLAYER_REGEN_ENABLED()
 end
 
 function mod:DebugTest()
-  NewBossAttempt("BossKilled", 715)
+  EncounterAttempt("BossKilled", 715)
+  EncounterAttempt("DBM_Kill", 613)
+  EncounterAttempt("kill", 1121)
+
+  EncounterAttempt("BossKilled", nil)
+  EncounterAttempt("DBM_Kill", -1)
+  EncounterAttempt("kill", 0)
+  EncounterAttempt("kill", "abc")
+
+  EncounterAttempt("InvalidEvent", 1116)
+  EncounterAttempt("InvalidEvent", 790)
+  EncounterAttempt("InvalidEvent", 1113)
+
+  EncounterAttempt("InvalidEvent", nil)
+  EncounterAttempt("InvalidEvent", -1)
+  EncounterAttempt("InvalidEvent", 0)
+  EncounterAttempt("InvalidEvent", "abc")
+
 end
 
 function mod:OnInitialize()
