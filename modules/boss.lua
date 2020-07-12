@@ -47,7 +47,7 @@ local function EncounterAttempt(event_name, encounter_id)
 
   local encounter = Encounters:GetEncounter(encounter_id)
 
-  if CanEditOfficerNote() and EPGP:IsRL() then
+  if CanEditOfficerNote() and EPGP:IsRLorML() then
     if mod.db.profile.autoreward then
       ep = mod:GetEncounterEP(encounter_id)
       if ep ~= nil and encounter.name ~= nil and ep > 0 then
