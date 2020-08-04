@@ -1,0 +1,12 @@
+## Interface: 11304
+## Title: Lib: Encounters
+## Notes: Library providing encounter data in wow classic
+## Author: Wollie [Nethergarde-Keep]
+## Version: 1.0
+## LoadOnDemand: 1
+## X-Donate: PayPal:mark AT e-rave DOT nl
+## X-Website: https://www.curseforge.com/wow/addons/libencounters-classic
+## X-Category: Library
+## X-License: MIT
+
+lib.xml

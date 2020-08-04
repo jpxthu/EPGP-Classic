@@ -32,6 +32,7 @@ libs\LibBabble-Inventory-3.0\lib.xml
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 libs\LibDeformat-3.0\lib.xml
 libs\LibDialog-1.0\lib.xml
+libs\LibEncounters\lib.xml
 libs\LibJSON-1.0\lib.xml
 libs\LibRealmInfo\LibRealmInfo.lua
 
