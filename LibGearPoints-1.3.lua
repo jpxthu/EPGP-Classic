@@ -77,16 +77,16 @@ end
 local CUSTOM_ITEM_DATA = {
   -- Classic P2
   [17204] = { 5, 80, "INVTYPE_2HWEAPON" },
-  [18422] = { 4, 74, "INVTYPE_NECK", nil, "Horde" }, -- Head of Onyxia
-  [18423] = { 4, 74, "INVTYPE_NECK", nil, "Alliance" }, -- Head of Onyxia
+  [18422] = { 4, 74, "INVTYPE_NECK", "Horde" }, -- Head of Onyxia
+  [18423] = { 4, 74, "INVTYPE_NECK", "Alliance" }, -- Head of Onyxia
   [18563] = { 5, 80, "INVTYPE_WEAPON" }, -- Legendary Sward
   [18564] = { 5, 80, "INVTYPE_WEAPON" }, -- Legendary Sward
   [18646] = { 4, 75, "INVTYPE_2HWEAPON" }, -- The Eye of Divinity
   [18703] = { 4, 75, "INVTYPE_RANGED" }, -- Ancient Petrified Leaf
 
   -- Classic P3
-  [19002] = { 4, 83, "INVTYPE_NECK", nil, "Horde" },
-  [19003] = { 4, 83, "INVTYPE_NECK", nil, "Alliance" },
+  [19002] = { 4, 83, "INVTYPE_NECK", "Horde" },
+  [19003] = { 4, 83, "INVTYPE_NECK", "Alliance" },
 
   -- Classic P5
   [20928] = { 4, 78, "INVTYPE_SHOULDER" }, -- T2.5 shoulder, feet

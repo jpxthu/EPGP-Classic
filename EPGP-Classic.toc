@@ -38,6 +38,7 @@ libs\LibRealmInfo\LibRealmInfo.lua
 
 libs\LibDebug-1.0.lua
 libs\LibEPGPChat-1.0.lua
+libs\LibEpgpOorProfile.lua
 libs\LibEPGPUI-1.0.lua
 libs\LibLocalConstant-1.0.lua
 libs\LibUtils.lua

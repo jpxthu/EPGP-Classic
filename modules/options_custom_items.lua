@@ -6,6 +6,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")
 local LN = LibStub("LibLocalConstant-1.0")
 local LUI = LibStub("LibEPGPUI-1.0")
+local LOor = LibStub("LibEpgpOorProfile-1.0")
 
 local LOCAL_NAME = LN:LocalName()
 
@@ -741,7 +742,7 @@ local function AddDefaultData()
   local ci = vars.customItems
   local faction = UnitFactionGroup("player")
   for i, v in pairs(CUSTOM_ITEM_DATA) do
-    if not v[5] or v[5] == faction then
+    if not v[4] or v[4] == faction then
       if not ci[i] then
         local equipLocKey = EQUIPLOC_INDEX[v[3]] or EQUIPLOC_CUSTOM_SCALE_INDEX
         ci[i] = {
@@ -751,6 +752,14 @@ local function AddDefaultData()
           equipLoc = EQUIPLOC_DATA[equipLocKey][2],
           default = true,
         }
+
+        if equipLocKey == EQUIPLOC_CUSTOM_SCALE_INDEX then
+          if v[5] then ci[i].s1 = v[5] end
+          if v[6] then ci[i].s2 = v[6] end
+        elseif equipLocKey == EQUIPLOC_CUSTOM_GP_INDEX then
+          if v[5] then ci[i].gp1 = v[5] end
+          if v[6] then ci[i].gp2 = v[6] end
+        end
       end
     else
       ci[i] = nil
@@ -779,4 +788,11 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
+end
+
+function mod:CheckGuildConfig(guild, realm)
+  if (guild == "Order Of Rhonin" or guild == "EPGP test") and realm == "艾隆纳亚" then
+    table.wipe(EPGP.db.profile.customItems)
+    CUSTOM_ITEM_DATA = LOor:GetCustomItemsProfile()
+  end
 end

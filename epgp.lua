@@ -1191,7 +1191,7 @@ function EPGP:GUILD_ROSTER_UPDATE()
     end
   else
     local guild = GetGuildInfo("player") or ""
-    -- local realm = GetRealmName()
+    local realm = GetRealmName()
     if #guild == 0 then
       GuildRoster()
     else
@@ -1208,6 +1208,9 @@ function EPGP:GUILD_ROSTER_UPDATE()
         for name, module in EPGP:IterateModules() do
           if not module.db or module.db.profile.enabled or not module.dbDefaults then
             Debug("Enabling module (startup): %s", name)
+            if module.CheckGuildConfig then
+              module:CheckGuildConfig(guild, realm)
+            end
             module:Enable()
           end
         end

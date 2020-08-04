@@ -1,7 +1,8 @@
 local mod = EPGP:NewModule("points")
-local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local GP = LibStub("LibGearPoints-1.3")
+local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LN = LibStub("LibLocalConstant-1.0")
+local LOor = LibStub("LibEpgpOorProfile-1.0")
 local Utils = LibStub("LibUtils-1.0")
 
 local LOCAL_NAME = LN:LocalName()
@@ -578,103 +579,10 @@ mod.optionsArgs = {
   -- },
 }
 
-local profileOOR = {
-  enabled = true,
-
-  baseGP = 80,
-  standardIlvl = 66,
-  ilvlDenominator = 10,
-  legendaryScale = 3,
-
-  headScale1 = 1,
-  headComment1 = _G.INVTYPE_HEAD,
-
-  neckScale1 = 1,
-  neckComment1 = _G.INVTYPE_NECK,
-
-  shoulderScale1 = 1,
-  shoulderComment1 = _G.INVTYPE_SHOULDER,
-
-  -- bodyScale1 = 0,
-  -- bodyComment1 = _G.INVTYPE_BODY,
-
-  chestScale1 = 1,
-  chestComment1 = _G.INVTYPE_CHEST,
-
-  waistScale1 = 1,
-  waistComment1 = _G.INVTYPE_WAIST,
-
-  legsScale1 = 1,
-  legsComment1 = _G.INVTYPE_LEGS,
-
-  feetScale1 = 1,
-  feetComment1 = _G.INVTYPE_FEET,
-
-  wristScale1 = 1,
-  wristComment1 = _G.INVTYPE_WRIST,
-
-  handScale1 = 1,
-  handComment1 = _G.INVTYPE_HAND,
-
-  fingerScale1 = 1,
-  fingerComment1 = _G.INVTYPE_FINGER,
-
-  trinketScale1 = 1.5,
-  trinketComment1 = _G.INVTYPE_TRINKET,
-
-  cloakScale1 = 1,
-  cloakComment1 = _G.INVTYPE_CLOAK,
-
-  weaponScale1 = 1.5,
-  weaponComment1 = DISPLAY_NAME.MainHWeapon,
-  weaponScale2 = 0.5,
-  weaponComment2 = DISPLAY_NAME.OffHWeapon,
-  weaponScale3 = 0.15,
-  weaponComment3 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
-
-  shieldScale1 = 0.5,
-  shieldComment1 = _G.SHIELDSLOT,
-
-  weapon2HScale1 = 2,
-  weapon2HComment1 = DISPLAY_NAME.TwoHWeapon,
-  weapon2HScale2 = 0.3,
-  weapon2HComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.TwoHWeapon),
-
-  weaponMainHScale1 = 1.5,
-  weaponMainHComment1 = DISPLAY_NAME.MainHWeapon,
-  weaponMainHScale2 = 0.15,
-  weaponMainHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
-
-  weaponOffHScale1 = 0.5,
-  weaponOffHComment1 = DISPLAY_NAME.OffHWeapon,
-  weaponOffHScale2 = 0.15,
-  weaponOffHComment2 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, DISPLAY_NAME.OneHWeapon),
-
-  holdableScale1 = 0.5,
-  holdableComment1 = _G.INVTYPE_HOLDABLE,
-
-  rangedScale1 = 2,
-  rangedComment1 = L["%s %s"]:format(_G.LOCALIZED_CLASS_NAMES_MALE.HUNTER, _G.INVTYPE_RANGED),
-  rangedScale2 = 0.3,
-  rangedComment2 = L["%s %s"]:format(L["Non-hunter"], _G.INVTYPE_RANGED),
-
-  wandScale1 = 0.3,
-  wandComment1 = LOCAL_NAME.Wand,
-
-  thrownScale1 = 0.3,
-  thrownComment1 = LOCAL_NAME.Thrown,
-
-  relicScale1 = 0.3,
-  relicComment1 = _G.INVTYPE_RELIC,
-
-  -- bagScale1 = 0,
-  -- bagComment1 = _G.INVTYPE_BAG,
-}
-
 function mod:CheckGuildConfig(guild, realm)
-  -- if guild == "Order Of Rhonin" and realm == "艾隆纳亚" then
-  --   Utils:CopyTable(profileOOR, mod.db.profile)
-  -- end
+  if (guild == "Order Of Rhonin" or guild == "EPGP test") and realm == "艾隆纳亚" then
+    Utils:CopyTable(LOor:GetPointsProfile(L, DISPLAY_NAME, LOCAL_NAME), mod.db.profile)
+  end
 end
 
 function mod:OnInitialize()
