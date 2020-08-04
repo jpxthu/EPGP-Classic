@@ -77,8 +77,8 @@ local function EncounterPlate(encounter_id, order)
     encounterPlate = {
       name = encounter.name,
       type = "input",
-      pattern = "^[1-9]%d*$",
-	  usage = L["should be a positive integer"],
+      pattern = "^[0-9]%d*$",
+      usage = L["should be a positive integer"],
       order = order,
       arg = encounter_id
     }
