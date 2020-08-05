@@ -13,74 +13,116 @@ mod.dbDefaults = {
     wipedetection = false,
     autoreward = false,
     bossreward = {},
+    bossreward_wipe = {},
   },
 }
 
-local function ShowPopup(event_name, boss_name)
+local function ShowKillPopup(boss_name)
   while (in_combat or DLG:ActiveDialog("EPGP_BOSS_DEAD") or
          DLG:ActiveDialog("EPGP_BOSS_ATTEMPT")) do
     Coroutine:Sleep(0.1)
   end
 
-  local dialog
-  if event_name == "kill" or event_name == "DBM_Kill" or event_name == "BossKilled" then
-    DLG:Spawn("EPGP_BOSS_DEAD", boss_name)
-  elseif event_name == "wipe" or event_name == "DBM_Wipe" and mod.db.profile.wipedetection then
-    DLG:Spawn("EPGP_BOSS_ATTEMPT", boss_name)
+  DLG:Spawn("EPGP_BOSS_DEAD", boss_name)
+end
+
+local function ShowWipePopup(boss_name)
+  while (in_combat or DLG:ActiveDialog("EPGP_BOSS_DEAD") or
+         DLG:ActiveDialog("EPGP_BOSS_ATTEMPT")) do
+    Coroutine:Sleep(0.1)
   end
+
+  DLG:Spawn("EPGP_BOSS_ATTEMPT", boss_name)
 end
 
 local function BossAttempt(event_name, boss_name)
+  local boss_name = boss_name or _G.UNKNOWNOBJECT
   Debug("Boss attempt: %s %s", event_name, boss_name)
   -- Temporary fix since we cannot unregister DBM callbacks
   if not mod:IsEnabled() then return end
+  if not CanEditOfficerNote() or not EPGP:IsRLorML() then return end
 
-  if CanEditOfficerNote() and EPGP:IsRLorML() then
-    Coroutine:RunAsync(ShowPopup, event_name, boss_name)
+  if event_name == "kill" or event_name == "DBM_Kill" or event_name == "BossKilled" then
+    Coroutine:RunAsync(ShowKillPopup, boss_name)
+  elseif (event_name == "wipe" or event_name == "DBM_Wipe") and mod.db.profile.wipedetection then
+    Coroutine:RunAsync(ShowWipePopup, boss_name)
   end
 end
 
-local function EncounterAttempt(event_name, encounter_id)
-  Debug("New Encounter attempt: %s %s", event_name, encounter_id)
+local function EncounterAttempt(event_name, boss_name, encounter_id)
+  Debug("Encounter attempt: %s %s", event_name, tostring(encounter_id))
+
+  if not mod.db.profile.autoreward or encounter_id == nil then
+    BossAttempt(event_name, boss_name)
+    return
+  end
+
   -- Temporary fix since we cannot unregister DBM callbacks
   if not mod:IsEnabled() then return end
+  if not CanEditOfficerNote() or not EPGP:IsRLorML() then return end
 
-  local encounter = Encounters:GetEncounter(encounter_id)
-
-  if type(encounter) == "table" then
-    if CanEditOfficerNote() and EPGP:IsRLorML() then
-      if mod.db.profile.autoreward then
-        ep = mod:GetEncounterEP(encounter_id)
-        if type(ep) == "number" and ep > 0 then
-          if event_name == "kill" or event_name == "DBM_Kill" or event_name == "BossKilled" then
-            EPGP:IncMassEPBy(encounter.name, ep)
-          elseif event_name == "wipe" or event_name == "DBM_Wipe" and mod.db.profile.wipedetection then
-            -- Todo: Decide if auto wipe reward should be a thing (maybe with reduced EP?)
-            -- For now just fallback to manual entry
-            Coroutine:RunAsync(ShowPopup, event_name, encounter.name)
-          end
-        end
-      else
-        Coroutine:RunAsync(ShowPopup, event_name, encounter.name)
-      end
+  local boss_name = boss_name or _G.UNKNOWNOBJECT
+  if event_name == "kill" or event_name == "DBM_Kill" then
+    local ep = mod:GetEncounterKillEP(encounter_id)
+    if ep == nil then
+      -- Most likely that the auto-award EP is not set for this boss.
+      Coroutine:RunAsync(ShowKillPopup, boss_name)
+    elseif ep > 0 then
+      EPGP:IncMassEPBy(boss_name, ep)
+    else
+      EPGP:Print(string.format(L["BOSS_KILL_AUTO_AWARD_0_EP_DESC"], boss_name))
     end
-  else
-    -- Fallback to manual entry if unknown encounter
-    Coroutine:RunAsync(ShowPopup, event_name, L['Unknown encounter'])
+  elseif event_name == "wipe" or event_name == "DBM_Wipe" then
+    if not mod.db.profile.wipedetection then return end
+    local ep_wipe = mod:GetEncounterWipeEP(encounter_id)
+    if ep_wipe == nil then
+      Coroutine:RunAsync(ShowWipePopup, boss_name)
+    elseif ep_wipe > 0 then
+      EPGP:IncMassEPBy(boss_name .. " (attempt)", ep_wipe)
+    else
+      EPGP:Print(string.format(L["BOSS_WIPE_AUTO_AWARD_0_EP_DESC"], boss_name))
+    end
   end
+end
+
+local function AutoAwardDisabled(v)
+  return not mod.db.profile.autoreward
+end
+
+local function AutoAwardWipeDisabled(v)
+  return not mod.db.profile.autoreward or not mod.db.profile.wipedetection
 end
 
 -- Template for EP values in UI configuration
-local function EncounterPlate(encounter_id, order)
+local function EncounterKillPlate(encounter_id, order)
   local encounter = Encounters:GetEncounter(encounter_id)
   if type(encounter) == "table" then
     encounterPlate = {
-      name = encounter.name,
+      name = encounter.name .. " - " .. L["kill"],
       type = "input",
-      pattern = "^[0-9]%d*$",
-      usage = L["should be a positive integer"],
-      order = order,
-      arg = encounter_id
+      pattern = "^%d*$",
+      usage = L["Should be a non-negative integer"],
+      order = order * 2 - 1,
+      arg = {encounter_id, true},
+      disabled = AutoAwardDisabled,
+    }
+    return encounterPlate
+  else
+    return {}
+  end
+end
+
+local function EncounterWipePlate(encounter_id, order)
+  local encounter = Encounters:GetEncounter(encounter_id)
+  if type(encounter) == "table" then
+    encounterPlate = {
+      name = encounter.name .. " - " .. L["wipe"],
+      type = "input",
+      pattern = "^%d*$",
+      usage = L["Should be a non-negative integer"],
+      order = order * 2,
+      arg = {encounter_id, false},
+      disabled = AutoAwardWipeDisabled,
     }
     return encounterPlate
   else
@@ -96,48 +138,47 @@ function mod:PLAYER_REGEN_ENABLED()
   in_combat = false
 end
 
-function mod:DebugTest()
-  EncounterAttempt("BossKilled", 715)
-  EncounterAttempt("DBM_Kill", 613)
-  EncounterAttempt("kill", 1121)
-
-  EncounterAttempt("BossKilled", nil)
-  EncounterAttempt("DBM_Kill", -1)
-  EncounterAttempt("kill", 0)
-  EncounterAttempt("kill", "abc")
-
-  EncounterAttempt("InvalidEvent", 1116)
-  EncounterAttempt("InvalidEvent", 790)
-  EncounterAttempt("InvalidEvent", 1113)
-
-  EncounterAttempt("InvalidEvent", nil)
-  EncounterAttempt("InvalidEvent", -1)
-  EncounterAttempt("InvalidEvent", 0)
-  EncounterAttempt("InvalidEvent", "abc")
-
-end
-
 function mod:OnInitialize()
   self.db = EPGP.db:RegisterNamespace("boss", mod.dbDefaults)
 end
 
-function mod:GetEncounterEP(encounter_id)
-  if mod.db.profile.bossreward[encounter_id] ~= nil then
-    return tonumber(mod.db.profile.bossreward[encounter_id])
+function mod:GetEncounterKillEP(encounter_id)
+  if mod.db.profile.bossreward[encounter_id] then
+    return mod.db.profile.bossreward[encounter_id]
   else
-    return 0
+    return nil
+  end
+end
+
+function mod:GetEncounterWipeEP(encounter_id)
+  if mod.db.profile.bossreward_wipe[encounter_id] then
+    return mod.db.profile.bossreward_wipe[encounter_id]
+  else
+    return nil
   end
 end
 
 local function SetEP(info, ep)
-  mod.db.profile.bossreward[info.arg] = tonumber(ep)
+  local id, kill = unpack(info.arg)
+  if kill then
+    mod.db.profile.bossreward[id] = tonumber(ep)
+  else
+    mod.db.profile.bossreward_wipe[id] = tonumber(ep)
+  end
 end
 
 local function GetEP(info)
-  if mod.db.profile.bossreward[info.arg] ~= nil then
-    return tostring(mod.db.profile.bossreward[info.arg])
+  local id, kill = unpack(info.arg)
+  local ep
+  if kill then
+    ep = mod.db.profile.bossreward[id]
   else
-    return ''
+    ep = mod.db.profile.bossreward_wipe[id]
+  end
+  if ep then
+    return tostring(ep)
+  else
+    return ""
   end
 end
 
@@ -162,147 +203,212 @@ mod.optionsArgs = {
     type = "toggle",
     name = L["Automatic EP Reward"],
     desc = L["Automatically reward EP to the raid after a boss kill. Requires DBM"],
-    order = 3,
+    order = 10,
     width = 30,
     disabled = function(v) return not DBM end,
   },
+  autoreward_desc = {
+    order = 11,
+    type = "description",
+    name = L["BOSS_AUTO_REWARD_DESC"],
+    fontSize = "medium",
+  },
   rewardHeader = {
-    order = 4,
+    order = 20,
     type = "header",
     name = L["Automatic EP Reward"],
   },
   bossrewards_mc = {
     type = "group",
     name = Encounters:GetInstance(409).name,
-    order = 5,
+    order = 21,
     set = SetEP,
     get = GetEP,
     args = {
-      lucifron = EncounterPlate(663, 1),
-      magmadar = EncounterPlate(664, 2),
-      gehennes = EncounterPlate(665, 3),
-      garr = EncounterPlate(666, 4),
-      shazzrah = EncounterPlate(667, 5),
-      baron = EncounterPlate(668, 6),
-      sulfuron = EncounterPlate(669, 7),
-      golemagg = EncounterPlate(670, 8),
-      majordomo = EncounterPlate(671, 9),
-      ragnaros = EncounterPlate(672, 10)
+      lucifron_kill  = EncounterKillPlate(663, 1),
+      lucifron_wipe  = EncounterWipePlate(663, 1),
+      magmadar_kill  = EncounterKillPlate(664, 2),
+      magmadar_wipe  = EncounterWipePlate(664, 2),
+      gehennes_kill  = EncounterKillPlate(665, 3),
+      gehennes_wipe  = EncounterWipePlate(665, 3),
+      garr_kill      = EncounterKillPlate(666, 4),
+      garr_wipe      = EncounterWipePlate(666, 4),
+      shazzrah_kill  = EncounterKillPlate(667, 5),
+      shazzrah_wipe  = EncounterWipePlate(667, 5),
+      baron_kill     = EncounterKillPlate(668, 6),
+      baron_wipe     = EncounterWipePlate(668, 6),
+      sulfuron_kill  = EncounterKillPlate(669, 7),
+      sulfuron_wipe  = EncounterWipePlate(669, 7),
+      golemagg_kill  = EncounterKillPlate(670, 8),
+      golemagg_wipe  = EncounterWipePlate(670, 8),
+      majordomo_kill = EncounterKillPlate(671, 9),
+      majordomo_wipe = EncounterWipePlate(671, 9),
+      ragnaros_kill  = EncounterKillPlate(672, 10),
+      ragnaros_wipe  = EncounterWipePlate(672, 10),
     }
   },
   bossrewards_ony = {
     type = "group",
     name = Encounters:GetInstance(249).name,
-    order = 6,
+    order = 22,
     set = SetEP,
     get = GetEP,
     args = {
-      onyxia = EncounterPlate(1084,1),
+      onyxia_kill = EncounterKillPlate(1084, 1),
+      onyxia_wipe = EncounterWipePlate(1084, 1),
     }
   },
   bossrewards_bwl = {
     type = "group",
     name = Encounters:GetInstance(469).name,
-    order = 7,
+    order = 23,
     set = SetEP,
     get = GetEP,
     args = {
-      razorgore = EncounterPlate(610, 1),
-      vaelastrasz = EncounterPlate(611, 2),
-      broodlord = EncounterPlate(612, 3),
-      firemaw = EncounterPlate(613, 4),
-      ebonroc = EncounterPlate(614, 5),
-      flamegor = EncounterPlate(615, 6),
-      chromaggus = EncounterPlate(616, 7),
-      nefarian = EncounterPlate(617, 8),
+      razorgore_kill   = EncounterKillPlate(610, 1),
+      razorgore_wipe   = EncounterWipePlate(610, 1),
+      vaelastrasz_kill = EncounterKillPlate(611, 2),
+      vaelastrasz_wipe = EncounterWipePlate(611, 2),
+      broodlord_kill   = EncounterKillPlate(612, 3),
+      broodlord_wipe   = EncounterWipePlate(612, 3),
+      firemaw_kill     = EncounterKillPlate(613, 4),
+      firemaw_wipe     = EncounterWipePlate(613, 4),
+      ebonroc_kill     = EncounterKillPlate(614, 5),
+      ebonroc_wipe     = EncounterWipePlate(614, 5),
+      flamegor_kill    = EncounterKillPlate(615, 6),
+      flamegor_wipe    = EncounterWipePlate(615, 6),
+      chromaggus_kill  = EncounterKillPlate(616, 7),
+      chromaggus_wipe  = EncounterWipePlate(616, 7),
+      nefarian_kill    = EncounterKillPlate(617, 8),
+      nefarian_wipe    = EncounterWipePlate(617, 8),
     }
   },
   bossrewards_zg = {
     type = "group",
     name = Encounters:GetInstance(309).name,
-    order = 8,
+    order = 24,
     set = SetEP,
     get = GetEP,
     args = {
-      venoxis = EncounterPlate(784, 1),
-      jeklik = EncounterPlate(785, 2),
-      marli = EncounterPlate(786, 3),
-      mandokir = EncounterPlate(787, 4),
-      hazzarah = EncounterPlate(788, 5),
-      thekal = EncounterPlate(789, 6),
-      gahzranka = EncounterPlate(790, 7),
-      arlokk = EncounterPlate(791, 8),
-      jindo = EncounterPlate(792, 9),
-      hakkar = EncounterPlate(793, 10),
+      venoxis_kill   = EncounterKillPlate(784, 1),
+      venoxis_wipe   = EncounterWipePlate(784, 1),
+      jeklik_kill    = EncounterKillPlate(785, 2),
+      jeklik_wipe    = EncounterWipePlate(785, 2),
+      marli_kill     = EncounterKillPlate(786, 3),
+      marli_wipe     = EncounterWipePlate(786, 3),
+      mandokir_kill  = EncounterKillPlate(787, 4),
+      mandokir_wipe  = EncounterWipePlate(787, 4),
+      hazzarah_kill  = EncounterKillPlate(788, 5),
+      hazzarah_wipe  = EncounterWipePlate(788, 5),
+      thekal_kill    = EncounterKillPlate(789, 6),
+      thekal_wipe    = EncounterWipePlate(789, 6),
+      gahzranka_kill = EncounterKillPlate(790, 7),
+      gahzranka_wipe = EncounterWipePlate(790, 7),
+      arlokk_kill    = EncounterKillPlate(791, 8),
+      arlokk_wipe    = EncounterWipePlate(791, 8),
+      jindo_kill     = EncounterKillPlate(792, 9),
+      jindo_wipe     = EncounterWipePlate(792, 9),
+      hakkar_kill    = EncounterKillPlate(793, 10),
+      hakkar_wipe    = EncounterWipePlate(793, 10),
     }
   },
   bossrewards_aq20 = {
     type = "group",
     name = Encounters:GetInstance(509).name,
-    order = 9,
+    order = 25,
     set = SetEP,
     get = GetEP,
     args = {
-      kurinnaxx = EncounterPlate(718, 1),
-      rajaxx = EncounterPlate(719, 2),
-      moam = EncounterPlate(720, 3),
-      buru = EncounterPlate(721, 4),
-      ayamiss = EncounterPlate(722, 5),
-      ossirian = EncounterPlate(723, 6),
+      kurinnaxx_kill = EncounterKillPlate(718, 1),
+      kurinnaxx_wipe = EncounterWipePlate(718, 1),
+      rajaxx_kill    = EncounterKillPlate(719, 2),
+      rajaxx_wipe    = EncounterWipePlate(719, 2),
+      moam_kill      = EncounterKillPlate(720, 3),
+      moam_wipe      = EncounterWipePlate(720, 3),
+      buru_kill      = EncounterKillPlate(721, 4),
+      buru_wipe      = EncounterWipePlate(721, 4),
+      ayamiss_kill   = EncounterKillPlate(722, 5),
+      ayamiss_wipe   = EncounterWipePlate(722, 5),
+      ossirian_kill  = EncounterKillPlate(723, 6),
+      ossirian_wipe  = EncounterWipePlate(723, 6),
     }
   },
   bossrewards_aq40 = {
     type = "group",
     name = Encounters:GetInstance(531).name,
-    order = 10,
+    order = 26,
     set = SetEP,
     get = GetEP,
     args = {
-      skeram = EncounterPlate(709, 1),
-      bugtrio = EncounterPlate(710, 2),
-      sartura = EncounterPlate(711, 3),
-      fankriss = EncounterPlate(712, 4),
-      viscidus = EncounterPlate(713, 5),
-      huhuran = EncounterPlate(714, 6),
-      twins = EncounterPlate(715, 7),
-      ouro = EncounterPlate(716, 8),
-      cthun = EncounterPlate(717, 9),
+      skeram_kill   = EncounterKillPlate(709, 1),
+      skeram_wipe   = EncounterWipePlate(709, 1),
+      bugtrio_kill  = EncounterKillPlate(710, 2),
+      bugtrio_wipe  = EncounterWipePlate(710, 2),
+      sartura_kill  = EncounterKillPlate(711, 3),
+      sartura_wipe  = EncounterWipePlate(711, 3),
+      fankriss_kill = EncounterKillPlate(712, 4),
+      fankriss_wipe = EncounterWipePlate(712, 4),
+      viscidus_kill = EncounterKillPlate(713, 5),
+      viscidus_wipe = EncounterWipePlate(713, 5),
+      huhuran_kill  = EncounterKillPlate(714, 6),
+      huhuran_wipe  = EncounterWipePlate(714, 6),
+      twins_kill    = EncounterKillPlate(715, 7),
+      twins_wipe    = EncounterWipePlate(715, 7),
+      ouro_kill     = EncounterKillPlate(716, 8),
+      ouro_wipe     = EncounterWipePlate(716, 8),
+      cthun_kill    = EncounterKillPlate(717, 9),
+      cthun_wipe    = EncounterWipePlate(717, 9),
     }
   },
   bossrewards_naxx = {
     type = "group",
     name = Encounters:GetInstance(533).name,
-    order = 11,
+    order = 27,
     set = SetEP,
     get = GetEP,
     args = {
-      anub = EncounterPlate(1107, 1),
-      faerlina = EncounterPlate(1110, 2),
-      maexxna = EncounterPlate(1116, 3),
-      noth = EncounterPlate(1117, 4),
-      heigan = EncounterPlate(1112, 5),
-      loatheb = EncounterPlate(1115, 6),
-      razuvious = EncounterPlate(1113, 7),
-      gothik = EncounterPlate(1109, 8),
-      fourhorse = EncounterPlate(1121, 9),
-      patchwerk = EncounterPlate(1118, 10),
-      grobbulus = EncounterPlate(1111, 11),
-      gluth = EncounterPlate(1108, 12),
-      thaddius = EncounterPlate(1120, 13),
-      sapphiron = EncounterPlate(1119, 14),
-      kelthuzad = EncounterPlate(1114, 15),
+      anub_kill      = EncounterKillPlate(1107, 1),
+      anub_wipe      = EncounterWipePlate(1107, 1),
+      faerlina_kill  = EncounterKillPlate(1110, 2),
+      faerlina_wipe  = EncounterWipePlate(1110, 2),
+      maexxna_kill   = EncounterKillPlate(1116, 3),
+      maexxna_wipe   = EncounterWipePlate(1116, 3),
+      noth_kill      = EncounterKillPlate(1117, 4),
+      noth_wipe      = EncounterWipePlate(1117, 4),
+      heigan_kill    = EncounterKillPlate(1112, 5),
+      heigan_wipe    = EncounterWipePlate(1112, 5),
+      loatheb_kill   = EncounterKillPlate(1115, 6),
+      loatheb_wipe   = EncounterWipePlate(1115, 6),
+      razuvious_kill = EncounterKillPlate(1113, 7),
+      razuvious_wipe = EncounterWipePlate(1113, 7),
+      gothik_kill    = EncounterKillPlate(1109, 8),
+      gothik_wipe    = EncounterWipePlate(1109, 8),
+      fourhorse_kill = EncounterKillPlate(1121, 9),
+      fourhorse_wipe = EncounterWipePlate(1121, 9),
+      patchwerk_kill = EncounterKillPlate(1118, 10),
+      patchwerk_wipe = EncounterWipePlate(1118, 10),
+      grobbulus_kill = EncounterKillPlate(1111, 11),
+      grobbulus_wipe = EncounterWipePlate(1111, 11),
+      gluth_kill     = EncounterKillPlate(1108, 12),
+      gluth_wipe     = EncounterWipePlate(1108, 12),
+      thaddius_kill  = EncounterKillPlate(1120, 13),
+      thaddius_wipe  = EncounterWipePlate(1120, 13),
+      sapphiron_kill = EncounterKillPlate(1119, 14),
+      sapphiron_wipe = EncounterWipePlate(1119, 14),
+      kelthuzad_kill = EncounterKillPlate(1114, 15),
+      kelthuzad_wipe = EncounterWipePlate(1114, 15),
     }
   }
 }
 
 local function dbmCallback(event, mod)
   Debug("dbmCallback: %s %s", event, mod.combatInfo.name)
-  EncounterAttempt(event, mod.combatInfo.eId)
+  EncounterAttempt(event, mod.combatInfo.name, mod.combatInfo.eId)
 end
 
-local function bwCallback(event, module)
-  Debug("bwCallback: %s %s", event, module.displayName)
-  BossAttempt(event == "BigWigs_OnBossWin" and "kill" or "wipe", module.displayName)
+local function bwCallback(event, mod)
+  Debug("bwCallback: %s %s", event, mod.displayName)
+  BossAttempt(event == "BigWigs_OnBossWin" and "kill" or "wipe", mod.displayName)
 end
 
 local function dxeCallback(event, encounter)
@@ -334,4 +440,44 @@ function mod:OnDisable()
   elseif DXE then
     DXE.UnregisterCallback(mod, "TriggerDefeat")
   end
+end
+
+-- Unit Test
+
+function mod:DebugTestOne(event, id)
+  local id_ = id or 0
+  id_ = tonumber(id_) or 0
+  local e = Encounters:GetEncounter(id_ or 0)
+  local name = e and e.name or _G.UNKNOWNOBJECT
+  EPGP:Print(string.format("BOSS test: event=[%s], name=[%s], id=[%s]",
+    tostring(event), name, tostring(id)))
+  EncounterAttempt(event, name, id)
+end
+
+function mod:DebugTest()
+  self:DebugTestOne("BossKilled", 715)
+  self:DebugTestOne("DBM_Kill", 613)
+  self:DebugTestOne("DBM_Wipe", 613)
+  self:DebugTestOne("kill", 1121)
+
+  self:DebugTestOne("BossKilled", nil)
+  self:DebugTestOne("DBM_Kill", -1)
+  self:DebugTestOne("DBM_Wipe", -1)
+  self:DebugTestOne("kill", 0)
+  self:DebugTestOne("wipe", 0)
+  self:DebugTestOne("kill", "abc")
+  self:DebugTestOne("wipe", "abc")
+
+  self:DebugTestOne("InvalidEvent", 1116)
+  self:DebugTestOne("InvalidEvent", 790)
+  self:DebugTestOne("InvalidEvent", 1113)
+
+  self:DebugTestOne("InvalidEvent", nil)
+  self:DebugTestOne("InvalidEvent", -1)
+  self:DebugTestOne("InvalidEvent", 0)
+  self:DebugTestOne("InvalidEvent", "abc")
+end
+
+function EpgpBossTest(event, id)
+  mod:DebugTest()
 end
