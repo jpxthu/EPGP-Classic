@@ -6,6 +6,7 @@ local DLG = LibStub("LibDialog-1.0")
 local Encounters = LibStub("LibEncounters")
 
 local in_combat = false
+local auto_reward = false
 
 mod.dbDefaults = {
   profile = {
@@ -49,10 +50,30 @@ local function BossAttempt(event_name, boss_name)
   end
 end
 
+local has_autority = nil
+local function CheckAuthority()
+  if CanEditOfficerNote() and EPGP:IsRLorML() then
+    if not has_autority then
+      if mod.db.profile.autoreward then
+        DLG:Spawn("EPGP_BOSS_AUTO_REWARD_ENABLE")
+      end
+    end
+    has_autority = true
+  else
+    if auto_reward then
+      auto_reward = false
+      EPGP:Print(L["BOSS_AUTO_REWARD_STOP"])
+    end
+    has_autority = false
+  end
+end
+
 local function EncounterAttempt(event_name, boss_name, encounter_id)
   Debug("Encounter attempt: %s %s", event_name, tostring(encounter_id))
 
-  if not mod.db.profile.autoreward or encounter_id == nil then
+  if not mod.db.profile.autoreward or
+     not auto_reward or
+     encounter_id == nil then
     BossAttempt(event_name, boss_name)
     return
   end
@@ -136,6 +157,16 @@ end
 
 function mod:PLAYER_REGEN_ENABLED()
   in_combat = false
+end
+
+function mod:EnableAutoReward()
+  auto_reward = true
+  EPGP:Print(L["BOSS_AUTO_REWARD_START"])
+end
+
+function mod:DisableAutoReward()
+  auto_reward = false
+  EPGP:Print(L["BOSS_AUTO_REWARD_STOP"])
 end
 
 function mod:OnInitialize()
@@ -419,6 +450,10 @@ end
 function mod:OnEnable()
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  self:RegisterEvent("GROUP_ROSTER_UPDATE", CheckAuthority)
+  self:RegisterEvent("GUILD_ROSTER_UPDATE", CheckAuthority)
+  CheckAuthority()
+
   if DBM then
     EPGP:Print(L["Using %s for boss kill tracking"]:format("DBM"))
     DBM:RegisterCallback("DBM_Kill", dbmCallback)
@@ -476,8 +511,4 @@ function mod:DebugTest()
   self:DebugTestOne("InvalidEvent", -1)
   self:DebugTestOne("InvalidEvent", 0)
   self:DebugTestOne("InvalidEvent", "abc")
-end
-
-function EpgpBossTest(event, id)
-  mod:DebugTest()
 end
