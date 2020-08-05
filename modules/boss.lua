@@ -4,6 +4,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local Coroutine = LibStub("LibCoroutine-1.0")
 local DLG = LibStub("LibDialog-1.0")
 local Encounters = LibStub("LibEncounters")
+local LOor = LibStub("LibEpgpOorProfile-1.0")
+local Utils = LibStub("LibUtils-1.0")
 
 local in_combat = false
 local auto_reward = false
@@ -474,6 +476,13 @@ function mod:OnDisable()
     BigWigsLoader.UnregisterMessage(self, "BigWigs_OnBossWipe")
   elseif DXE then
     DXE.UnregisterCallback(mod, "TriggerDefeat")
+  end
+end
+
+function mod:CheckGuildConfig(guild, realm)
+  if (guild == "Order Of Rhonin" or guild == "EPGP test") and realm == "艾隆纳亚" then
+    Utils:CopyTable(LOor:GetBossKillEp(), mod.db.profile.bossreward)
+    table.wipe(mod.db.profile.bossreward_wipe)
   end
 end
 
