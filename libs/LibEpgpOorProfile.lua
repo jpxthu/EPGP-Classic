@@ -4,6 +4,43 @@ local MINOR_VERSION = 10000
 local lib, oldMinor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
 
+function lib:GetBossKillEp()
+  local ep = {}
+  ep[663]  = 1  -- MC 1
+  ep[664]  = 1  -- MC 2
+  ep[665]  = 1  -- MC 3
+  ep[666]  = 1  -- MC 4
+  ep[667]  = 1  -- MC 5
+  ep[668]  = 1  -- MC 6
+  ep[669]  = 1  -- MC 7
+  ep[670]  = 1  -- MC 8
+  ep[671]  = 1  -- MC 9
+  ep[672]  = 2  -- MC 拉格纳罗斯
+
+  ep[1084] = 2  -- 奥妮克希亚
+
+  ep[610]  = 2  -- BWL 1
+  ep[611]  = 2  -- BWL 2
+  ep[612]  = 2  -- BWL 3
+  ep[613]  = 2  -- BWL 4
+  ep[614]  = 2  -- BWL 5
+  ep[615]  = 2  -- BWL 6
+  ep[616]  = 2  -- BWL 7
+  ep[617]  = 4  -- BWL 奈法利安
+
+  ep[709]  = 2  -- AQ40 预言者斯克拉姆
+  ep[710]  = 2  -- AQ40 安其拉三宝
+  ep[711]  = 2  -- AQ40 沙尔图拉
+  ep[712]  = 2  -- AQ40 顽强的范克瑞斯
+  ep[713]  = 4  -- AQ40 维希度斯
+  ep[714]  = 2  -- AQ40 哈霍兰公主
+  ep[715]  = 4  -- AQ40 双子皇帝
+  ep[716]  = 4  -- AQ40 奥罗
+  ep[717]  = 8  -- AQ40 克苏恩
+
+  return ep
+end
+
 function lib:GetCustomItemsProfile()
   local CUSTOM_ITEM_DATA = {
     -- Classic P2
