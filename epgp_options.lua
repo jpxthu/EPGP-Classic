@@ -48,6 +48,15 @@ function EPGP:SetupOptions()
         desc = L["Resets GP (not EP!) of all members of the guild. This will set all main toons' GP to 0. Use with care!"],
         func = function() DLG:Spawn("EPGP_RESET_GP") end,
       },
+      allow_negative_ep = {
+        order = 2000,
+        type = "toggle",
+        name = L["ALLOW_NEGATIVE_EP_NAME"],
+        desc = L["ALLOW_NEGATIVE_EP_DESC"],
+        width = 30,
+        get = function() return self.db.profile.allow_negative_ep end,
+        set = function(info, v) self.db.profile.allow_negative_ep = v end,
+      }
     },
   }
 
