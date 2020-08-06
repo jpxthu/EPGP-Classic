@@ -1,9 +1,9 @@
-## Interface: 11304
+## Interface: 11305
 ## X-Min-Interface: 11302
 ## Title: EPGP Classic
 ## Notes: Effort Points/Gear Points Loot System
 ## Author: jpxthu (Maintainer)
-## Version: v1.4.9
+## Version: v1.5.0-Alpha
 ## SavedVariables: EPGP_DB
 ## OptionalDeps: LibRealmInfo
 ## X-Category: Guild
