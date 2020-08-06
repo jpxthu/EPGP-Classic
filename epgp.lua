@@ -302,7 +302,7 @@ local comparators = {
          end
 
          if a_bid == b_bid then
-           return a_ep/a_gp > b_ep/b_gp
+           return a_ep / math.max(1, a_gp) > b_ep / math.max(1, b_gp)
          end
 
          if not a_bid then return false end
