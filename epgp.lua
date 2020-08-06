@@ -204,7 +204,7 @@ function EPGP:DecodeNote(note)
     if note == "" then
       return 0, 0
     else
-      local ep, gp = string.match(note, "^(%d+),(%d+)$")
+      local ep, gp = string.match(note, "^(-?%d+),(%d+)$")
       if ep then
         return tonumber(ep), tonumber(gp)
       end
@@ -213,8 +213,11 @@ function EPGP:DecodeNote(note)
 end
 
 local function EncodeNote(ep, gp)
-  return string.format("%d,%d",
-                       math.max(ep, 0),
+  local ep = ep
+  if not EPGP.db.profile.allow_negative_ep then
+    ep = math.max(ep, 0)
+  end
+  return string.format("%d,%d", ep,
                        math.max(gp - EPGP.db.profile.base_gp, 0))
 end
 
@@ -225,7 +228,7 @@ local function AddEPGP(name, ep, gp)
          string.format("%s is not a main!", tostring(name)))
 
   -- Compute the actual amounts we can add/subtract.
-  if (total_ep + ep) < 0 then
+  if (total_ep + ep) < 0 and not EPGP.db.profile.allow_negative_ep then
     ep = -total_ep
   end
   if (total_gp + gp) < 0 then
@@ -991,17 +994,18 @@ function EPGP:OnInitialize()
 
   local defaults = {
     profile = {
-      last_awards = {},
-      show_everyone = false,
-      sort_order = "PR",
-      recurring_ep_period_mins = 15,
-      decay_p = 0,
-      extras_p = 100,
-      min_ep = 0,
+      allow_negative_ep = false,
       base_gp = 1,
       bonus_loot_log = {},
-      manageRankAll = true,
+      decay_p = 0,
+      extras_p = 100,
+      last_awards = {},
       manageRank = {true, true, true, true, true, true, true, true, true, true},
+      manageRankAll = true,
+      min_ep = 0,
+      recurring_ep_period_mins = 15,
+      show_everyone = false,
+      sort_order = "PR",
     }
   }
 

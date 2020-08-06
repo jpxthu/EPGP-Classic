@@ -4,6 +4,8 @@ if not L then return end
 L["Accepting settings from [%s]..."] = true
 L["Add loot items automatically when loot windows opened or corpse loot received."] = true
 L["Adjust all main toons' GP?"] = true
+L["ALLOW_NEGATIVE_EP_DESC"] = "Allow someone's EP be a negative integer. Test feature, don't know if have bugs."
+L["ALLOW_NEGATIVE_EP_NAME"] = "Allow negative EP (test feature)"
 L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."] = true
 L["Allow whisper for others"] = true
 L["Alts"] = true
