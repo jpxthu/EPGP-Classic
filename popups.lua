@@ -304,6 +304,25 @@ DLG:Register("EPGP_BOSS_ATTEMPT", {
   show_while_dead = true,
 })
 
+DLG:Register("EPGP_BOSS_AUTO_REWARD_ENABLE", {
+  text = L["WHETHER_TO_START_BOSS_AUTO_REWARD"],
+  buttons = {
+    {
+      text = _G.YES,
+      on_click = function(self)
+        EPGP:GetModule("boss"):EnableAutoReward()
+      end,
+    },
+    {
+      text = _G.NO,
+      on_click = function(self)
+        EPGP:GetModule("boss"):DisableAutoReward()
+      end,
+    },
+  },
+  show_while_dead = true,
+})
+
 DLG:Register("EPGP_LOOTMASTER_ASK_TRACKING", {
   text = "You are the Loot Master, would you like to use EPGP Lootmaster to distribute loot?\r\n\r\n(You will be asked again next time. Use the configuration panel to change this behaviour)",
   icon = [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]],
