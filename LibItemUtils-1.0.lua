@@ -360,7 +360,7 @@ end
 
 function lib:ClassesThatCanUse(item, t)
   t = NewTableOrClear(t)
-  for class, _ in pairs(RAID_CLASS_COLORS) do
+  for class, _ in pairs(_G.RAID_CLASS_COLORS) do
     if self:ClassCanUse(class, item) then
       table.insert(t, class)
     end
@@ -370,7 +370,7 @@ end
 
 function lib:ClassesThatCannotUse(item, t)
   t = NewTableOrClear(t)
-  for class, _ in pairs(RAID_CLASS_COLORS) do
+  for class, _ in pairs(_G.RAID_CLASS_COLORS) do
     if self:ClassCannotUse(class, item) then
       table.insert(t, class)
     end

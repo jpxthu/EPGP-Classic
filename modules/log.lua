@@ -18,6 +18,7 @@
 local mod = EPGP:NewModule("log", "AceComm-3.0", "AceEvent-3.0")
 
 local L = LibStub:GetLibrary("AceLocale-3.0"):GetLocale("EPGP")
+local LIU = LibStub("LibItemUtils-1.0")
 local GS = LibStub("LibGuildStorage-1.2")
 local JSON = LibStub("LibJSON-1.0")
 local ItemUtils = LibStub("LibItemUtils-1.0")
@@ -28,6 +29,36 @@ if not mod.callbacks then
   mod.callbacks = CallbackHandler:New(mod)
 end
 local callbacks = mod.callbacks
+
+local function RecordItemLootLog(timestamp, name, itemlink, amount)
+  if not mod.db.profile.record_item_log then return end
+  if not timestamp or not name or not itemlink then return end
+
+  local item_log = mod.db.profile.item_log
+  if not item_log[itemlink] then
+    item_log[itemlink] = {}
+  end
+  table.insert(item_log[itemlink], {timestamp, name, amount})
+end
+
+function mod:ItemLog(itemlink)
+  if not mod.db.profile.record_item_log then return nil end
+  local log = self.db.profile.item_log[itemlink]
+  if not log then return nil end
+  if #log == 0 then return nil end
+  local str = {}
+  local start_i = #log
+  local end_i = math.max(1, #log - self.db.profile.item_log_display_number + 1)
+  for i = start_i, end_i, -1 do
+    local timestamp, name, amount = unpack(log[i])
+    local color = _G.RAID_CLASS_COLORS[EPGP:GetClass(name)].colorStr
+    name = EPGP:GetDisplayCharacterName(name)
+    name = string.format("\124c%s%s\124r", color, name)
+    table.insert(str, string.format("%d GP  %s  %s", amount, name, date("%Y-%m-%d", timestamp)))
+    -- table.insert(str, {name, amount, date("%Y-%m-%d", timestamp)})
+  end
+  return str
+end
 
 -- local timestamp_t = {}
 local function GetTimestamp(diff)
@@ -65,11 +96,15 @@ local function AppendToLog(kind, event_type, name, reason, amount, mass, undo)
     for k,_ in ipairs(mod.db.profile.redo) do
       mod.db.profile.redo[k] = nil
     end
-    local entry = {GetTimestamp(), kind, name, reason, amount}
+    local timestamp = GetTimestamp()
+    local entry = {timestamp, kind, name, reason, amount}
     table.insert(mod.db.profile.log, entry)
     mod:SendCommMessage("EPGP", string.format(LOG_FORMAT, unpack(entry)),
                         "GUILD", nil, "BULK")
     callbacks:Fire("LogChanged", #mod.db.profile.log)
+    if kind == "GP" then
+      RecordItemLootLog(timestamp, name, reason, amount)
+    end
   end
 end
 
@@ -77,9 +112,13 @@ function mod:LogSync(prefix, msg, distribution, sender)
   if prefix == "EPGP" and sender ~= UnitName("player") then
     local timestamp, kind, name, reason, amount = deformat(msg, LOG_FORMAT)
     if timestamp then
-      local entry = {tonumber(timestamp), kind, name, reason, tonumber(amount)}
+      amount = tonumber(amount)
+      local entry = {tonumber(timestamp), kind, name, reason, amount}
       table.insert(mod.db.profile.log, entry)
       callbacks:Fire("LogChanged", #self.db.profile.log)
+      if kind == "GP" then
+        RecordItemLootLog(timestamp, name, reason, amount)
+      end
     end
   end
 end
@@ -380,7 +419,60 @@ mod.dbDefaults = {
     enabled = true,
     log = {},
     redo = {},
+    item_log = {},
+    record_item_log = false,
+    item_log_display_number = 5,
   }
+}
+
+mod.optionsName = L["Logs"]
+mod.optionsDesc = L["Logs"]
+mod.optionsArgs = {
+  help = {
+    order = 1,
+    type = "description",
+    name = L["Logs"],
+    fontSize = "medium",
+  },
+  item_log_header = {
+    order = 20,
+    type = "header",
+    name = L["LOOT_ITEM_LOG_HEADER"],
+  },
+  item_log_help = {
+    order = 21,
+    type = "description",
+    name = L["LOOT_RECORD_ITEM_LOG_DESC"],
+    fontSize = "medium",
+  },
+  record_item_log = {
+    order = 22,
+    type = "toggle",
+    name = L["LOOT_RECORD_ITEM_LOG_NAME"],
+    desc = L["LOOT_RECORD_ITEM_LOG_DESC"],
+  },
+  item_log_display_number = {
+    order = 23,
+    type = "input",
+    name = L["LOOT_ITEM_LOG_SHOW_NUMBER_NAME"],
+    pattern = "^[1-9]%d*$",
+    usage = L["should be a positive integer"],
+    get = function()
+      return tostring(mod.db.profile.item_log_display_number)
+    end,
+    set = function(info, v)
+      mod.db.profile.item_log_display_number = tonumber(v)
+    end,
+  },
+  clean_item_log = {
+    order = 24,
+    type = "execute",
+    name = L["LOOT_ITEM_LOG_CLEAR_NAME"],
+    func = function()
+      table.wipe(mod.db.profile.item_log)
+      EPGP:Print(L["LOOT_ITEM_LOG_CLEAR_MSG"])
+    end,
+  },
 }
 
 function mod:OnInitialize()

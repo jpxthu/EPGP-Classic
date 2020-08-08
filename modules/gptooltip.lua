@@ -13,25 +13,37 @@ local function TooltipAddGpLine(tooltip, i, gp, c)
   if c ~= "" then
     s = s .. " (" .. c .. ")"
   end
-  tooltip:AddLine(s, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+  tooltip:AddLine(s)
   return true
 end
 
-function OnTooltipSetItem(tooltip, ...)
+local function TooltipAddGpLines(tooltip, itemlink)
+  local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
+  if not TooltipAddGpLine(tooltip, 1, gp1, c1) then return end
+  if not TooltipAddGpLine(tooltip, 2, gp2, c2) then return end
+  if not TooltipAddGpLine(tooltip, 3, gp3, c3) then return end
+end
+
+local function OnTooltipSetItem(tooltip, ...)
   local _, itemlink = tooltip:GetItem()
   if not itemlink then return end
-  local gp1, c1, gp2, c2, gp3, c3 = GP:GetValue(itemlink)
 
   if mod.db.profile.ilvl then
     local ilvl = select(4, GetItemInfo(itemlink))
     if ilvl then
-      tooltip:AddLine(("ilvl: %s"):format(ilvl))
+      tooltip:AddLine("ilvl: " .. tostring(ilvl))
     end
   end
 
-  if not TooltipAddGpLine(tooltip, 1, gp1, c1) then return end
-  if not TooltipAddGpLine(tooltip, 2, gp2, c2) then return end
-  if not TooltipAddGpLine(tooltip, 3, gp3, c3) then return end
+  TooltipAddGpLines(tooltip, itemlink)
+
+  local item_log = EPGP:GetModule("log"):ItemLog(itemlink)
+  if item_log then
+    tooltip:AddLine(" ")
+    for i, v in pairs(item_log) do
+      tooltip:AddLine(v)
+    end
+  end
 end
 
 mod.dbDefaults = {
