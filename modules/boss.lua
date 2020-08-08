@@ -234,8 +234,8 @@ mod.optionsArgs = {
   },
   autoreward = {
     type = "toggle",
-    name = L["Automatic EP Reward"],
-    desc = L["Automatically reward EP to the raid after a boss kill. Requires DBM"],
+    name = L["BOSS_AUTO_REWARD_NAME"],
+    desc = L["BOSS_AUTO_REWARD_DESC"],
     order = 10,
     width = 30,
     disabled = function(v) return not DBM end,
@@ -249,7 +249,7 @@ mod.optionsArgs = {
   rewardHeader = {
     order = 20,
     type = "header",
-    name = L["Automatic EP Reward"],
+    name = L["BOSS_AUTO_REWARD_NAME"],
   },
   bossrewards_mc = {
     type = "group",

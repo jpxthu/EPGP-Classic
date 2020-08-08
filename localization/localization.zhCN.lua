@@ -3,6 +3,8 @@ if not L then return end
 
 --@localization(locale="zhCN", format="lua_additive_table", same-key-is-true=true)@
 
+--@debug@
+
 L["%+d EP (%s) to %s"] = "%+d EP (%s) 给 %s"
 L["%+d GP (%s) to %s"] = "%+d GP (%s) 给 %s"
 L["'%s' - expected 'on' or 'off', or no argument to toggle."] = "'%s' - 选择“on”，“off”或者“default”，否则将无法触发"
@@ -40,6 +42,8 @@ L["Add loot items automatically when loot windows opened or corpse loot received
 L["Adjust all main toons' GP?"] = "调整所有大号的 GP？"
 L["Allow adding [name] into standby list by whispering \"epgp standby [name]\" if enabled."] = "允许密语 \"epgp standby [角色名]\" 将其他角色加入替补名单"
 L["Allow whisper for others"] = "允许替他人替补"
+L["ALLOW_NEGATIVE_EP_DESC"] = "允许公会成员的 EP 是负整数。测试功能，可能有 bug！"
+L["ALLOW_NEGATIVE_EP_NAME"] = "允许负数 EP（测试功能）"
 L["Alts"] = "小号"
 L["An item was disenchanted or deposited into the guild bank"] = "一件物品已被分解或已存入公会银行"
 L["Announce"] = "通告"
@@ -65,6 +69,12 @@ L["Bid medium"] = "竞标媒介"
 L["Blackwing Lair"] = "黑翼之巢"
 L["Bonus roll for %s (%s left): got %s (ilvl %d)"] = "%s 额外拾取（%s 剩余）：获得 %s（装等 %d）"
 L["Bonus roll for %s (%s left): got gold"] = "%s 额外拾取（%s 剩余）：获得金币"
+L["BOSS_AUTO_REWARD_DESC"] = "BOSS 击杀或灭团后向自动奖励 EP。需要 DBM。如果输入框留空，BOSS 击杀或灭团后会弹出原来的奖励窗口。"
+L["BOSS_AUTO_REWARD_NAME"] = "自动奖励 EP"
+L["BOSS_AUTO_REWARD_START"] = "开始 BOSS 击杀/灭团自动奖励"
+L["BOSS_AUTO_REWARD_STOP"] = "停止 BOSS 击杀/灭团自动奖励"
+L["BOSS_KILL_AUTO_AWARD_0_EP_DESC"] = "[%s] 的击杀自动奖励 EP 为 0，跳过。"
+L["BOSS_WIPE_AUTO_AWARD_0_EP_DESC"] = "[%s] 的灭团自动奖励 EP 为 0，跳过。"
 L["Clear"] = "清除"
 L["Collect bid/roll message to help sorting"] = "收集竞标和 roll 点信息并排序"
 L["Comment %d"] = "备注 %d"
@@ -83,6 +93,12 @@ L["DECAY_BASE_GP_DESC"] = [=[衰减时计算 BASE_GP。
 L["DECAY_BASE_GP_TEXT"] = "衰减 BASE_GP"
 L["DECAY_P_DESC"] = "衰减百分比"
 L["default"] = "默认"
+L["DIST_ANNOUNCE_PR_FMT_DESC"] = [=[默认值：
+${char} EP:${ep} GP:${gp} PR:${pr}
+
+可选变量：
+${bid}]=]
+L["DIST_ANNOUNCE_PR_FMT_NAME"] = "EP/GP/PR 通告文字格式"
 L["Distribution"] = "分配"
 L["Do you want to resume recurring award (%s) %d EP/%s?"] = "你想重新开始周期性奖励 (%s) %d EP/%s 吗？"
 L["EP Reason"] = "EP 理由"
@@ -119,6 +135,7 @@ L["Import"] = "导入"
 L["Importing data snapshot taken at: %s"] = "导入%s截取的数据快照"
 L["invalid input"] = "无效输入"
 L["Invalid officer note [%s] for %s (ignored)"] = "人物 %s 包含无效的官员备注 [%s] (已被忽略)"
+L["kill"] = "击杀"
 L["Legendary Scale"] = "传说装备系数"
 L["List errors"] = "列出错误"
 L["Lists errors during officer note parsing to the default chat frame. Examples are members with an invalid officer note."] = "在默认聊天框架中列出解析官员备注时发生的错误。例如具有无效官员备注的会员。"
@@ -127,6 +144,12 @@ L["Loot list is almost full (%d/%d)."] = "战利品列表快满了（%d/%d）。
 L["Loot list is full (%d). %s will not be added into list."] = "战利品列表满了（%d）。%s 不会被加入列表。"
 L["Loot list: "] = "战利品列表："
 L["Loot tracking threshold"] = "战利品拾取追踪等级阀值"
+L["LOOT_ITEM_LOG_CLEAR_MSG"] = "拾取记录已清空。"
+L["LOOT_ITEM_LOG_CLEAR_NAME"] = "清空拾取记录"
+L["LOOT_ITEM_LOG_HEADER"] = "拾取记录"
+L["LOOT_ITEM_LOG_SHOW_NUMBER_NAME"] = "最大记录数量"
+L["LOOT_RECORD_ITEM_LOG_DESC"] = "保存拾取记录，在物品的鼠标提示中显示。"
+L["LOOT_RECORD_ITEM_LOG_NAME"] = "保存拾取记录"
 L["Main"] = "大号"
 L["Make sure you are the only person changing EP and GP. If you have multiple people changing EP and GP at the same time, for example one awarding EP and another crediting GP, you *are* going to have data loss."] = "确保你是唯一一个正在变更 EP 和 GP 的人。如果有多人同时变更 EP 和 GP，比如一个人正在发放 EP 时另一个人记录 GP，你*必定*会丢失数据。"
 L["Mass Adjust GP"] = "批量调整 GP"
@@ -194,6 +217,7 @@ L["Sets the medium EPGP will use to collect need/greed results from members."] =
 L["Settings sent from trusted members will be accepted without asking."] = "来自信任成员的设置会被自动同步，不需要经过询问。"
 L["SETTINGS_RECEIVED_POPUP_TEXT"] = "收到来自 [%s] 的设置，是否覆盖本地设置？点击 [%s] 将 [%s] 加入信任列表，以后将不再询问。"
 L["should be a none-zero integer"] = "应为非零整数"
+L["Should be a non-negative integer"] = "应为非负整数"
 L["should be a positive integer"] = "应为正整数"
 L["Show everyone"] = "显示所有人"
 L["Show item level"] = "显示物品等级"
@@ -206,6 +230,7 @@ L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."] = "不�
 L["Standby whispers in raid"] = "发送密语的待命人员"
 L["Start recurring award (%s) %d EP/%s"] = "开始周期性奖励 (%s) %d EP/%s"
 L["Stop recurring award"] = "停止周期性奖励"
+L["string1"] = true
 L["Sync finished."] = "同步完成。"
 L["Sync settings to guild ranks:"] = "向以下公会级别同步设置："
 L["Sync to:"] = "同步给："
@@ -227,10 +252,14 @@ L["Using %s for boss kill tracking"] = "使用 %s 以追踪首领击杀。"
 L["Value"] = "数值"
 L["Web & WeChat Mini Program"] = "网站/微信小程序"
 L["When a new tier comes, you may like to increase [standard_ilvl]. That can avoid large gear points. If you do that, a GP rescaling is recommended. Everyone's GP will be changed."] = "新版本更新后，应当提高 [standard_ilvl] 以避免装备 GP 数值过大。如果你提高了 [standard_ilvl]，建议重新调整 GP；每个人的 GP 都会被重设。"
+L["WHETHER_TO_START_BOSS_AUTO_REWARD"] = "EPGP：是否开始 BOSS 击杀/团灭自动奖励？"
 L["Whisper"] = "密语"
+L["wipe"] = "团灭"
 L["Wipe awards"] = "灭团奖励"
 L["Wiped on %s. Award EP?"] = "在 %s 的战斗中灭团。奖励 EP？"
 L["Write into Guild Info"] = "写入公会信息"
 L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"] = "现在你可访问如下网站查阅自己的 epgp 积分和已获得战利品：http://www.epgpweb.com"
 L["You may need to deselect \"Show only members\" on EPGP web after uploading."] = "上传后，你可能需要勾掉“Show only members”选项。"
 L["You should probably: increase standard_ilvl, reset or rescale GP."] = "你可能需要：提高 standard_ilvl，重置或重新调整 GP。"
+
+--@end-debug@

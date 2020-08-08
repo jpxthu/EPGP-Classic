@@ -189,8 +189,8 @@ mod.optionsArgs = {
   prAnnounceMsgFmt = {
     order = 14,
     type = "input",
-    name = L["EP/GP/PR announce text"],
-    desc = L["Default:\n${char} EP:${ep} GP:${gp} PR:${pr}\n\nAdditional Variables:\n${bid}"],
+    name = L["DIST_ANNOUNCE_PR_FMT_NAME"],
+    desc = L["DIST_ANNOUNCE_PR_FMT_DESC"],
     width = 100 ,
   },
   -- spacer1 = LUI:OptionsSpacer(13, 0.001),
