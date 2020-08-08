@@ -228,7 +228,7 @@ local function CreateEPGPExportImportFrame()
         self.editbox:SetScript("OnTextChanged", nil)
       elseif self.exportDetail then
         self.help:SetText(L["EXPORT_DETAIL_DESC"] .. "\n" ..
-                          "https://epgp.dj173.com - " .. _G.ZHCN .. " - " .. L["Web & WeChat Mini Program"])
+                          "https://www.wowepgp.com - " .. _G.ZHCN .. " - " .. L["Web & WeChat Mini Program"])
         self.button1:Show()
         self.button1:SetText(CLOSE)
         self.button1:SetPoint("CENTER", self, "CENTER")
@@ -2121,7 +2121,7 @@ local function CreateEPGPFrameStandings()
         local name = EPGP:GetMember(j)
         row.name = name
         row.cells[1]:SetText(Ambiguate(row.name, "short"))
-        local c = RAID_CLASS_COLORS[EPGP:GetClass(row.name)]
+        local c = _G.RAID_CLASS_COLORS[EPGP:GetClass(row.name)]
         row.cells[1]:SetTextColor(c.r, c.g, c.b)
         local ep, gp = EPGP:GetEPGP(row.name)
         row.cells[2]:SetText(ep)
