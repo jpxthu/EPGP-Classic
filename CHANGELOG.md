@@ -1,3 +1,9 @@
+### v1.5.0 (2020.8.9)
+
+- New feature: boss kill/wipe reward
+- New feature: loot log (history)
+- Update log sync website
+
 ### v1.4.9 (2020.5.10)
 
 - Bug fix: can not get external EPGP (jpxthu/RCLootCouncil_EPGP_Classic#1)

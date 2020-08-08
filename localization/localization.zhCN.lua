@@ -162,6 +162,9 @@ L["must be equal to or higher than %s"] = "必须高于或等于 %s"
 L["must be equal to or lower than %s"] = "必须小于等于 %s"
 L["Naxxramas"] = "纳克萨玛斯"
 L["Need/greed medium"] = "需求/贪婪媒介"
+L["NEW_VERSION_INTRO_1_5_0"] = [=[新功能：
+1. BOSS 击杀/灭团自动奖励。在 %s -> %s -> EPGP -> %s 中开启和设置。
+2. 拾取记录。在 %s -> %s -> EPGP -> %s 中开启和设置。]=]
 L["Next award in "] = "距离下次奖励"
 L["Non-hunter"] = "非猎人"
 L["Non-tank"] = "非坦克"
@@ -222,7 +225,6 @@ L["should be a positive integer"] = "应为正整数"
 L["Show everyone"] = "显示所有人"
 L["Show item level"] = "显示物品等级"
 L["Slots"] = "部位"
-L["Some 3rd-party EPGP system were launched. Details in: EPGP -> %s -> %s"] = "一些第三方 EPGP 系统已发布，详见：EPGP -> %s -> %s"
 L["Some english word"] = "一些英语"
 L["Some english word that doesn't exist"] = "一些不存在的英语"
 L["Standby"] = "待命"

@@ -133,6 +133,9 @@ L["must be equal to or higher than %s"] = true
 L["must be equal to or lower than %s"] = true
 L["Naxxramas"] = true
 L["Need/greed medium"] = true
+L["NEW_VERSION_INTRO_1_5_0"] = [=[New features:
+1. Boss kill/wipe auto reward. Enable and config in %s -> %s -> EPGP -> %s.
+2. Loot log. Enable and config in %s -> %s -> EPGP -> %s.]=]
 L["Next award in "] = true
 L["Non-hunter"] = true
 L["Non-tank"] = true
@@ -210,7 +213,6 @@ L["%s is not eligible for EP awards"] = true
 L["%s is not in the award list now. Whisper me 'epgp standby' to enlist again."] = true
 L["%s is now removed from the award list. Whisper me 'epgp standby' to enlist again."] = true
 L["Slots"] = true
-L["Some 3rd-party EPGP system were launched. Details in: EPGP -> %s -> %s"] = true
 L["Some english word"] = true
 L["Some english word that doesn't exist"] = true
 L["%s %s"] = true
