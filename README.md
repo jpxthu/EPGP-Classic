@@ -28,6 +28,7 @@ New added:
 - Enhancement on whisper. More options offered in interface->EPGP.
 - Gear points (GP) scale and equation setting GUI.
 - Loot tracking and distribution module.
+- Automatic EP reward for boss kills and wipes
 
 ## Resources
 
