@@ -792,7 +792,11 @@ end
 
 function mod:CheckGuildConfig(guild, realm)
   if (guild == "Order Of Rhonin" or guild == "EPGP test") and realm == "艾隆纳亚" then
-    table.wipe(EPGP.db.profile.customItems)
+    if EPGP.db.profile.customItems then
+      table.wipe(EPGP.db.profile.customItems)
+    else
+      EPGP.db.profile.customItems = {}
+    end
     CUSTOM_ITEM_DATA = LOor:GetCustomItemsProfile()
   end
 end

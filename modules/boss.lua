@@ -481,8 +481,13 @@ end
 
 function mod:CheckGuildConfig(guild, realm)
   if (guild == "Order Of Rhonin" or guild == "EPGP test") and realm == "艾隆纳亚" then
+    if not mod.db.profile.bossreward then
+      mod.db.profile.bossreward = {}
+    end
     Utils:CopyTable(LOor:GetBossKillEp(), mod.db.profile.bossreward)
-    table.wipe(mod.db.profile.bossreward_wipe)
+    if mod.db.profile.bossreward_wipe then
+      table.wipe(mod.db.profile.bossreward_wipe)
+    end
   end
 end
 
