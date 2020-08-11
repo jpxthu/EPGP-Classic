@@ -1,0 +1,5 @@
+package-as: EPGP-Classic
+
+manual-changelog:
+    filename: changelog.md
+    markup-type: markdown
