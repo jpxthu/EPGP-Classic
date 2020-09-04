@@ -137,6 +137,7 @@ function lib:GetCustomItemsProfile()
     [23558] = { 4, 81, "CUSTOM_GP", nil, 1 }, -- [穴居虫之壳]
 
     -- TAQ 克苏恩
+    [21134] = { 4, 84, "CUSTOM_SCALE", nil, 2.0 }, -- [疯狂黑暗之刃]
     [21579] = { 4, 88, "CUSTOM_GP", nil, 1 }, -- [克苏恩的触须]
     [21839] = { 4, 84, "CUSTOM_SCALE", nil, 2.0 }, -- [虚妄预言者节杖]
     [21126] = { 4, 84, "CUSTOM_SCALE", nil, 2.0, 0.5 }, -- [死亡之钉]
