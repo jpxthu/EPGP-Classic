@@ -75,6 +75,8 @@ function lib:GetCustomItemsProfile()
     [19430] = { 4, 75, "CUSTOM_GP", nil, 5 }, -- [纯净思想斗篷]
     [19433] = { 4, 75, "CUSTOM_GP", nil, 1 }, -- [灰烬护腿]
     [19357] = { 4, 75, "CUSTOM_GP", nil, 1 }, -- [悲哀使者]
+    [19355] = { 4, 75, "CUSTOM_GP", nil, 5 }, -- [暗影之翼]
+    [19357] = { 4, 75, "CUSTOM_GP", nil, 5 }, -- [源力之环]
     [19389] = { 4, 77, "CUSTOM_GP", nil, 1 }, -- [紧绷的龙皮护肩]
     [19390] = { 4, 77, "CUSTOM_GP", nil, 1 }, -- [紧绷的龙皮手套]
     [19388] = { 4, 77, "CUSTOM_GP", nil, 1 }, -- [安格莉丝塔之握]
