@@ -56,7 +56,16 @@ function EPGP:SetupOptions()
         width = 30,
         get = function() return self.db.profile.allow_negative_ep end,
         set = function(info, v) self.db.profile.allow_negative_ep = v end,
-      }
+      },
+      remind_enable_combatlog = {
+        order = 2001,
+        type = "toggle",
+        name = L["COMBATLOG_REMIND_ENABLE_NAME"],
+        desc = L["COMBATLOG_REMIND_ENABLE_DESC"],
+        width = 30,
+        get = function() return self.db.profile.remind_enable_combatlog end,
+        set = function(info, v) self.db.profile.remind_enable_combatlog = v end,
+      },
     },
   }
 

@@ -67,6 +67,7 @@ modules\loot.lua
 modules\options_custom_items.lua
 modules\options.lua
 modules\points.lua
+modules\reminder.lua
 modules\rescale.lua
 modules\sync.lua
 modules\ui.lua

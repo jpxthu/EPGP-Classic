@@ -45,6 +45,15 @@ L["BOSS_KILL_AUTO_AWARD_0_EP_DESC"] = "Boss kill auto award EP of [%s] was set t
 L["BOSS_WIPE_AUTO_AWARD_0_EP_DESC"] = "Boss wipe auto award EP of [%s] was set to 0. Skip."
 L["Clear"] = true
 L["Collect bid/roll message to help sorting"] = true
+L["COMBATLOG_ENABLE_FAIL"] = "Failed to enable combatlog. Please try it manually (/combatlog)."
+L["COMBATLOG_ENABLE_REMIND_MSG"] = [=[EPGP reminder
+Would you like to enable combatlog? (/combatlog)]=]
+L["COMBATLOG_IS_LOGGING"] = "Combatlog is logging (/combatlog)."
+L["COMBATLOG_REMIND_ENABLE_DESC"] = [=[Remind to enable combatlog when:
+1. Join a raid
+2. Entering world when in a raid
+This is a testing feature.]=]
+L["COMBATLOG_REMIND_ENABLE_NAME"] = "Remind enable combatlog (testing)"
 L["Comment %d"] = true
 L["Credit GP"] = true
 L["Credit GP to %s"] = true

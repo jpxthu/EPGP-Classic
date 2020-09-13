@@ -11,10 +11,18 @@ function EPGPSearchG(s, parent, pre, lvl)
   if not pre then pre = "_G." end
   if not lvl then lvl = 0 end
   for i, v in pairs(parent) do
-    if type(v) == "table" and lvl < 4 and type(i) == "string" and i ~= "_G" then
-      EPGPSearchG(s, v, pre .. i .. ".", lvl + 1)
+    if type(v) == "table" then
+      if lvl < 4 and type(i) == "string" and i ~= "_G" then
+        EPGPSearchG(s, v, pre .. i .. ".", lvl + 1)
+      end
     elseif v == s then
       print(pre .. i)
+    -- elseif type(v) == "string" then
+    --   if string.sub(v, 1, string.len(s)) == s then
+    --     print(pre .. i)
+    --   end
+    else
+      -- print(pre .. tostring(i), type(v))
     end
   end
 end

@@ -77,6 +77,15 @@ L["BOSS_KILL_AUTO_AWARD_0_EP_DESC"] = "[%s] 的击杀自动奖励 EP 为 0，跳
 L["BOSS_WIPE_AUTO_AWARD_0_EP_DESC"] = "[%s] 的灭团自动奖励 EP 为 0，跳过。"
 L["Clear"] = "清除"
 L["Collect bid/roll message to help sorting"] = "收集竞标和 roll 点信息并排序"
+L["COMBATLOG_ENABLE_FAIL"] = "开启战斗日志失败，请手动尝试（/combatlog）。"
+L["COMBATLOG_ENABLE_REMIND_MSG"] = [=[EPGP 提醒
+是否启用战斗日志？（/combatlog）]=]
+L["COMBATLOG_IS_LOGGING"] = "战斗日志已启用（/combatlog）。"
+L["COMBATLOG_REMIND_ENABLE_DESC"] = [=[当满足以下条件时提醒启用战斗日志：
+1. 加入一个团队
+2. 进入游戏并且在一个团队中
+这是一个测试功能。]=]
+L["COMBATLOG_REMIND_ENABLE_NAME"] = "提醒启用战斗日志（测试）"
 L["Comment %d"] = "备注 %d"
 L["Credit GP"] = "记入 GP"
 L["Credit GP to %s"] = "给 %s 增加 GP"

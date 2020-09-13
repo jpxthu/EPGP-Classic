@@ -407,3 +407,25 @@ DLG:Register("EPGP_SETTINGS_RECEIVED", {
     },
   }
 })
+
+DLG:Register("EPGP_REMIND_ENABLE_COMBATLOG", {
+  text = L["COMBATLOG_ENABLE_REMIND_MSG"],
+  icon = [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]],
+  buttons = {
+    {
+      text = _G.YES,
+      on_click = function(self)
+        if LoggingCombat(true) then
+          EPGP:Print(_G.COMBATLOGENABLED)
+        else
+          EPGP:Print(L["COMBATLOG_ENABLE_FAIL"])
+        end
+      end,
+    },
+    {
+      text = _G.NO,
+    },
+  },
+  hide_on_escape = true,
+  show_while_dead = true,
+})
