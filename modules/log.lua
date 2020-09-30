@@ -43,6 +43,7 @@ end
 
 function mod:ItemLog(itemlink)
   if not mod.db.profile.record_item_log then return nil end
+  if not itemlink then return nil end
   local log = self.db.profile.item_log[itemlink]
   if not log then return nil end
   if #log == 0 then return nil end
@@ -51,7 +52,7 @@ function mod:ItemLog(itemlink)
   local end_i = math.max(1, #log - self.db.profile.item_log_display_number + 1)
   for i = start_i, end_i, -1 do
     local timestamp, name, amount = unpack(log[i])
-    local color = _G.RAID_CLASS_COLORS[EPGP:GetClass(name)].colorStr
+    local color = _G.RAID_CLASS_COLORS[EPGP:GetClass(name) or "DEATHKNIGHT"].colorStr
     name = EPGP:GetDisplayCharacterName(name)
     name = string.format("\124c%s%s\124r", color, name)
     table.insert(str, string.format("%d GP  %s  %s", amount, name, date("%Y-%m-%d", timestamp)))

@@ -18,7 +18,7 @@ local function EnableCombatlog()
 end
 
 local function Init()
-  in_raid = UnitInRaid("player")
+  in_raid = not not UnitInRaid("player")
   EnableCombatlog()
 end
 
@@ -27,7 +27,7 @@ local function RaidtatusChanged()
 end
 
 function mod:GROUP_ROSTER_UPDATE()
-  local tmp = UnitInRaid("player")
+  local tmp = not not UnitInRaid("player")
   if in_raid ~= tmp then
     in_raid = tmp
     RaidtatusChanged()
