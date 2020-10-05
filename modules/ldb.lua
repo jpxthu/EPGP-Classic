@@ -38,7 +38,7 @@ function mod:OnEnable()
           tooltip:AddLine("Right-click to open the EPGP config", 0, 1, 0)
           tooltip:AddLine(" ")
           local status = string.format(
-            L["Decay=%s%% BaseGP=%s MinEP=%s Extras=%s%%"],
+            "Decay=%s%% BaseGP=%s MinEP=%s Extras=%s%%",
             "|cFFFFFFFF"..EPGP:GetDecayPercent().."|r",
             "|cFFFFFFFF"..EPGP:GetBaseGP().."|r",
             "|cFFFFFFFF"..EPGP:GetMinEP().."|r",
