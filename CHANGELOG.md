@@ -1,3 +1,7 @@
+### v1.5.6 (2020.12.2)
+
+- Standard ilvl update for NAXX.
+
 ### v1.5.2 (2020.9.14)
 
 - Remind to enable combatlog. Default off.
