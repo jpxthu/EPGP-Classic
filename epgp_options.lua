@@ -140,7 +140,7 @@ function EPGP:ProcessCommand(str)
     local member, reason, amount = self:GetArgs(str, 3, nextpos)
     amount = tonumber(amount)
     if self:CanIncEPBy(reason, amount) then
-      self:IncEPBy(member, reason, amount)
+      self:IncEPBy(self:GetFullCharacterName(member), reason, amount)
     end
   elseif command == "gp" then
     local member, itemlink, amount = self:GetArgs(str, 3, nextpos)
@@ -157,7 +157,7 @@ function EPGP:ProcessCommand(str)
     end
 
     if self:CanIncGPBy(itemlink, amount) then
-      self:IncGPBy(member, itemlink, amount)
+      self:IncGPBy(self:GetFullCharacterName(member), itemlink, amount)
     end
   elseif command == "decay" then
     if EPGP:CanDecayEPGP() then

@@ -811,6 +811,7 @@ function EPGP:CanIncEPBy(reason, amount)
   return true
 end
 
+-- name must be the full character name contains realm.
 function EPGP:IncEPBy(name, reason, amount, mass, undo)
   -- When we do mass EP or decay we know what we are doing even though
   -- CanIncEPBy returns false
@@ -846,6 +847,7 @@ function EPGP:CanIncGPBy(reason, amount)
   return true
 end
 
+-- name must be the full character name contains realm.
 function EPGP:IncGPBy(name, reason, amount, mass, undo)
   -- When we do mass GP or decay we know what we are doing even though
   -- CanIncGPBy returns false
