@@ -187,6 +187,8 @@ function lib:GetCustomItemsProfile()
     [22364] = { 4, 86, "INVTYPE_HAND" },
     [22371] = { 4, 86, "INVTYPE_HAND" },
     [22358] = { 4, 86, "INVTYPE_FEET" },
+    [22365] = { 4, 86, "INVTYPE_FEET" },
+    [22372] = { 4, 86, "INVTYPE_FEET" },
     [23061] = { 4, 86, "INVTYPE_FINGER" },  -- [信仰之戒]
     [23062] = { 4, 86, "INVTYPE_FINGER" },  -- [霜火之戒]
     [23063] = { 4, 86, "INVTYPE_FINGER" },  -- [瘟疫之心指环]
