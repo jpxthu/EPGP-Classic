@@ -1,3 +1,7 @@
+### v1.5.7 (2020.12.19)
+
+- ep and gp command allowing short name without realm (#52)
+
 ### v1.5.6 (2020.12.2)
 
 - Standard ilvl update for NAXX.
