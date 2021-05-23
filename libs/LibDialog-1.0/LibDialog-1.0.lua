@@ -33,7 +33,7 @@ if not lib then
     return
 end -- No upgrade needed
 
-local dialog_prototype = _G.CreateFrame("Frame", nil, _G.UIParent)
+local dialog_prototype = _G.CreateFrame("Frame", nil, _G.UIParent, BackdropTemplateMixin and "BackdropTemplate");
 local dialog_meta = {
     __index = dialog_prototype
 }
@@ -347,7 +347,7 @@ local function _AcquireCheckBox(parent, index)
     local checkbox = table.remove(checkbox_heap)
 
     if not checkbox then
-        local container = _G.CreateFrame("Frame", ("%s_CheckBoxContainer%d"):format(MAJOR, #active_checkboxes + 1), _G.UIParent)
+        local container = _G.CreateFrame("Frame", ("%s_CheckBoxContainer%d"):format(MAJOR, #active_checkboxes + 1), _G.UIParent, BackdropTemplateMixin and "BackdropTemplate");
         container:SetHeight(DEFAULT_CHECKBOX_SIZE)
 
         checkbox = _G.CreateFrame("CheckButton", ("%s_CheckBox%d"):format(MAJOR, #active_checkboxes + 1), container, "UICheckButtonTemplate")
