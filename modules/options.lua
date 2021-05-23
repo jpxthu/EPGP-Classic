@@ -70,11 +70,11 @@ function mod:FillFrame(f)
   CreateTableHeader(f, L["%s %s"]:format(_G.CUSTOM, _G.ITEMS), "customItems")
   CreateTableHeader(f, "Sync", "sync")
 
-  frames.customItems = CreateFrame("FRAME", "CustomItemsFrame", f)
+  frames.customItems = CreateFrame("FRAME", "CustomItemsFrame", f, BackdropTemplateMixin and "BackdropTemplate");
   frames.customItems:SetPoint("TOPLEFT", headers[1], "BOTTOMLEFT", 0, -5)
   EPGP:GetModule("optionsCustomItems"):FillFrame(frames.customItems, f)
 
-  frames.sync = CreateFrame("FRAME", "CustomItemsFrame", f)
+  frames.sync = CreateFrame("FRAME", "CustomItemsFrame", f, BackdropTemplateMixin and "BackdropTemplate");
   frames.sync:SetPoint("TOPLEFT", headers[1], "BOTTOMLEFT", 0, -5)
   EPGP:GetModule("sync"):FillFrame(frames.sync, f)
 

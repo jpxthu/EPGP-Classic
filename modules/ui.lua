@@ -365,7 +365,7 @@ local function CreateTable(parent, texts, widths, justfiesH, rightPadding)
   end
 
   -- Make a frame for the rows
-  local rowFrame = CreateFrame("Frame", nil, parent)
+  local rowFrame = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate");
   rowFrame:SetPoint("TOP", parent.headers[#parent.headers], "BOTTOM")
   rowFrame:SetPoint("BOTTOMLEFT")
   rowFrame:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -rightPadding, 0)
@@ -1618,11 +1618,11 @@ local function CreateEPGPSideFrame(self)
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local gpFrame = CreateFrame("Frame", nil, f)
+  local gpFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   gpFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -30)
   gpFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -30)
 
-  local epFrame = CreateFrame("Frame", nil, f)
+  local epFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   epFrame:SetPoint("TOPLEFT", gpFrame, "BOTTOMLEFT", 0, -15)
   epFrame:SetPoint("TOPRIGHT", gpFrame, "BOTTOMRIGHT", -15, -15)
 
@@ -1682,15 +1682,15 @@ local function CreateEPGPSideFrame2()
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local epFrame = CreateFrame("Frame", nil, f)
+  local epFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   epFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   epFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -30, -15)
 
-  local customFrame = CreateFrame("Frame", nil, f)
+  local customFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   customFrame:SetPoint("TOPLEFT", epFrame, "BOTTOMLEFT", 0, -15)
   customFrame:SetPoint("TOPRIGHT", epFrame, "BOTTOMRIGHT", 0, -15)
 
-  local decayFrame = CreateFrame("Frame", nil, f)
+  local decayFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   decayFrame:SetPoint("TOPLEFT", customFrame, "BOTTOMLEFT", 0, -15)
   decayFrame:SetPoint("TOPRIGHT", customFrame, "BOTTOMRIGHT", 0, -15)
 
@@ -1767,7 +1767,7 @@ local function CreateEPGPLootFrame()
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local itemFrame = CreateFrame("Frame", nil, f)
+  local itemFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   itemFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   itemFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -15)
   itemFrame:SetScript("OnShow",
@@ -1884,7 +1884,7 @@ local function CreateEPGPFrameStandings()
   CreateEPGPOptionsFrame()
 
   -- Make the main frame
-  local main = CreateFrame("Frame", nil, EPGPFrame)
+  local main = CreateFrame("Frame", nil, EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   main:SetWidth(325)
   main:SetHeight(358)
   main:SetPoint("TOPLEFT", EPGPFrame, 19, -72)
@@ -2010,7 +2010,7 @@ local function CreateEPGPFrameStandings()
   end
 
   -- Make the table frame
-  local tabl = CreateFrame("Frame", nil, main)
+  local tabl = CreateFrame("Frame", nil, main, BackdropTemplateMixin and "BackdropTemplate");
   tabl:SetPoint("TOPLEFT")
   tabl:SetPoint("TOPRIGHT")
   tabl:SetPoint("BOTTOM", modeText, "TOP")
