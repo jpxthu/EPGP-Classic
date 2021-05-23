@@ -7,7 +7,7 @@ local MINOR_VERSION = tonumber(("$Revision: 1023 $"):match("%d+")) or 0
 local lib, oldMinor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
 
-lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION.."_Frame", UIParent)
+lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION.."_Frame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
 local frame = lib.frame
 
 -- See if we're updating the lib, if so copy the old lib's isDebugging boolean

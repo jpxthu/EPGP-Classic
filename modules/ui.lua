@@ -96,7 +96,7 @@ end
 
 local function CreateEPGPFrame()
   -- EPGPFrame
-  local f = CreateFrame("Frame", "EPGPFrame", UIParent)
+  local f = CreateFrame("Frame", "EPGPFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
   f:Hide()
   f:SetToplevel(true)
   f:EnableMouse(true)
@@ -161,7 +161,7 @@ local function CreateEPGPFrame()
 end
 
 local function CreateEPGPExportImportFrame()
-  local f = CreateFrame("Frame", "EPGPExportImportFrame", UIParent)
+  local f = CreateFrame("Frame", "EPGPExportImportFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
   f:Hide()
   f:SetPoint("CENTER")
   f:SetFrameStrata("TOOLTIP")
@@ -391,7 +391,7 @@ local function CreateTable(parent, texts, widths, justfiesH, rightPadding)
 end
 
 local function CreateEPGPLogFrame()
-  local f = CreateFrame("Frame", "EPGPLogFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPLogFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:SetResizable(true)
@@ -544,7 +544,7 @@ local function CreateEPGPLogFrame()
       end
     end)
 
-  local scrollParent = CreateFrame("Frame", nil, f)
+  local scrollParent = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   scrollParent:SetPoint("TOP", t, "TOP", 0, -16)
   scrollParent:SetPoint("BOTTOM", redo, "TOP", 0, 0)
   scrollParent:SetPoint("LEFT", f, "LEFT", 16, 0)
@@ -1582,7 +1582,7 @@ local function AddDecayControls(frame)
 end
 
 local function CreateEPGPSideFrame(self)
-  local f = CreateFrame("Frame", "EPGPSideFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPSideFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1662,7 +1662,7 @@ local function CreateEPGPSideFrame(self)
 end
 
 local function CreateEPGPSideFrame2()
-  local f = CreateFrame("Frame", "EPGPSideFrame2", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPSideFrame2", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1743,7 +1743,7 @@ local function CreateEPGPSideFrame2()
 end
 
 local function CreateEPGPLootFrame()
-  local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1782,7 +1782,7 @@ local function CreateEPGPLootFrame()
 end
 
 local function CreateEPGPOptionsFrame()
-  local f = CreateFrame("Frame", "EPGPOptionsFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPOptionsFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1820,7 +1820,7 @@ end
 
 local function CreateEPGPFrameStandings()
   -- Make the show everyone checkbox
-  local f = CreateFrame("Frame", nil, EPGPFrame)
+  local f = CreateFrame("Frame", nil, EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   f:SetHeight(28)
   f:SetPoint("TOPRIGHT", EPGPFrame, "TOPRIGHT", -42, -38)
 
