@@ -1286,7 +1286,7 @@ function EPGP:OnEnable()
 
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-  UpdateFrame = UpdateFrame or CreateFrame("Frame")
+  UpdateFrame = UpdateFrame or CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate");
   UpdateFrame:SetScript("OnUpdate", nil)
 
   local function UpdateFrameOnUpdate(self, elapsed)

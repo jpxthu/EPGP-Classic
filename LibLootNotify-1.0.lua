@@ -21,7 +21,7 @@ local CallbackHandler = LibStub("CallbackHandler-1.0")
 lib.callbacks = lib.callbacks or CallbackHandler:New(lib)
 local callbacks = lib.callbacks
 
-lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION .. "_Frame")
+lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION .. "_Frame", UIParentBackdropTemplateMixin and "BackdropTemplate");
 local frame = lib.frame
 
 frame:UnregisterAllEvents()
