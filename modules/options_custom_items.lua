@@ -382,7 +382,7 @@ local function ItemRemoveButtonOnClickFunc(self)
 end
 
 local function CreateAddFrame(parent)
-  addFrame = CreateFrame("Frame", nil, parent)
+  addFrame = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate");
   addFrame:SetPoint("TOPLEFT")
   addFrame:SetPoint("RIGHT")
 
@@ -392,7 +392,7 @@ local function CreateAddFrame(parent)
   iconF:SetPoint("TOPLEFT")
   addFrame.iconF = iconF
 
-  local iconFrame = CreateFrame("Frame", nil, addFrame)
+  local iconFrame = CreateFrame("Frame", nil, addFrame, BackdropTemplateMixin and "BackdropTemplate");
   iconFrame:ClearAllPoints()
   iconFrame:SetAllPoints(iconF)
   iconFrame:SetScript("OnEnter", ItemIconFrameOnEnterFunc)
@@ -512,7 +512,7 @@ local function AddTitle(f, name, width, top, left)
 end
 
 local function AddOneItemFrame(parent, top)
-  local f = CreateFrame("Frame", nil, parent)
+  local f = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate");
   f:SetPoint("LEFT")
   f:SetPoint("RIGHT")
   if top then
@@ -527,7 +527,7 @@ local function AddOneItemFrame(parent, top)
   iconF:SetPoint("TOPLEFT")
   f.iconF = iconF
 
-  local iconFrame = CreateFrame("Frame", nil, f)
+  local iconFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   iconFrame:ClearAllPoints()
   iconFrame:SetAllPoints(iconF)
   iconFrame:SetScript("OnEnter", ItemIconFrameOnEnterFunc)
@@ -656,7 +656,7 @@ function mod:FillFrame(f, parent)
   t = AddTitle(f, "GP1", columnWidth.gp, addFrame, t)
   t = AddTitle(f, "GP2", columnWidth.gp, addFrame, t)
 
-  containerFrame = CreateFrame("Frame", nil, f)
+  containerFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   containerFrame:SetPoint("TOP", t, "BOTTOM")
   containerFrame:SetPoint("LEFT")
   containerFrame:SetWidth(columnWidthTotal + 27)

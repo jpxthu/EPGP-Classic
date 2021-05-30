@@ -96,7 +96,7 @@ end
 
 local function CreateEPGPFrame()
   -- EPGPFrame
-  local f = CreateFrame("Frame", "EPGPFrame", UIParent)
+  local f = CreateFrame("Frame", "EPGPFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
   f:Hide()
   f:SetToplevel(true)
   f:EnableMouse(true)
@@ -161,7 +161,7 @@ local function CreateEPGPFrame()
 end
 
 local function CreateEPGPExportImportFrame()
-  local f = CreateFrame("Frame", "EPGPExportImportFrame", UIParent)
+  local f = CreateFrame("Frame", "EPGPExportImportFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
   f:Hide()
   f:SetPoint("CENTER")
   f:SetFrameStrata("TOOLTIP")
@@ -365,7 +365,7 @@ local function CreateTable(parent, texts, widths, justfiesH, rightPadding)
   end
 
   -- Make a frame for the rows
-  local rowFrame = CreateFrame("Frame", nil, parent)
+  local rowFrame = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate");
   rowFrame:SetPoint("TOP", parent.headers[#parent.headers], "BOTTOM")
   rowFrame:SetPoint("BOTTOMLEFT")
   rowFrame:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -rightPadding, 0)
@@ -391,7 +391,7 @@ local function CreateTable(parent, texts, widths, justfiesH, rightPadding)
 end
 
 local function CreateEPGPLogFrame()
-  local f = CreateFrame("Frame", "EPGPLogFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPLogFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:SetResizable(true)
@@ -544,7 +544,7 @@ local function CreateEPGPLogFrame()
       end
     end)
 
-  local scrollParent = CreateFrame("Frame", nil, f)
+  local scrollParent = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   scrollParent:SetPoint("TOP", t, "TOP", 0, -16)
   scrollParent:SetPoint("BOTTOM", redo, "TOP", 0, 0)
   scrollParent:SetPoint("LEFT", f, "LEFT", 16, 0)
@@ -1582,7 +1582,7 @@ local function AddDecayControls(frame)
 end
 
 local function CreateEPGPSideFrame(self)
-  local f = CreateFrame("Frame", "EPGPSideFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPSideFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1618,11 +1618,11 @@ local function CreateEPGPSideFrame(self)
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local gpFrame = CreateFrame("Frame", nil, f)
+  local gpFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   gpFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -30)
   gpFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -30)
 
-  local epFrame = CreateFrame("Frame", nil, f)
+  local epFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   epFrame:SetPoint("TOPLEFT", gpFrame, "BOTTOMLEFT", 0, -15)
   epFrame:SetPoint("TOPRIGHT", gpFrame, "BOTTOMRIGHT", -15, -15)
 
@@ -1662,7 +1662,7 @@ local function CreateEPGPSideFrame(self)
 end
 
 local function CreateEPGPSideFrame2()
-  local f = CreateFrame("Frame", "EPGPSideFrame2", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPSideFrame2", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1682,15 +1682,15 @@ local function CreateEPGPSideFrame2()
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local epFrame = CreateFrame("Frame", nil, f)
+  local epFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   epFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   epFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -30, -15)
 
-  local customFrame = CreateFrame("Frame", nil, f)
+  local customFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   customFrame:SetPoint("TOPLEFT", epFrame, "BOTTOMLEFT", 0, -15)
   customFrame:SetPoint("TOPRIGHT", epFrame, "BOTTOMRIGHT", 0, -15)
 
-  local decayFrame = CreateFrame("Frame", nil, f)
+  local decayFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   decayFrame:SetPoint("TOPLEFT", customFrame, "BOTTOMLEFT", 0, -15)
   decayFrame:SetPoint("TOPRIGHT", customFrame, "BOTTOMRIGHT", 0, -15)
 
@@ -1743,7 +1743,7 @@ local function CreateEPGPSideFrame2()
 end
 
 local function CreateEPGPLootFrame()
-  local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPLootFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1767,7 +1767,7 @@ local function CreateEPGPLootFrame()
   local cb = CreateFrame("Button", nil, f, "UIPanelCloseButton")
   cb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -3)
 
-  local itemFrame = CreateFrame("Frame", nil, f)
+  local itemFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   itemFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15)
   itemFrame:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -15)
   itemFrame:SetScript("OnShow",
@@ -1782,7 +1782,7 @@ local function CreateEPGPLootFrame()
 end
 
 local function CreateEPGPOptionsFrame()
-  local f = CreateFrame("Frame", "EPGPOptionsFrame", EPGPFrame)
+  local f = CreateFrame("Frame", "EPGPOptionsFrame", EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   table.insert(SIDEFRAMES, f)
 
   f:Hide()
@@ -1820,7 +1820,7 @@ end
 
 local function CreateEPGPFrameStandings()
   -- Make the show everyone checkbox
-  local f = CreateFrame("Frame", nil, EPGPFrame)
+  local f = CreateFrame("Frame", nil, EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   f:SetHeight(28)
   f:SetPoint("TOPRIGHT", EPGPFrame, "TOPRIGHT", -42, -38)
 
@@ -1884,7 +1884,7 @@ local function CreateEPGPFrameStandings()
   CreateEPGPOptionsFrame()
 
   -- Make the main frame
-  local main = CreateFrame("Frame", nil, EPGPFrame)
+  local main = CreateFrame("Frame", nil, EPGPFrame, BackdropTemplateMixin and "BackdropTemplate");
   main:SetWidth(325)
   main:SetHeight(358)
   main:SetPoint("TOPLEFT", EPGPFrame, 19, -72)
@@ -2010,7 +2010,7 @@ local function CreateEPGPFrameStandings()
   end
 
   -- Make the table frame
-  local tabl = CreateFrame("Frame", nil, main)
+  local tabl = CreateFrame("Frame", nil, main, BackdropTemplateMixin and "BackdropTemplate");
   tabl:SetPoint("TOPLEFT")
   tabl:SetPoint("TOPRIGHT")
   tabl:SetPoint("BOTTOM", modeText, "TOP")

@@ -18,7 +18,7 @@ local LBIR = LibStub("LibBabble-Inventory-3.0"):GetReverseLookupTable()
 local deformat = LibStub("LibDeformat-3.0")
 
 -- Make a frame for our repeating calls to GetItemInfo.
-lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION .. "_Frame")
+lib.frame = lib.frame or CreateFrame("Frame", MAJOR_VERSION .. "_Frame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
 local frame = lib.frame
 frame:Hide()
 frame:SetScript('OnUpdate', nil)

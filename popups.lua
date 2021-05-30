@@ -50,7 +50,7 @@ DLG:Register("EPGP_CONFIRM_GP_CREDIT", {
     self.editboxes[1]:SetText(edit)
     self.editboxes[1]:HighlightText()
     if not self.icon_frame then
-      local icon_frame = CreateFrame("Frame", nil, self)
+      local icon_frame = CreateFrame("Frame", nil, self, BackdropTemplateMixin and "BackdropTemplate");
       icon_frame:ClearAllPoints()
       icon_frame:SetAllPoints(self.icon)
       icon_frame:SetScript("OnEnter", function(self)

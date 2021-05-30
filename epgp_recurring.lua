@@ -5,7 +5,7 @@ local DLG = LibStub("LibDialog-1.0")
 
 local callbacks = EPGP.callbacks
 
-local frame = CreateFrame("Frame", "EPGP_RecurringAwardFrame")
+local frame = CreateFrame("Frame", "EPGP_RecurringAwardFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
 local timeout = 0
 local function RecurringTicker(self, elapsed)
   -- EPGP's db is available after GUILD_ROSTER_UPDATE. So we have a

@@ -65,7 +65,7 @@ if lib.frame then
   lib.frame:SetScript("OnEvent", nil)
   lib.frame:SetScript("OnUpdate", nil)
 else
-  lib.frame = CreateFrame("Frame", MAJOR_VERSION .. "_Frame")
+  lib.frame = CreateFrame("Frame", MAJOR_VERSION .. "_Frame", UIParent, BackdropTemplateMixin and "BackdropTemplate");
 end
 local frame = lib.frame
 frame:Show()

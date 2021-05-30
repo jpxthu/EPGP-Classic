@@ -254,7 +254,7 @@ end
 local function AddLootControlItems(frame, topItem, index)
   local authority = CanEditOfficerNote()
 
-  local f = CreateFrame("Frame", nil, frame)
+  local f = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate");
   f:SetPoint("LEFT")
   f:SetPoint("RIGHT")
   f:SetPoint("TOP", topItem, "BOTTOMLEFT")
@@ -265,7 +265,7 @@ local function AddLootControlItems(frame, topItem, index)
   icon:SetPoint("LEFT")
   icon:SetPoint("TOP")
 
-  local iconFrame = CreateFrame("Frame", nil, f)
+  local iconFrame = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate");
   iconFrame:ClearAllPoints()
   iconFrame:SetAllPoints(icon)
   iconFrame:SetScript("OnEnter", LootItemIconFrameOnEnterFunc)
