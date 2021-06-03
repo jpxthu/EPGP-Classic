@@ -1,4 +1,8 @@
-### v1.6.0 (2021.6.4)
+### v1.6.1-tbc (2021.6.4)
+
+- Update raid list for TBC.
+
+### v1.6.0-alpha (2021.6.4)
 
 - Upgrade libraries for TBC.
 - Update suggested standard ilvl for TBC.

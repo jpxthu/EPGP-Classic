@@ -3,7 +3,7 @@
 ## Title: EPGP TBC
 ## Notes: Effort Points/Gear Points Loot System
 ## Author: jpxthu (Maintainer)
-## Version: v1.6.0
+## Version: v1.6.1-tbc
 ## SavedVariables: EPGP_DB
 ## OptionalDeps: LibRealmInfo
 ## X-Category: Guild
