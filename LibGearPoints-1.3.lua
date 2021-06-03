@@ -32,11 +32,16 @@ function lib:GetRecommendIlvlParams(version, levelCap)
     standardIlvlLastTier = 66
     standardIlvlNextTier = 86
     ilvlDenominator = 10
-  elseif version < 20200 then
+  elseif version < 20501 then
     standardIlvl = 86
     standardIlvlLastTier = 76
     standardIlvlNextTier = nil
     ilvlDenominator = 10
+  else
+    standardIlvl = 120
+    standardIlvlLastTier = nil
+    standardIlvlNextTier = 133
+    ilvlDenominator = 13
   -- elseif version < 40200 then
   --   standardIlvl = 359
   -- elseif version < 40300 then
