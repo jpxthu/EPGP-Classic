@@ -164,78 +164,78 @@ function lib:GetCustomItemsProfile()
     -- [21837] = { 4, 77, "INVTYPE_WEAPONOFFHAND" }, -- [阿努比萨斯战锤]
     -- [21891] = { 4, 81, "CUSTOM_GP", nil, 1 }, -- [坠落星辰碎片]
 
-    -- NAXX T3
-    [22349] = { 4, 86, "INVTYPE_CHEST" },
-    [22350] = { 4, 86, "INVTYPE_CHEST" },
-    [22351] = { 4, 86, "INVTYPE_CHEST" },
-    [22352] = { 4, 86, "INVTYPE_LEGS" },
-    [22359] = { 4, 86, "INVTYPE_LEGS" },
-    [22366] = { 4, 86, "INVTYPE_LEGS" },
-    [22353] = { 4, 86, "INVTYPE_HEAD" },
-    [22360] = { 4, 86, "INVTYPE_HEAD" },
-    [22367] = { 4, 86, "INVTYPE_HEAD" },
-    [22354] = { 4, 86, "INVTYPE_SHOULDER" },
-    [22361] = { 4, 86, "INVTYPE_SHOULDER" },
-    [22368] = { 4, 86, "INVTYPE_SHOULDER" },
-    [22355] = { 4, 86, "INVTYPE_WRIST" },
-    [22362] = { 4, 86, "INVTYPE_WRIST" },
-    [22369] = { 4, 86, "INVTYPE_WRIST" },
-    [22356] = { 4, 86, "INVTYPE_WAIST" },
-    [22363] = { 4, 86, "INVTYPE_WAIST" },
-    [22370] = { 4, 86, "INVTYPE_WAIST" },
-    [22357] = { 4, 86, "INVTYPE_HAND" },
-    [22364] = { 4, 86, "INVTYPE_HAND" },
-    [22371] = { 4, 86, "INVTYPE_HAND" },
-    [22358] = { 4, 86, "INVTYPE_FEET" },
-    [22365] = { 4, 86, "INVTYPE_FEET" },
-    [22372] = { 4, 86, "INVTYPE_FEET" },
-    [23061] = { 4, 86, "INVTYPE_FINGER" },  -- [信仰之戒]
-    [23062] = { 4, 86, "INVTYPE_FINGER" },  -- [霜火之戒]
-    [23063] = { 4, 86, "INVTYPE_FINGER" },  -- [瘟疫之心指环]
-    [23060] = { 4, 86, "INVTYPE_FINGER" },  -- [骨镰之戒]
-    [23064] = { 4, 86, "INVTYPE_FINGER" },  -- [梦游者之戒]
-    [23067] = { 4, 86, "INVTYPE_FINGER" },  -- [地穴追猎者指环]
-    [23065] = { 4, 86, "INVTYPE_FINGER" },  -- [碎地者之戒]
-    [23066] = { 4, 86, "INVTYPE_FINGER" },  -- [救赎之戒]
-    [23059] = { 4, 86, "INVTYPE_FINGER" },  -- [无畏之戒]
-    [22726] = { 5, 90, "CUSTOM_GP", nil, 20 }, -- [埃提耶什的碎片]
-    -- NAXX 小怪
-    [23664] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒肩铠]
-    [23667] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的肩甲]
-    [23069] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [死灵骑士的外衣]
-    [23663] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒束带]
-    [23666] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的腰带]
-    [23665] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒护腿]
-    [23668] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的护腿]
-    [23238] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [冥河圆盾]
-    -- NAXX 阿努布雷坎
-    [22937] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [蛛魔宝石]
-    -- NAXX 黑女巫法琳娜
-    [22943] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [仇恨石坠]
-    -- NAXX 迈克斯纳
-    [22947] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [遗忘之名]
-    -- NAXX 洛欧塞布
-    [23037] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [灵魂热情之戒]
-    [23042] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [洛欧塞布之影]
-    -- NAXX 教官拉苏维奥斯
-    [23017] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [日蚀之幕]
-    -- NAXX 收割者戈提克
-    [23023] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [萨迪斯的项圈]
-    [23073] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [偏移之靴]
-    -- NAXX 四骑士
-    [22809] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [赎罪十字军之槌]
-    [22691] = { 4, 89, "INVTYPE_2HWEAPON" },  -- [堕落的灰烬使者]
-    -- NAXX 格拉斯
-    [22994] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [被消化的力量之手]
-    -- NAXX 塔迪乌斯
-    [23001] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [衰落之眼]
-    -- NAXX 萨菲隆
-    [23549] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的坚韧]
-    [23548] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的威严]
-    [23545] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的力量]
-    [23547] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的活力]
-    -- NAXX 克尔苏加德
-    [22520] = { 4, 90, "INVTYPE_TRINKET" }, -- [克尔苏加德的护符匣]
+    -- -- NAXX T3
+    -- [22349] = { 4, 86, "INVTYPE_CHEST" },
+    -- [22350] = { 4, 86, "INVTYPE_CHEST" },
+    -- [22351] = { 4, 86, "INVTYPE_CHEST" },
+    -- [22352] = { 4, 86, "INVTYPE_LEGS" },
+    -- [22359] = { 4, 86, "INVTYPE_LEGS" },
+    -- [22366] = { 4, 86, "INVTYPE_LEGS" },
+    -- [22353] = { 4, 86, "INVTYPE_HEAD" },
+    -- [22360] = { 4, 86, "INVTYPE_HEAD" },
+    -- [22367] = { 4, 86, "INVTYPE_HEAD" },
+    -- [22354] = { 4, 86, "INVTYPE_SHOULDER" },
+    -- [22361] = { 4, 86, "INVTYPE_SHOULDER" },
+    -- [22368] = { 4, 86, "INVTYPE_SHOULDER" },
+    -- [22355] = { 4, 86, "INVTYPE_WRIST" },
+    -- [22362] = { 4, 86, "INVTYPE_WRIST" },
+    -- [22369] = { 4, 86, "INVTYPE_WRIST" },
+    -- [22356] = { 4, 86, "INVTYPE_WAIST" },
+    -- [22363] = { 4, 86, "INVTYPE_WAIST" },
+    -- [22370] = { 4, 86, "INVTYPE_WAIST" },
+    -- [22357] = { 4, 86, "INVTYPE_HAND" },
+    -- [22364] = { 4, 86, "INVTYPE_HAND" },
+    -- [22371] = { 4, 86, "INVTYPE_HAND" },
+    -- [22358] = { 4, 86, "INVTYPE_FEET" },
+    -- [22365] = { 4, 86, "INVTYPE_FEET" },
+    -- [22372] = { 4, 86, "INVTYPE_FEET" },
+    -- [23061] = { 4, 86, "INVTYPE_FINGER" },  -- [信仰之戒]
+    -- [23062] = { 4, 86, "INVTYPE_FINGER" },  -- [霜火之戒]
+    -- [23063] = { 4, 86, "INVTYPE_FINGER" },  -- [瘟疫之心指环]
+    -- [23060] = { 4, 86, "INVTYPE_FINGER" },  -- [骨镰之戒]
+    -- [23064] = { 4, 86, "INVTYPE_FINGER" },  -- [梦游者之戒]
+    -- [23067] = { 4, 86, "INVTYPE_FINGER" },  -- [地穴追猎者指环]
+    -- [23065] = { 4, 86, "INVTYPE_FINGER" },  -- [碎地者之戒]
+    -- [23066] = { 4, 86, "INVTYPE_FINGER" },  -- [救赎之戒]
+    -- [23059] = { 4, 86, "INVTYPE_FINGER" },  -- [无畏之戒]
+    -- [22726] = { 5, 90, "CUSTOM_GP", nil, 20 }, -- [埃提耶什的碎片]
+    -- -- NAXX 小怪
+    -- [23664] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒肩铠]
+    -- [23667] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的肩甲]
+    -- [23069] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [死灵骑士的外衣]
+    -- [23663] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒束带]
+    -- [23666] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的腰带]
+    -- [23665] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [元素愤怒护腿]
+    -- [23668] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [大十字军的护腿]
+    -- [23238] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [冥河圆盾]
+    -- -- NAXX 阿努布雷坎
+    -- [22937] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [蛛魔宝石]
+    -- -- NAXX 黑女巫法琳娜
+    -- [22943] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [仇恨石坠]
+    -- -- NAXX 迈克斯纳
+    -- [22947] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [遗忘之名]
+    -- -- NAXX 洛欧塞布
+    -- [23037] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [灵魂热情之戒]
+    -- [23042] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [洛欧塞布之影]
+    -- -- NAXX 教官拉苏维奥斯
+    -- [23017] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [日蚀之幕]
+    -- -- NAXX 收割者戈提克
+    -- [23023] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [萨迪斯的项圈]
+    -- [23073] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [偏移之靴]
+    -- -- NAXX 四骑士
+    -- [22809] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [赎罪十字军之槌]
+    -- [22691] = { 4, 89, "INVTYPE_2HWEAPON" },  -- [堕落的灰烬使者]
+    -- -- NAXX 格拉斯
+    -- [22994] = { 4, 83, "CUSTOM_GP", nil, 1 }, -- [被消化的力量之手]
+    -- -- NAXX 塔迪乌斯
+    -- [23001] = { 4, 85, "CUSTOM_GP", nil, 1 }, -- [衰落之眼]
+    -- -- NAXX 萨菲隆
+    -- [23549] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的坚韧]
+    -- [23548] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的威严]
+    -- [23545] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的力量]
+    -- [23547] = { 4, 90, "CUSTOM_GP", nil, 20 }, -- [天灾的活力]
+    -- -- NAXX 克尔苏加德
+    -- [22520] = { 4, 90, "INVTYPE_TRINKET" }, -- [克尔苏加德的护符匣]
   }
   return CUSTOM_ITEM_DATA
 end
@@ -245,8 +245,8 @@ function lib:GetPointsProfile(L, DISPLAY_NAME, LOCAL_NAME)
     enabled = true,
 
     baseGP = 80,
-    standardIlvl = 86,
-    ilvlDenominator = 10,
+    standardIlvl = 120,
+    ilvlDenominator = 13,
     legendaryScale = 3,
 
     headScale1 = 1,
