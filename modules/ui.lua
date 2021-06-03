@@ -918,13 +918,9 @@ local function EPGPSideFrameEPDropDown_SetList(dropDown)
   --   end
   -- end
 
-  tinsert(list, _G.DUNGEON_FLOOR_MOLTENCORE1)
-  tinsert(list, _G.DUNGEON_FLOOR_ONYXIASLAIR1)
-  tinsert(list, L["Blackwing Lair"])
-  tinsert(list, _G.DUNGEON_FLOOR_ZULGURUB1)
-  tinsert(list, _G.DUNGEON_FLOOR_RUINSOFAHNQIRAJ1)
-  tinsert(list, L["Temple of Ahn'Qiraj"])
-  tinsert(list, L["Naxxramas"])
+  tinsert(list, L["Karazhan"])
+  tinsert(list, _G.DUNGEON_FLOOR_MAGTHERIDONSLAIR1)
+  tinsert(list, _G.DUNGEON_FLOOR_GRUULSLAIR1)
   tinsert(list, OTHER)
 
   dropDown:SetList(list)

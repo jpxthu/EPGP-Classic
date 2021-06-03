@@ -115,6 +115,7 @@ L["Import"] = true
 L["Importing data snapshot taken at: %s"] = true
 L["invalid input"] = true
 L["Invalid officer note [%s] for %s (ignored)"] = true
+L["Karazhan"] = true
 L["kill"] = true
 L["Legendary Scale"] = true
 L["List errors"] = true
