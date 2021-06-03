@@ -1,3 +1,8 @@
+### v1.6.0 (2021.6.4)
+
+- Upgrade libraries for TBC.
+- Update suggested standard ilvl for TBC.
+
 ### v1.5.7 (2020.12.19)
 
 - ep and gp command allowing short name without realm (#52)
