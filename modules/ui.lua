@@ -2,6 +2,7 @@
 
 local mod = EPGP:NewModule("ui")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local LE = LibStub("AceLocale-3.0"):GetLocale("LibEncounters")
 local GS = LibStub("LibGuildStorage-1.2")
 local GP = LibStub("LibGearPoints-1.3")
 local DLG = LibStub("LibDialog-1.0")
@@ -918,9 +919,14 @@ local function EPGPSideFrameEPDropDown_SetList(dropDown)
   --   end
   -- end
 
-  tinsert(list, L["Karazhan"])
-  tinsert(list, _G.DUNGEON_FLOOR_MAGTHERIDONSLAIR1)
-  tinsert(list, _G.DUNGEON_FLOOR_GRUULSLAIR1)
+  tinsert(list, LE["Karazhan"])
+  tinsert(list, LE["Magtheridon's Lair"])
+  tinsert(list, LE["Gruul's Lair"])
+  tinsert(list, LE["Coilfang: Serpentshrine Cavern"])
+  tinsert(list, LE["Tempest Keep"])
+  tinsert(list, LE["The Battle for Mount Hyjal"])
+  tinsert(list, LE["Black Temple"])
+  tinsert(list, LE["The Sunwell"])
   tinsert(list, OTHER)
 
   dropDown:SetList(list)
