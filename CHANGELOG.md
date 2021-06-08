@@ -1,3 +1,7 @@
+### v1.6.2-tbc (2021.6.9)
+
+- Update raid/boss list for TBC.
+
 ### v1.6.1-tbc (2021.6.4)
 
 - Update raid list for TBC.
