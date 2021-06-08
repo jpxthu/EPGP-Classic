@@ -62,6 +62,58 @@ L["Sapphiron"] = true
 L["Thaddius"] = true
 L["The Four Horsemen"] = true
 
+L["High Warlord Naj'entus"] = true
+L["Supremus"] = true
+L["Shade of Akama"] = true
+L["Teron Gorefiend"] = true
+L["Gurtogg Bloodboil"] = true
+L["Reliquary of Souls"] = true
+L["Mother Shahraz"] = true
+L["The Illidari Council"] = true
+L["Illidan Stormrage"] = true
+
+L["Rage Winterchill"] = true
+L["Anetheron"] = true
+L["Kaz'rogal"] = true
+L["Azgalor"] = true
+L["Archimonde"] = true
+
+L["Hydross the Unstable"] = true
+L["The Lurker Below"] = true
+L["Leotheras the Blind"] = true
+L["Fathom-Lord Karathress"] = true
+L["Morogrim Tidewalker"] = true
+L["Lady Vashj"] = true
+
+L["High King Maulgar"] = true
+L["Gruul the Dragonkiller"] = true
+
+L["Magtheridon"] = true
+
+L["Kalecgos"] = true
+L["Brutallus"] = true
+L["Felmyst"] = true
+L["Eredar Twins"] = true
+L["M'uru"] = true
+L["Kil'jaeden"] = true
+
+L["Al'ar"] = true
+L["Void Reaver"] = true
+L["High Astromancer Solarian"] = true
+L["Kael'thas Sunstrider"] = true
+
+L["Attumen the Huntsman"] = true
+L["Moroes"] = true
+L["Maiden of Virtue"] = true
+L["Opera Hall"] = true
+L["The Curator"] = true
+L["Terestian Illhoof"] = true
+L["Shade of Aran"] = true
+L["Netherspite"] = true
+L["Chess Event"] = true
+L["Prince Malchezaar"] = true
+L["Nightbane"] = true
+
 --- Instance Names ---
 L["Onyxia's Lair"] = true
 L["Zul'Gurub"] = true
@@ -70,3 +122,11 @@ L["Blackwing Lair"] = true
 L["Ruins of Ahn'Qiraj"] = true
 L["Ahn'Qiraj Temple"] = true
 L["Naxxramas"] = true
+L["The Sunwell"] = true
+L["Gruul's Lair"] = true
+L["Tempest Keep"] = true
+L["Coilfang: Serpentshrine Cavern"] = true
+L["Magtheridon's Lair"] = true
+L["Black Temple"] = true
+L["The Battle for Mount Hyjal"] = true
+L["Karazhan"] = true
