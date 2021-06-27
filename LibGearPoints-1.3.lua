@@ -174,14 +174,14 @@ local CUSTOM_ITEM_DATA = {
   [30250] = { 4, 133, "INVTYPE_SHOULDER" },
 
   -- Tier 5 - BoE recipes - BoP crafts
-  [30282] = { 4, 128, "INVTYPE_BOOTS" },
-  [30283] = { 4, 128, "INVTYPE_BOOTS" },
-  [30305] = { 4, 128, "INVTYPE_BOOTS" },
-  [30306] = { 4, 128, "INVTYPE_BOOTS" },
-  [30307] = { 4, 128, "INVTYPE_BOOTS" },
-  [30308] = { 4, 128, "INVTYPE_BOOTS" },
-  [30323] = { 4, 128, "INVTYPE_BOOTS" },
-  [30324] = { 4, 128, "INVTYPE_BOOTS" },
+  [30282] = { 4, 128, "INVTYPE_FEET" },
+  [30283] = { 4, 128, "INVTYPE_FEET" },
+  [30305] = { 4, 128, "INVTYPE_FEET" },
+  [30306] = { 4, 128, "INVTYPE_FEET" },
+  [30307] = { 4, 128, "INVTYPE_FEET" },
+  [30308] = { 4, 128, "INVTYPE_FEET" },
+  [30323] = { 4, 128, "INVTYPE_FEET" },
+  [30324] = { 4, 128, "INVTYPE_FEET" },
 
   -- Tier 6
   [31089] = { 4, 146, "INVTYPE_CHEST" },
