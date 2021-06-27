@@ -352,7 +352,7 @@ DLG:Register("EPGP_NEW_VERSION", {
     L["You can now check your epgp standings and loot on the web: http://www.epgpweb.com"] .. "\n\n" ..
     -- L["NEW_VERSION_INTRO_1_5_0"]:format(_G.UIOPTIONS_MENU, _G.ADDONS, _G.BOSS, _G.UIOPTIONS_MENU, _G.ADDONS, L["Logs"]),
     -- L["Some 3rd-party EPGP system were launched. Details in: EPGP -> %s -> %s"]:format(L["Logs"], L["Export Detail"]),
-    L["%s %s"]:format(L["[%s] is comming!"]:format(LE["Naxxramas"]), L["You should probably: increase standard_ilvl, reset or rescale GP."]) .. "\n" ..
+    L["%s %s"]:format(L["[%s] is comming!"]:format("TBC"), L["You should probably: increase standard_ilvl, reset or rescale GP."]) .. "\n" ..
     string.format("(%s -> %s -> EPGP -> %s / %s)", _G.UIOPTIONS_MENU, _G.ADDONS, L["Gear Points"], L["Rescale GP"]), -- /script EPGP.db.profile.last_version = nil
   icon = [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]],
   buttons = {
