@@ -1,4 +1,4 @@
-### v1.6.3-tbc (2021.6.28)
+### v1.6.4-tbc (2021.6.28)
 
 - Update the custom item list for TBC.
 
