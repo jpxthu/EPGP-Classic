@@ -1,3 +1,7 @@
+### v1.6.3-tbc (2021.6.28)
+
+- Update the custom item list for TBC.
+
 ### v1.6.2-tbc (2021.6.9)
 
 - Update raid/boss list for TBC.
