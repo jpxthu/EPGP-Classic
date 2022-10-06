@@ -51,6 +51,8 @@ function lib:PrintTable(t, spaces)
     if type(v) == "table" then
       Debug(spaces .. tostring(i) .. " =")
       self:PrintTable(v, spaces .. "-")
+    elseif v == nil then
+      Debug(spaces .. tostring(i) .. " = nil")
     else
       Debug(spaces .. tostring(i) .. " = " .. tostring(v))
     end
@@ -64,4 +66,18 @@ function lib:Join(separator, arr)
     s = s .. separator .. tostring(arr[i])
   end
   return s
+end
+
+function EPGPGetLibBabble(name)
+
+	local l = {}
+	local l1 = LibStub(name):GetBaseLookupTable()  -- English
+	local l2 = LibStub(name):GetUnstrictLookupTable()  -- Locale. May be nil for some keywords.
+	for k, v in pairs(l1) do
+		l[k] = v
+	end
+	for k, v in pairs(l2) do
+		l[k] = v
+	end
+	return l
 end

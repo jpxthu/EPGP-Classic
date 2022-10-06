@@ -1,14 +1,14 @@
 --[[ EPGP User Interface ]]--
 
 local mod = EPGP:NewModule("ui")
-local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
-local LE = LibStub("AceLocale-3.0"):GetLocale("LibEncounters")
-local GS = LibStub("LibGuildStorage-1.2")
-local GP = LibStub("LibGearPoints-1.3")
 local DLG = LibStub("LibDialog-1.0")
+local GP = LibStub("LibGearPoints-1.3")
+local GS = LibStub("LibGuildStorage-1.2")
 local GUI = LibStub("AceGUI-3.0")
+local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
 local LIU = LibStub("LibItemUtils-1.0")
 local LUI = LibStub("LibEPGPUI-1.0")
+local SubZone = EPGPGetLibBabble("LibBabble-SubZone-3.0")
 
 local callbacks = EPGP.callbacks
 
@@ -919,14 +919,14 @@ local function EPGPSideFrameEPDropDown_SetList(dropDown)
   --   end
   -- end
 
-  tinsert(list, LE["Karazhan"])
-  tinsert(list, LE["Magtheridon's Lair"])
-  tinsert(list, LE["Gruul's Lair"])
-  tinsert(list, LE["Coilfang: Serpentshrine Cavern"])
-  tinsert(list, LE["Tempest Keep"])
-  tinsert(list, LE["The Battle for Mount Hyjal"])
-  tinsert(list, LE["Black Temple"])
-  tinsert(list, LE["The Sunwell"])
+  tinsert(list, SubZone["Naxxramas"])
+  tinsert(list, SubZone["The Eye of Eternity"])
+  tinsert(list, SubZone["The Obsidian Sanctum"])
+  tinsert(list, SubZone["Ulduar"])
+  tinsert(list, SubZone["Trial of the Crusader"])
+  tinsert(list, SubZone["Onyxia's Lair"])
+  tinsert(list, SubZone["Icecrown Citadel"])
+  tinsert(list, SubZone["The Ruby Sanctum"])
   tinsert(list, OTHER)
 
   dropDown:SetList(list)

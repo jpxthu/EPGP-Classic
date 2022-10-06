@@ -1,10 +1,11 @@
 local mod = EPGP:NewModule("boss", "AceEvent-3.0")
 local Debug = LibStub("LibDebug-1.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("EPGP")
+local Boss = EPGPGetLibBabble("LibBabble-Boss-3.0")
 local Coroutine = LibStub("LibCoroutine-1.0")
 local DLG = LibStub("LibDialog-1.0")
-local Encounters = LibStub("LibEncounters")
 local LOor = LibStub("LibEpgpOorProfile-1.0")
+local SubZone = EPGPGetLibBabble("LibBabble-SubZone-3.0")
 local Utils = LibStub("LibUtils-1.0")
 
 local in_combat = false
@@ -15,8 +16,14 @@ mod.dbDefaults = {
     enabled = false,
     wipedetection = false,
     autoreward = false,
-    bossreward = {},
-    bossreward_wipe = {},
+    bossreward_10n = {},
+    bossreward_10h = {},
+    bossreward_25n = {},
+    bossreward_25h = {},
+    bossreward_10n_wipe = {},
+    bossreward_10h_wipe = {},
+    bossreward_25n_wipe = {},
+    bossreward_25h_wipe = {},
   },
 }
 
@@ -70,12 +77,16 @@ local function CheckAuthority()
   end
 end
 
-local function EncounterAttempt(event_name, boss_name, encounter_id)
-  Debug("Encounter attempt: %s %s", event_name, tostring(encounter_id))
+local function EncounterAttempt(event_name, boss_name, encounter_id, difficulty_id)
+  if not difficulty_id then
+    _, _, difficulty_id, _, _, _, _, _, _, _ = GetInstanceInfo()
+  end
+  Debug("Encounter attempt: %s %s %s", event_name, tostring(encounter_id), tostring(difficulty_id))
 
   if not mod.db.profile.autoreward or
      not auto_reward or
-     encounter_id == nil then
+     encounter_id == nil or
+     difficulty_id == nil then
     BossAttempt(event_name, boss_name)
     return
   end
@@ -86,7 +97,7 @@ local function EncounterAttempt(event_name, boss_name, encounter_id)
 
   local boss_name = boss_name or _G.UNKNOWNOBJECT
   if event_name == "kill" or event_name == "DBM_Kill" then
-    local ep = mod:GetEncounterKillEP(encounter_id)
+    local ep = mod:GetEncounterKillEP(encounter_id, difficulty_id)
     if ep == nil then
       -- Most likely that the auto-award EP is not set for this boss.
       Coroutine:RunAsync(ShowKillPopup, boss_name)
@@ -97,7 +108,7 @@ local function EncounterAttempt(event_name, boss_name, encounter_id)
     end
   elseif event_name == "wipe" or event_name == "DBM_Wipe" then
     if not mod.db.profile.wipedetection then return end
-    local ep_wipe = mod:GetEncounterWipeEP(encounter_id)
+    local ep_wipe = mod:GetEncounterWipeEP(encounter_id, difficulty_id)
     if ep_wipe == nil then
       Coroutine:RunAsync(ShowWipePopup, boss_name)
     elseif ep_wipe > 0 then
@@ -117,40 +128,30 @@ local function AutoAwardWipeDisabled(v)
 end
 
 -- Template for EP values in UI configuration
-local function EncounterKillPlate(encounter_id, order)
-  local encounter = Encounters:GetEncounter(encounter_id)
-  if type(encounter) == "table" then
-    encounterPlate = {
-      name = encounter.name .. " - " .. L["kill"],
-      type = "input",
-      pattern = "^%d*$",
-      usage = L["Should be a non-negative integer"],
-      order = order * 2 - 1,
-      arg = {encounter_id, true},
-      disabled = AutoAwardDisabled,
-    }
-    return encounterPlate
-  else
-    return {}
-  end
+local function EncounterKillPlate(difficulty, order, id, locale_name)
+  encounterPlate = {
+    name = locale_name .. " - " .. L["kill"],
+    type = "input",
+    pattern = "^%d*$",
+    usage = L["Should be a non-negative integer"],
+    order = order * 2 - 1,
+    arg = {id, true, difficulty},
+    disabled = AutoAwardDisabled,
+  }
+  return encounterPlate
 end
 
-local function EncounterWipePlate(encounter_id, order)
-  local encounter = Encounters:GetEncounter(encounter_id)
-  if type(encounter) == "table" then
-    encounterPlate = {
-      name = encounter.name .. " - " .. L["wipe"],
-      type = "input",
-      pattern = "^%d*$",
-      usage = L["Should be a non-negative integer"],
-      order = order * 2,
-      arg = {encounter_id, false},
-      disabled = AutoAwardWipeDisabled,
-    }
-    return encounterPlate
-  else
-    return {}
-  end
+local function EncounterWipePlate(difficulty, order, id, locale_name)
+  encounterPlate = {
+    name = locale_name .. " - " .. L["wipe"],
+    type = "input",
+    pattern = "^%d*$",
+    usage = L["Should be a non-negative integer"],
+    order = order * 2,
+    arg = {id, false, difficulty},
+    disabled = AutoAwardWipeDisabled,
+  }
+  return encounterPlate
 end
 
 function mod:PLAYER_REGEN_DISABLED()
@@ -175,38 +176,97 @@ function mod:OnInitialize()
   self.db = EPGP.db:RegisterNamespace("boss", mod.dbDefaults)
 end
 
-function mod:GetEncounterKillEP(encounter_id)
-  if mod.db.profile.bossreward[encounter_id] then
-    return mod.db.profile.bossreward[encounter_id]
-  else
-    return nil
+-- DifficultyID: https://wowpedia.fandom.com/wiki/DifficultyID
+function mod:GetEncounterKillEP(encounter_id, difficulty_id)
+  if difficulty_id == 3 or difficulty_id == 175 then
+    if mod.db.profile.bossreward_10n[encounter_id] then
+      return mod.db.profile.bossreward_10n[encounter_id]
+    end
+  elseif difficulty_id == 4 or difficulty_id == 176 then
+    if mod.db.profile.bossreward_25n[encounter_id] then
+      return mod.db.profile.bossreward_25n[encounter_id]
+    end
+  elseif difficulty_id == 5 or difficulty_id == 193 then
+    if mod.db.profile.bossreward_10h[encounter_id] then
+      return mod.db.profile.bossreward_10h[encounter_id]
+    end
+  elseif difficulty_id == 6 or difficulty_id == 194 then
+    if mod.db.profile.bossreward_25h[encounter_id] then
+      return mod.db.profile.bossreward_25h[encounter_id]
+    end
   end
+  return nil
 end
 
-function mod:GetEncounterWipeEP(encounter_id)
-  if mod.db.profile.bossreward_wipe[encounter_id] then
-    return mod.db.profile.bossreward_wipe[encounter_id]
-  else
-    return nil
+function mod:GetEncounterWipeEP(encounter_id, difficulty_id)
+  if difficulty_id == 3 or difficulty_id == 175 then
+    if mod.db.profile.bossreward_10n_wipe[encounter_id] then
+      return mod.db.profile.bossreward_10n_wipe[encounter_id]
+    end
+  elseif difficulty_id == 4 or difficulty_id == 176 then
+    if mod.db.profile.bossreward_25n_wipe[encounter_id] then
+      return mod.db.profile.bossreward_25n_wipe[encounter_id]
+    end
+  elseif difficulty_id == 5 or difficulty_id == 193 then
+    if mod.db.profile.bossreward_10h_wipe[encounter_id] then
+      return mod.db.profile.bossreward_10h_wipe[encounter_id]
+    end
+  elseif difficulty_id == 6 or difficulty_id == 194 then
+    if mod.db.profile.bossreward_25h_wipe[encounter_id] then
+      return mod.db.profile.bossreward_25h_wipe[encounter_id]
+    end
   end
+  return nil
 end
 
 local function SetEP(info, ep)
-  local id, kill = unpack(info.arg)
+  local id, kill, difficulty = unpack(info.arg)
   if kill then
-    mod.db.profile.bossreward[id] = tonumber(ep)
+    if difficulty == "10N" then
+      mod.db.profile.bossreward_10n[id] = tonumber(ep)
+    elseif difficulty == "10H" then
+      mod.db.profile.bossreward_10h[id] = tonumber(ep)
+    elseif difficulty == "25N" then
+      mod.db.profile.bossreward_25n[id] = tonumber(ep)
+    elseif difficulty == "25H" then
+      mod.db.profile.bossreward_25h[id] = tonumber(ep)
+    end
   else
-    mod.db.profile.bossreward_wipe[id] = tonumber(ep)
+    if difficulty == "10N" then
+      mod.db.profile.bossreward_10n_wipe[id] = tonumber(ep)
+    elseif difficulty == "10H" then
+      mod.db.profile.bossreward_10h_wipe[id] = tonumber(ep)
+    elseif difficulty == "25N" then
+      mod.db.profile.bossreward_25n_wipe[id] = tonumber(ep)
+    elseif difficulty == "25H" then
+      mod.db.profile.bossreward_25h_wipe[id] = tonumber(ep)
+    end
   end
 end
 
 local function GetEP(info)
-  local id, kill = unpack(info.arg)
+  local id, kill, difficulty = unpack(info.arg)
   local ep
   if kill then
-    ep = mod.db.profile.bossreward[id]
+    if difficulty == "10N" then
+      ep = mod.db.profile.bossreward_10n[id]
+    elseif difficulty == "10H" then
+      ep = mod.db.profile.bossreward_10h[id]
+    elseif difficulty == "25N" then
+      ep = mod.db.profile.bossreward_25n[id]
+    elseif difficulty == "25H" then
+      ep = mod.db.profile.bossreward_25h[id]
+    end
   else
-    ep = mod.db.profile.bossreward_wipe[id]
+    if difficulty == "10N" then
+      ep = mod.db.profile.bossreward_10n_wipe[id]
+    elseif difficulty == "10H" then
+      ep = mod.db.profile.bossreward_10h_wipe[id]
+    elseif difficulty == "25N" then
+      ep = mod.db.profile.bossreward_25n_wipe[id]
+    elseif difficulty == "25H" then
+      ep = mod.db.profile.bossreward_25h_wipe[id]
+    end
   end
   if ep then
     return tostring(ep)
@@ -217,6 +277,8 @@ end
 
 mod.optionsName = _G.BOSS
 mod.optionsDesc = L["Automatic boss tracking"]
+
+-- Encounter ID: https://wowpedia.fandom.com/wiki/DungeonEncounterID#Classic
 mod.optionsArgs = {
   help = {
     order = 1,
@@ -251,352 +313,481 @@ mod.optionsArgs = {
     type = "header",
     name = L["BOSS_AUTO_REWARD_NAME"],
   },
-  -- bossrewards_mc = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(409).name,
-  --   order = 21,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     lucifron_kill  = EncounterKillPlate(663, 1),
-  --     lucifron_wipe  = EncounterWipePlate(663, 1),
-  --     magmadar_kill  = EncounterKillPlate(664, 2),
-  --     magmadar_wipe  = EncounterWipePlate(664, 2),
-  --     gehennes_kill  = EncounterKillPlate(665, 3),
-  --     gehennes_wipe  = EncounterWipePlate(665, 3),
-  --     garr_kill      = EncounterKillPlate(666, 4),
-  --     garr_wipe      = EncounterWipePlate(666, 4),
-  --     shazzrah_kill  = EncounterKillPlate(667, 5),
-  --     shazzrah_wipe  = EncounterWipePlate(667, 5),
-  --     baron_kill     = EncounterKillPlate(668, 6),
-  --     baron_wipe     = EncounterWipePlate(668, 6),
-  --     sulfuron_kill  = EncounterKillPlate(669, 7),
-  --     sulfuron_wipe  = EncounterWipePlate(669, 7),
-  --     golemagg_kill  = EncounterKillPlate(670, 8),
-  --     golemagg_wipe  = EncounterWipePlate(670, 8),
-  --     majordomo_kill = EncounterKillPlate(671, 9),
-  --     majordomo_wipe = EncounterWipePlate(671, 9),
-  --     ragnaros_kill  = EncounterKillPlate(672, 10),
-  --     ragnaros_wipe  = EncounterWipePlate(672, 10),
-  --   }
-  -- },
-  -- bossrewards_ony = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(249).name,
-  --   order = 22,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     onyxia_kill = EncounterKillPlate(1084, 1),
-  --     onyxia_wipe = EncounterWipePlate(1084, 1),
-  --   }
-  -- },
-  -- bossrewards_bwl = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(469).name,
-  --   order = 23,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     razorgore_kill   = EncounterKillPlate(610, 1),
-  --     razorgore_wipe   = EncounterWipePlate(610, 1),
-  --     vaelastrasz_kill = EncounterKillPlate(611, 2),
-  --     vaelastrasz_wipe = EncounterWipePlate(611, 2),
-  --     broodlord_kill   = EncounterKillPlate(612, 3),
-  --     broodlord_wipe   = EncounterWipePlate(612, 3),
-  --     firemaw_kill     = EncounterKillPlate(613, 4),
-  --     firemaw_wipe     = EncounterWipePlate(613, 4),
-  --     ebonroc_kill     = EncounterKillPlate(614, 5),
-  --     ebonroc_wipe     = EncounterWipePlate(614, 5),
-  --     flamegor_kill    = EncounterKillPlate(615, 6),
-  --     flamegor_wipe    = EncounterWipePlate(615, 6),
-  --     chromaggus_kill  = EncounterKillPlate(616, 7),
-  --     chromaggus_wipe  = EncounterWipePlate(616, 7),
-  --     nefarian_kill    = EncounterKillPlate(617, 8),
-  --     nefarian_wipe    = EncounterWipePlate(617, 8),
-  --   }
-  -- },
-  -- bossrewards_zg = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(309).name,
-  --   order = 24,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     venoxis_kill   = EncounterKillPlate(784, 1),
-  --     venoxis_wipe   = EncounterWipePlate(784, 1),
-  --     jeklik_kill    = EncounterKillPlate(785, 2),
-  --     jeklik_wipe    = EncounterWipePlate(785, 2),
-  --     marli_kill     = EncounterKillPlate(786, 3),
-  --     marli_wipe     = EncounterWipePlate(786, 3),
-  --     mandokir_kill  = EncounterKillPlate(787, 4),
-  --     mandokir_wipe  = EncounterWipePlate(787, 4),
-  --     hazzarah_kill  = EncounterKillPlate(788, 5),
-  --     hazzarah_wipe  = EncounterWipePlate(788, 5),
-  --     thekal_kill    = EncounterKillPlate(789, 6),
-  --     thekal_wipe    = EncounterWipePlate(789, 6),
-  --     gahzranka_kill = EncounterKillPlate(790, 7),
-  --     gahzranka_wipe = EncounterWipePlate(790, 7),
-  --     arlokk_kill    = EncounterKillPlate(791, 8),
-  --     arlokk_wipe    = EncounterWipePlate(791, 8),
-  --     jindo_kill     = EncounterKillPlate(792, 9),
-  --     jindo_wipe     = EncounterWipePlate(792, 9),
-  --     hakkar_kill    = EncounterKillPlate(793, 10),
-  --     hakkar_wipe    = EncounterWipePlate(793, 10),
-  --   }
-  -- },
-  -- bossrewards_aq20 = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(509).name,
-  --   order = 25,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     kurinnaxx_kill = EncounterKillPlate(718, 1),
-  --     kurinnaxx_wipe = EncounterWipePlate(718, 1),
-  --     rajaxx_kill    = EncounterKillPlate(719, 2),
-  --     rajaxx_wipe    = EncounterWipePlate(719, 2),
-  --     moam_kill      = EncounterKillPlate(720, 3),
-  --     moam_wipe      = EncounterWipePlate(720, 3),
-  --     buru_kill      = EncounterKillPlate(721, 4),
-  --     buru_wipe      = EncounterWipePlate(721, 4),
-  --     ayamiss_kill   = EncounterKillPlate(722, 5),
-  --     ayamiss_wipe   = EncounterWipePlate(722, 5),
-  --     ossirian_kill  = EncounterKillPlate(723, 6),
-  --     ossirian_wipe  = EncounterWipePlate(723, 6),
-  --   }
-  -- },
-  -- bossrewards_aq40 = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(531).name,
-  --   order = 26,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     skeram_kill   = EncounterKillPlate(709, 1),
-  --     skeram_wipe   = EncounterWipePlate(709, 1),
-  --     bugtrio_kill  = EncounterKillPlate(710, 2),
-  --     bugtrio_wipe  = EncounterWipePlate(710, 2),
-  --     sartura_kill  = EncounterKillPlate(711, 3),
-  --     sartura_wipe  = EncounterWipePlate(711, 3),
-  --     fankriss_kill = EncounterKillPlate(712, 4),
-  --     fankriss_wipe = EncounterWipePlate(712, 4),
-  --     viscidus_kill = EncounterKillPlate(713, 5),
-  --     viscidus_wipe = EncounterWipePlate(713, 5),
-  --     huhuran_kill  = EncounterKillPlate(714, 6),
-  --     huhuran_wipe  = EncounterWipePlate(714, 6),
-  --     twins_kill    = EncounterKillPlate(715, 7),
-  --     twins_wipe    = EncounterWipePlate(715, 7),
-  --     ouro_kill     = EncounterKillPlate(716, 8),
-  --     ouro_wipe     = EncounterWipePlate(716, 8),
-  --     cthun_kill    = EncounterKillPlate(717, 9),
-  --     cthun_wipe    = EncounterWipePlate(717, 9),
-  --   }
-  -- },
-  -- bossrewards_naxx = {
-  --   type = "group",
-  --   name = Encounters:GetInstance(533).name,
-  --   order = 27,
-  --   set = SetEP,
-  --   get = GetEP,
-  --   args = {
-  --     anub_kill      = EncounterKillPlate(1107, 1),
-  --     anub_wipe      = EncounterWipePlate(1107, 1),
-  --     faerlina_kill  = EncounterKillPlate(1110, 2),
-  --     faerlina_wipe  = EncounterWipePlate(1110, 2),
-  --     maexxna_kill   = EncounterKillPlate(1116, 3),
-  --     maexxna_wipe   = EncounterWipePlate(1116, 3),
-  --     noth_kill      = EncounterKillPlate(1117, 4),
-  --     noth_wipe      = EncounterWipePlate(1117, 4),
-  --     heigan_kill    = EncounterKillPlate(1112, 5),
-  --     heigan_wipe    = EncounterWipePlate(1112, 5),
-  --     loatheb_kill   = EncounterKillPlate(1115, 6),
-  --     loatheb_wipe   = EncounterWipePlate(1115, 6),
-  --     razuvious_kill = EncounterKillPlate(1113, 7),
-  --     razuvious_wipe = EncounterWipePlate(1113, 7),
-  --     gothik_kill    = EncounterKillPlate(1109, 8),
-  --     gothik_wipe    = EncounterWipePlate(1109, 8),
-  --     fourhorse_kill = EncounterKillPlate(1121, 9),
-  --     fourhorse_wipe = EncounterWipePlate(1121, 9),
-  --     patchwerk_kill = EncounterKillPlate(1118, 10),
-  --     patchwerk_wipe = EncounterWipePlate(1118, 10),
-  --     grobbulus_kill = EncounterKillPlate(1111, 11),
-  --     grobbulus_wipe = EncounterWipePlate(1111, 11),
-  --     gluth_kill     = EncounterKillPlate(1108, 12),
-  --     gluth_wipe     = EncounterWipePlate(1108, 12),
-  --     thaddius_kill  = EncounterKillPlate(1120, 13),
-  --     thaddius_wipe  = EncounterWipePlate(1120, 13),
-  --     sapphiron_kill = EncounterKillPlate(1119, 14),
-  --     sapphiron_wipe = EncounterWipePlate(1119, 14),
-  --     kelthuzad_kill = EncounterKillPlate(1114, 15),
-  --     kelthuzad_wipe = EncounterWipePlate(1114, 15),
-  --   }
-  -- }
-  bossrewards_karazhan = {
+  bossrewards_naxxramas_10 = {
     type = "group",
-    name = Encounters:GetInstance(532).name,
+    name = SubZone["Naxxramas"] .. " (10)",
     order = 30,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(652, 1),
-      wipe_1  = EncounterWipePlate(652, 1),
-      kill_2  = EncounterKillPlate(653, 2),
-      wipe_2  = EncounterWipePlate(653, 2),
-      kill_3  = EncounterKillPlate(654, 3),
-      wipe_3  = EncounterWipePlate(654, 3),
-      kill_4  = EncounterKillPlate(655, 4),
-      wipe_4  = EncounterWipePlate(655, 4),
-      kill_5  = EncounterKillPlate(656, 5),
-      wipe_5  = EncounterWipePlate(656, 5),
-      kill_6  = EncounterKillPlate(657, 6),
-      wipe_6  = EncounterWipePlate(657, 6),
-      kill_7  = EncounterKillPlate(658, 7),
-      wipe_7  = EncounterWipePlate(658, 7),
-      kill_8  = EncounterKillPlate(659, 8),
-      wipe_8  = EncounterWipePlate(659, 8),
-      kill_9  = EncounterKillPlate(660, 9),
-      wipe_9  = EncounterWipePlate(660, 9),
-      kill_10 = EncounterKillPlate(661, 10),
-      wipe_10 = EncounterWipePlate(661, 10),
-      kill_11 = EncounterKillPlate(662, 11),
-      wipe_11 = EncounterWipePlate(662, 11),
+      kill_1  = EncounterKillPlate("10N", 1,  1107, Boss["Anub'Rekhan"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1107, Boss["Anub'Rekhan"]),
+      kill_2  = EncounterKillPlate("10N", 2,  1110, Boss["Grand Widow Faerlina"]),
+      wipe_2  = EncounterWipePlate("10N", 2,  1110, Boss["Grand Widow Faerlina"]),
+      kill_3  = EncounterKillPlate("10N", 3,  1116, Boss["Maexxna"]),
+      wipe_3  = EncounterWipePlate("10N", 3,  1116, Boss["Maexxna"]),
+      kill_4  = EncounterKillPlate("10N", 4,  1117, Boss["Noth the Plaguebringer"]),
+      wipe_4  = EncounterWipePlate("10N", 4,  1117, Boss["Noth the Plaguebringer"]),
+      kill_5  = EncounterKillPlate("10N", 5,  1112, Boss["Heigan the Unclean"]),
+      wipe_5  = EncounterWipePlate("10N", 5,  1112, Boss["Heigan the Unclean"]),
+      kill_6  = EncounterKillPlate("10N", 6,  1115, Boss["Loatheb"]),
+      wipe_6  = EncounterWipePlate("10N", 6,  1115, Boss["Loatheb"]),
+      kill_7  = EncounterKillPlate("10N", 7,  1113, Boss["Instructor Razuvious"]),
+      wipe_7  = EncounterWipePlate("10N", 7,  1113, Boss["Instructor Razuvious"]),
+      kill_8  = EncounterKillPlate("10N", 8,  1109, Boss["Gothik the Harvester"]),
+      wipe_8  = EncounterWipePlate("10N", 8,  1109, Boss["Gothik the Harvester"]),
+      kill_9  = EncounterKillPlate("10N", 9,  1121, Boss["The Four Horsemen"]),
+      wipe_9  = EncounterWipePlate("10N", 9,  1121, Boss["The Four Horsemen"]),
+      kill_10 = EncounterKillPlate("10N", 10, 1118, Boss["Patchwerk"]),
+      wipe_10 = EncounterWipePlate("10N", 10, 1118, Boss["Patchwerk"]),
+      kill_11 = EncounterKillPlate("10N", 11, 1111, Boss["Grobbulus"]),
+      wipe_11 = EncounterWipePlate("10N", 11, 1111, Boss["Grobbulus"]),
+      kill_12 = EncounterKillPlate("10N", 12, 1108, Boss["Gluth"]),
+      wipe_12 = EncounterWipePlate("10N", 12, 1108, Boss["Gluth"]),
+      kill_13 = EncounterKillPlate("10N", 13, 1120, Boss["Thaddius"]),
+      wipe_13 = EncounterWipePlate("10N", 13, 1120, Boss["Thaddius"]),
+      kill_14 = EncounterKillPlate("10N", 14, 1119, Boss["Sapphiron"]),
+      wipe_14 = EncounterWipePlate("10N", 14, 1119, Boss["Sapphiron"]),
+      kill_15 = EncounterKillPlate("10N", 15, 1114, Boss["Kel'Thuzad"]),
+      wipe_15 = EncounterWipePlate("10N", 15, 1114, Boss["Kel'Thuzad"]),
     }
   },
-  bossrewards_magtheridon = {
+  bossrewards_naxxramas_25 = {
     type = "group",
-    name = Encounters:GetInstance(544).name,
+    name = SubZone["Naxxramas"] .. " (25)",
     order = 31,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(651, 1),
-      wipe_1  = EncounterWipePlate(651, 1),
+      kill_1  = EncounterKillPlate("25N", 1,  1107, Boss["Anub'Rekhan"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1107, Boss["Anub'Rekhan"]),
+      kill_2  = EncounterKillPlate("25N", 2,  1110, Boss["Grand Widow Faerlina"]),
+      wipe_2  = EncounterWipePlate("25N", 2,  1110, Boss["Grand Widow Faerlina"]),
+      kill_3  = EncounterKillPlate("25N", 3,  1116, Boss["Maexxna"]),
+      wipe_3  = EncounterWipePlate("25N", 3,  1116, Boss["Maexxna"]),
+      kill_4  = EncounterKillPlate("25N", 4,  1117, Boss["Noth the Plaguebringer"]),
+      wipe_4  = EncounterWipePlate("25N", 4,  1117, Boss["Noth the Plaguebringer"]),
+      kill_5  = EncounterKillPlate("25N", 5,  1112, Boss["Heigan the Unclean"]),
+      wipe_5  = EncounterWipePlate("25N", 5,  1112, Boss["Heigan the Unclean"]),
+      kill_6  = EncounterKillPlate("25N", 6,  1115, Boss["Loatheb"]),
+      wipe_6  = EncounterWipePlate("25N", 6,  1115, Boss["Loatheb"]),
+      kill_7  = EncounterKillPlate("25N", 7,  1113, Boss["Instructor Razuvious"]),
+      wipe_7  = EncounterWipePlate("25N", 7,  1113, Boss["Instructor Razuvious"]),
+      kill_8  = EncounterKillPlate("25N", 8,  1109, Boss["Gothik the Harvester"]),
+      wipe_8  = EncounterWipePlate("25N", 8,  1109, Boss["Gothik the Harvester"]),
+      kill_9  = EncounterKillPlate("25N", 9,  1121, Boss["The Four Horsemen"]),
+      wipe_9  = EncounterWipePlate("25N", 9,  1121, Boss["The Four Horsemen"]),
+      kill_10 = EncounterKillPlate("25N", 10, 1118, Boss["Patchwerk"]),
+      wipe_10 = EncounterWipePlate("25N", 10, 1118, Boss["Patchwerk"]),
+      kill_11 = EncounterKillPlate("25N", 11, 1111, Boss["Grobbulus"]),
+      wipe_11 = EncounterWipePlate("25N", 11, 1111, Boss["Grobbulus"]),
+      kill_12 = EncounterKillPlate("25N", 12, 1108, Boss["Gluth"]),
+      wipe_12 = EncounterWipePlate("25N", 12, 1108, Boss["Gluth"]),
+      kill_13 = EncounterKillPlate("25N", 13, 1120, Boss["Thaddius"]),
+      wipe_13 = EncounterWipePlate("25N", 13, 1120, Boss["Thaddius"]),
+      kill_14 = EncounterKillPlate("25N", 14, 1119, Boss["Sapphiron"]),
+      wipe_14 = EncounterWipePlate("25N", 14, 1119, Boss["Sapphiron"]),
+      kill_15 = EncounterKillPlate("25N", 15, 1114, Boss["Kel'Thuzad"]),
+      wipe_15 = EncounterWipePlate("25N", 15, 1114, Boss["Kel'Thuzad"]),
     }
   },
-  bossrewards_gruul = {
+  bossrewards_the_eye_of_eternity_10 = {
     type = "group",
-    name = Encounters:GetInstance(565).name,
-    order = 32,
+    name = SubZone["The Eye of Eternity"] .. " (10)",
+    order = 40,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(649, 1),
-      wipe_1  = EncounterWipePlate(649, 1),
-      kill_2  = EncounterKillPlate(650, 2),
-      wipe_2  = EncounterWipePlate(650, 2),
+      kill_1  = EncounterKillPlate("10N", 1,  1094, Boss["Malygos"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1094, Boss["Malygos"]),
     }
   },
-  bossrewards_serpentshrine = {
+  bossrewards_the_eye_of_eternity_25 = {
     type = "group",
-    name = Encounters:GetInstance(548).name,
-    order = 33,
+    name = SubZone["The Eye of Eternity"] .. " (25)",
+    order = 41,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(623, 1),
-      wipe_1  = EncounterWipePlate(623, 1),
-      kill_2  = EncounterKillPlate(624, 2),
-      wipe_2  = EncounterWipePlate(624, 2),
-      kill_3  = EncounterKillPlate(625, 3),
-      wipe_3  = EncounterWipePlate(625, 3),
-      kill_4  = EncounterKillPlate(626, 4),
-      wipe_4  = EncounterWipePlate(626, 4),
-      kill_5  = EncounterKillPlate(627, 5),
-      wipe_5  = EncounterWipePlate(627, 5),
-      kill_6  = EncounterKillPlate(628, 6),
-      wipe_6  = EncounterWipePlate(628, 6),
+      kill_1  = EncounterKillPlate("25N", 1,  1094, Boss["Malygos"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1094, Boss["Malygos"]),
     }
   },
-  bossrewards_tempest = {
+  bossrewards_the_obsidian_sanctum_10 = {
     type = "group",
-    name = Encounters:GetInstance(550).name,
-    order = 34,
+    name = SubZone["The Obsidian Sanctum"] .. " (10)",
+    order = 50,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(730, 1),
-      wipe_1  = EncounterWipePlate(730, 1),
-      kill_2  = EncounterKillPlate(731, 2),
-      wipe_2  = EncounterWipePlate(731, 2),
-      kill_3  = EncounterKillPlate(732, 3),
-      wipe_3  = EncounterWipePlate(732, 3),
-      kill_4  = EncounterKillPlate(733, 4),
-      wipe_4  = EncounterWipePlate(733, 4),
+      kill_1  = EncounterKillPlate("10N", 1,  1090, Boss["Sartharion"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1090, Boss["Sartharion"]),
     }
   },
-  bossrewards_hyjal = {
+  bossrewards_the_obsidian_sanctum_25 = {
     type = "group",
-    name = Encounters:GetInstance(534).name,
-    order = 35,
+    name = SubZone["The Obsidian Sanctum"] .. " (25)",
+    order = 51,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(618, 1),
-      wipe_1  = EncounterWipePlate(618, 1),
-      kill_2  = EncounterKillPlate(619, 2),
-      wipe_2  = EncounterWipePlate(619, 2),
-      kill_3  = EncounterKillPlate(620, 3),
-      wipe_3  = EncounterWipePlate(620, 3),
-      kill_4  = EncounterKillPlate(621, 4),
-      wipe_4  = EncounterWipePlate(621, 4),
-      kill_5  = EncounterKillPlate(622, 5),
-      wipe_5  = EncounterWipePlate(622, 5),
+      kill_1  = EncounterKillPlate("25N", 1,  1090, Boss["Sartharion"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1090, Boss["Sartharion"]),
     }
   },
-  bossrewards_black_temple = {
+  bossrewards_ulduar_10 = {
     type = "group",
-    name = Encounters:GetInstance(564).name,
-    order = 36,
+    name = SubZone["Ulduar"] .. " (10)",
+    order = 60,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(601, 1),
-      wipe_1  = EncounterWipePlate(601, 1),
-      kill_2  = EncounterKillPlate(602, 2),
-      wipe_2  = EncounterWipePlate(602, 2),
-      kill_3  = EncounterKillPlate(603, 3),
-      wipe_3  = EncounterWipePlate(603, 3),
-      kill_4  = EncounterKillPlate(604, 4),
-      wipe_4  = EncounterWipePlate(604, 4),
-      kill_5  = EncounterKillPlate(605, 5),
-      wipe_5  = EncounterWipePlate(605, 5),
-      kill_6  = EncounterKillPlate(606, 6),
-      wipe_6  = EncounterWipePlate(606, 6),
-      kill_7  = EncounterKillPlate(607, 7),
-      wipe_7  = EncounterWipePlate(607, 7),
-      kill_8  = EncounterKillPlate(608, 8),
-      wipe_8  = EncounterWipePlate(608, 8),
-      kill_9  = EncounterKillPlate(609, 9),
-      wipe_9  = EncounterWipePlate(609, 9),
+      kill_1  = EncounterKillPlate("10N", 1,  1132, Boss["Flame Leviathan"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1132, Boss["Flame Leviathan"]),
+      kill_2  = EncounterKillPlate("10N", 2,  1136, Boss["Ignis the Furnace Master"]),
+      wipe_2  = EncounterWipePlate("10N", 2,  1136, Boss["Ignis the Furnace Master"]),
+      kill_3  = EncounterKillPlate("10N", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("10N", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("10N", 4,  1142, Boss["XT-002 Deconstructor"]),
+      wipe_4  = EncounterWipePlate("10N", 4,  1142, Boss["XT-002 Deconstructor"]),
+      kill_5  = EncounterKillPlate("10N", 5,  1140, Boss["Assembly of Iron"]),
+      wipe_5  = EncounterWipePlate("10N", 5,  1140, Boss["Assembly of Iron"]),
+      kill_6  = EncounterKillPlate("10N", 6,  1137, Boss["Kologarn"]),
+      wipe_6  = EncounterWipePlate("10N", 6,  1137, Boss["Kologarn"]),
+      kill_7  = EncounterKillPlate("10N", 7,  1130, Boss["Algalon the Observer"]),
+      wipe_7  = EncounterWipePlate("10N", 7,  1130, Boss["Algalon the Observer"]),
+      kill_8  = EncounterKillPlate("10N", 8,  1131, Boss["Auriaya"]),
+      wipe_8  = EncounterWipePlate("10N", 8,  1131, Boss["Auriaya"]),
+      kill_9  = EncounterKillPlate("10N", 9,  1135, Boss["Hodir"]),
+      wipe_9  = EncounterWipePlate("10N", 9,  1135, Boss["Hodir"]),
+      kill_10 = EncounterKillPlate("10N", 10, 1141, Boss["Thorim"]),
+      wipe_10 = EncounterWipePlate("10N", 10, 1141, Boss["Thorim"]),
+      kill_11 = EncounterKillPlate("10N", 11, 1133, Boss["Freya"]),
+      wipe_11 = EncounterWipePlate("10N", 11, 1133, Boss["Freya"]),
+      kill_12 = EncounterKillPlate("10N", 12, 1138, Boss["Mimiron"]),
+      wipe_12 = EncounterWipePlate("10N", 12, 1138, Boss["Mimiron"]),
+      kill_13 = EncounterKillPlate("10N", 13, 1134, Boss["General Vezax"]),
+      wipe_13 = EncounterWipePlate("10N", 13, 1134, Boss["General Vezax"]),
+      kill_14 = EncounterKillPlate("10N", 14, 1143, Boss["Yogg-Saron"]),
+      wipe_14 = EncounterWipePlate("10N", 14, 1143, Boss["Yogg-Saron"]),
     }
   },
-  bossrewards_sunwell = {
+  bossrewards_ulduar_25 = {
     type = "group",
-    name = Encounters:GetInstance(580).name,
-    order = 37,
+    name = SubZone["Ulduar"] .. " (25)",
+    order = 61,
     set = SetEP,
     get = GetEP,
     args = {
-      kill_1  = EncounterKillPlate(724, 1),
-      wipe_1  = EncounterWipePlate(724, 1),
-      kill_2  = EncounterKillPlate(725, 2),
-      wipe_2  = EncounterWipePlate(725, 2),
-      kill_3  = EncounterKillPlate(726, 3),
-      wipe_3  = EncounterWipePlate(726, 3),
-      kill_4  = EncounterKillPlate(727, 4),
-      wipe_4  = EncounterWipePlate(727, 4),
-      kill_5  = EncounterKillPlate(728, 5),
-      wipe_5  = EncounterWipePlate(728, 5),
-      kill_6  = EncounterKillPlate(729, 6),
-      wipe_6  = EncounterWipePlate(729, 6),
+      kill_1  = EncounterKillPlate("25N", 1,  1132, Boss["Flame Leviathan"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1132, Boss["Flame Leviathan"]),
+      kill_2  = EncounterKillPlate("25N", 2,  1136, Boss["Ignis the Furnace Master"]),
+      wipe_2  = EncounterWipePlate("25N", 2,  1136, Boss["Ignis the Furnace Master"]),
+      kill_3  = EncounterKillPlate("25N", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("25N", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("25N", 4,  1142, Boss["XT-002 Deconstructor"]),
+      wipe_4  = EncounterWipePlate("25N", 4,  1142, Boss["XT-002 Deconstructor"]),
+      kill_5  = EncounterKillPlate("25N", 5,  1140, Boss["Assembly of Iron"]),
+      wipe_5  = EncounterWipePlate("25N", 5,  1140, Boss["Assembly of Iron"]),
+      kill_6  = EncounterKillPlate("25N", 6,  1137, Boss["Kologarn"]),
+      wipe_6  = EncounterWipePlate("25N", 6,  1137, Boss["Kologarn"]),
+      kill_7  = EncounterKillPlate("25N", 7,  1130, Boss["Algalon the Observer"]),
+      wipe_7  = EncounterWipePlate("25N", 7,  1130, Boss["Algalon the Observer"]),
+      kill_8  = EncounterKillPlate("25N", 8,  1131, Boss["Auriaya"]),
+      wipe_8  = EncounterWipePlate("25N", 8,  1131, Boss["Auriaya"]),
+      kill_9  = EncounterKillPlate("25N", 9,  1135, Boss["Hodir"]),
+      wipe_9  = EncounterWipePlate("25N", 9,  1135, Boss["Hodir"]),
+      kill_10 = EncounterKillPlate("25N", 10, 1141, Boss["Thorim"]),
+      wipe_10 = EncounterWipePlate("25N", 10, 1141, Boss["Thorim"]),
+      kill_11 = EncounterKillPlate("25N", 11, 1133, Boss["Freya"]),
+      wipe_11 = EncounterWipePlate("25N", 11, 1133, Boss["Freya"]),
+      kill_12 = EncounterKillPlate("25N", 12, 1138, Boss["Mimiron"]),
+      wipe_12 = EncounterWipePlate("25N", 12, 1138, Boss["Mimiron"]),
+      kill_13 = EncounterKillPlate("25N", 13, 1134, Boss["General Vezax"]),
+      wipe_13 = EncounterWipePlate("25N", 13, 1134, Boss["General Vezax"]),
+      kill_14 = EncounterKillPlate("25N", 14, 1143, Boss["Yogg-Saron"]),
+      wipe_14 = EncounterWipePlate("25N", 14, 1143, Boss["Yogg-Saron"]),
+    }
+  },
+  bossrewards_trial_of_the_crusader_10n = {
+    type = "group",
+    name = SubZone["Trial of the Crusader"] .. " (10N)",
+    order = 70,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10N", 1,  1088, Boss["The Beasts of Northrend"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1088, Boss["The Beasts of Northrend"]),
+      kill_2  = EncounterKillPlate("10N", 2,  1087, Boss["Lord Jaraxxus"]),
+      wipe_2  = EncounterWipePlate("10N", 2,  1087, Boss["Lord Jaraxxus"]),
+      kill_3  = EncounterKillPlate("10N", 3,  1086, Boss["Faction Champions"]),
+      wipe_3  = EncounterWipePlate("10N", 3,  1086, Boss["Faction Champions"]),
+      kill_4  = EncounterKillPlate("10N", 4,  1089, Boss["The Twin Val'kyr"]),
+      wipe_4  = EncounterWipePlate("10N", 4,  1089, Boss["The Twin Val'kyr"]),
+      kill_5  = EncounterKillPlate("10N", 5,  1085, Boss["Anub'arak"]),
+      wipe_5  = EncounterWipePlate("10N", 5,  1085, Boss["Anub'arak"]),
+    }
+  },
+  bossrewards_trial_of_the_crusader_10h = {
+    type = "group",
+    name = SubZone["Trial of the Crusader"] .. " (10H)",
+    order = 71,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10H", 1,  1088, Boss["The Beasts of Northrend"]),
+      wipe_1  = EncounterWipePlate("10H", 1,  1088, Boss["The Beasts of Northrend"]),
+      kill_2  = EncounterKillPlate("10H", 2,  1087, Boss["Lord Jaraxxus"]),
+      wipe_2  = EncounterWipePlate("10H", 2,  1087, Boss["Lord Jaraxxus"]),
+      kill_3  = EncounterKillPlate("10H", 3,  1086, Boss["Faction Champions"]),
+      wipe_3  = EncounterWipePlate("10H", 3,  1086, Boss["Faction Champions"]),
+      kill_4  = EncounterKillPlate("10H", 4,  1089, Boss["The Twin Val'kyr"]),
+      wipe_4  = EncounterWipePlate("10H", 4,  1089, Boss["The Twin Val'kyr"]),
+      kill_5  = EncounterKillPlate("10H", 5,  1085, Boss["Anub'arak"]),
+      wipe_5  = EncounterWipePlate("10H", 5,  1085, Boss["Anub'arak"]),
+    }
+  },
+  bossrewards_trial_of_the_crusader_25n = {
+    type = "group",
+    name = SubZone["Trial of the Crusader"] .. " (25N)",
+    order = 72,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25N", 1,  1088, Boss["The Beasts of Northrend"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1088, Boss["The Beasts of Northrend"]),
+      kill_2  = EncounterKillPlate("25N", 2,  1087, Boss["Lord Jaraxxus"]),
+      wipe_2  = EncounterWipePlate("25N", 2,  1087, Boss["Lord Jaraxxus"]),
+      kill_3  = EncounterKillPlate("25N", 3,  1086, Boss["Faction Champions"]),
+      wipe_3  = EncounterWipePlate("25N", 3,  1086, Boss["Faction Champions"]),
+      kill_4  = EncounterKillPlate("25N", 4,  1089, Boss["The Twin Val'kyr"]),
+      wipe_4  = EncounterWipePlate("25N", 4,  1089, Boss["The Twin Val'kyr"]),
+      kill_5  = EncounterKillPlate("25N", 5,  1085, Boss["Anub'arak"]),
+      wipe_5  = EncounterWipePlate("25N", 5,  1085, Boss["Anub'arak"]),
+    }
+  },
+  bossrewards_trial_of_the_crusader_25h = {
+    type = "group",
+    name = SubZone["Trial of the Crusader"] .. " (25H)",
+    order = 73,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25H", 1,  1088, Boss["The Beasts of Northrend"]),
+      wipe_1  = EncounterWipePlate("25H", 1,  1088, Boss["The Beasts of Northrend"]),
+      kill_2  = EncounterKillPlate("25H", 2,  1087, Boss["Lord Jaraxxus"]),
+      wipe_2  = EncounterWipePlate("25H", 2,  1087, Boss["Lord Jaraxxus"]),
+      kill_3  = EncounterKillPlate("25H", 3,  1086, Boss["Faction Champions"]),
+      wipe_3  = EncounterWipePlate("25H", 3,  1086, Boss["Faction Champions"]),
+      kill_4  = EncounterKillPlate("25H", 4,  1089, Boss["The Twin Val'kyr"]),
+      wipe_4  = EncounterWipePlate("25H", 4,  1089, Boss["The Twin Val'kyr"]),
+      kill_5  = EncounterKillPlate("25H", 5,  1085, Boss["Anub'arak"]),
+      wipe_5  = EncounterWipePlate("25H", 5,  1085, Boss["Anub'arak"]),
+    }
+  },
+  bossrewards_onyxias_lair_10 = {
+    type = "group",
+    name = SubZone["Onyxia's Lair"] .. " (10)",
+    order = 80,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10N", 1,  1084, Boss["Onyxia"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1084, Boss["Onyxia"]),
+    }
+  },
+  bossrewards_onyxias_lair_25 = {
+    type = "group",
+    name = SubZone["Onyxia's Lair"] .. " (25)",
+    order = 81,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25N", 1,  1084, Boss["Onyxia"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1084, Boss["Onyxia"]),
+    }
+  },
+  bossrewards_icecrown_citadel_10n = {
+    type = "group",
+    name = SubZone["Icecrown Citadel"] .. " (10N)",
+    order = 90,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10N", 1,  1101, Boss["Lord Marrowgar"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1101, Boss["Lord Marrowgar"]),
+      kill_2  = EncounterKillPlate("10N", 2,  1100, Boss["Lady Deathwhisper"]),
+      wipe_2  = EncounterWipePlate("10N", 2,  1100, Boss["Lady Deathwhisper"]),
+      kill_3  = EncounterKillPlate("10N", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("10N", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("10N", 4,  1096, Boss["Deathbringer Saurfang"]),
+      wipe_4  = EncounterWipePlate("10N", 4,  1096, Boss["Deathbringer Saurfang"]),
+      kill_5  = EncounterKillPlate("10N", 5,  1097, Boss["Festergut"]),
+      wipe_5  = EncounterWipePlate("10N", 5,  1097, Boss["Festergut"]),
+      kill_6  = EncounterKillPlate("10N", 6,  1104, Boss["Rotface"]),
+      wipe_6  = EncounterWipePlate("10N", 6,  1104, Boss["Rotface"]),
+      kill_7  = EncounterKillPlate("10N", 7,  1102, Boss["Professor Putricide"]),
+      wipe_7  = EncounterWipePlate("10N", 7,  1102, Boss["Professor Putricide"]),
+      kill_8  = EncounterKillPlate("10N", 8,  1095, Boss["Blood Council"]),
+      wipe_8  = EncounterWipePlate("10N", 8,  1095, Boss["Blood Council"]),
+      kill_9  = EncounterKillPlate("10N", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      wipe_9  = EncounterWipePlate("10N", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      kill_10 = EncounterKillPlate("10N", 10, 1098, Boss["Valithria Dreamwalker"]),
+      wipe_10 = EncounterWipePlate("10N", 10, 1098, Boss["Valithria Dreamwalker"]),
+      kill_11 = EncounterKillPlate("10N", 11, 1105, Boss["Sindragosa"]),
+      wipe_11 = EncounterWipePlate("10N", 11, 1105, Boss["Sindragosa"]),
+      kill_12 = EncounterKillPlate("10N", 12, 1106, Boss["The Lich King"]),
+      wipe_12 = EncounterWipePlate("10N", 12, 1106, Boss["The Lich King"]),
+    }
+  },
+  bossrewards_icecrown_citadel_10h = {
+    type = "group",
+    name = SubZone["Icecrown Citadel"] .. " (10H)",
+    order = 91,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10H", 1,  1101, Boss["Lord Marrowgar"]),
+      wipe_1  = EncounterWipePlate("10H", 1,  1101, Boss["Lord Marrowgar"]),
+      kill_2  = EncounterKillPlate("10H", 2,  1100, Boss["Lady Deathwhisper"]),
+      wipe_2  = EncounterWipePlate("10H", 2,  1100, Boss["Lady Deathwhisper"]),
+      kill_3  = EncounterKillPlate("10H", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("10H", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("10H", 4,  1096, Boss["Deathbringer Saurfang"]),
+      wipe_4  = EncounterWipePlate("10H", 4,  1096, Boss["Deathbringer Saurfang"]),
+      kill_5  = EncounterKillPlate("10H", 5,  1097, Boss["Festergut"]),
+      wipe_5  = EncounterWipePlate("10H", 5,  1097, Boss["Festergut"]),
+      kill_6  = EncounterKillPlate("10H", 6,  1104, Boss["Rotface"]),
+      wipe_6  = EncounterWipePlate("10H", 6,  1104, Boss["Rotface"]),
+      kill_7  = EncounterKillPlate("10H", 7,  1102, Boss["Professor Putricide"]),
+      wipe_7  = EncounterWipePlate("10H", 7,  1102, Boss["Professor Putricide"]),
+      kill_8  = EncounterKillPlate("10H", 8,  1095, Boss["Blood Council"]),
+      wipe_8  = EncounterWipePlate("10H", 8,  1095, Boss["Blood Council"]),
+      kill_9  = EncounterKillPlate("10H", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      wipe_9  = EncounterWipePlate("10H", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      kill_10 = EncounterKillPlate("10H", 10, 1098, Boss["Valithria Dreamwalker"]),
+      wipe_10 = EncounterWipePlate("10H", 10, 1098, Boss["Valithria Dreamwalker"]),
+      kill_11 = EncounterKillPlate("10H", 11, 1105, Boss["Sindragosa"]),
+      wipe_11 = EncounterWipePlate("10H", 11, 1105, Boss["Sindragosa"]),
+      kill_12 = EncounterKillPlate("10H", 12, 1106, Boss["The Lich King"]),
+      wipe_12 = EncounterWipePlate("10H", 12, 1106, Boss["The Lich King"]),
+    }
+  },
+  bossrewards_icecrown_citadel_25n = {
+    type = "group",
+    name = SubZone["Icecrown Citadel"] .. " (25N)",
+    order = 92,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25N", 1,  1101, Boss["Lord Marrowgar"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1101, Boss["Lord Marrowgar"]),
+      kill_2  = EncounterKillPlate("25N", 2,  1100, Boss["Lady Deathwhisper"]),
+      wipe_2  = EncounterWipePlate("25N", 2,  1100, Boss["Lady Deathwhisper"]),
+      kill_3  = EncounterKillPlate("25N", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("25N", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("25N", 4,  1096, Boss["Deathbringer Saurfang"]),
+      wipe_4  = EncounterWipePlate("25N", 4,  1096, Boss["Deathbringer Saurfang"]),
+      kill_5  = EncounterKillPlate("25N", 5,  1097, Boss["Festergut"]),
+      wipe_5  = EncounterWipePlate("25N", 5,  1097, Boss["Festergut"]),
+      kill_6  = EncounterKillPlate("25N", 6,  1104, Boss["Rotface"]),
+      wipe_6  = EncounterWipePlate("25N", 6,  1104, Boss["Rotface"]),
+      kill_7  = EncounterKillPlate("25N", 7,  1102, Boss["Professor Putricide"]),
+      wipe_7  = EncounterWipePlate("25N", 7,  1102, Boss["Professor Putricide"]),
+      kill_8  = EncounterKillPlate("25N", 8,  1095, Boss["Blood Council"]),
+      wipe_8  = EncounterWipePlate("25N", 8,  1095, Boss["Blood Council"]),
+      kill_9  = EncounterKillPlate("25N", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      wipe_9  = EncounterWipePlate("25N", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      kill_10 = EncounterKillPlate("25N", 10, 1098, Boss["Valithria Dreamwalker"]),
+      wipe_10 = EncounterWipePlate("25N", 10, 1098, Boss["Valithria Dreamwalker"]),
+      kill_11 = EncounterKillPlate("25N", 11, 1105, Boss["Sindragosa"]),
+      wipe_11 = EncounterWipePlate("25N", 11, 1105, Boss["Sindragosa"]),
+      kill_12 = EncounterKillPlate("25N", 12, 1106, Boss["The Lich King"]),
+      wipe_12 = EncounterWipePlate("25N", 12, 1106, Boss["The Lich King"]),
+    }
+  },
+  bossrewards_icecrown_citadel_25h = {
+    type = "group",
+    name = SubZone["Icecrown Citadel"] .. " (25H)",
+    order = 93,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25H", 1,  1101, Boss["Lord Marrowgar"]),
+      wipe_1  = EncounterWipePlate("25H", 1,  1101, Boss["Lord Marrowgar"]),
+      kill_2  = EncounterKillPlate("25H", 2,  1100, Boss["Lady Deathwhisper"]),
+      wipe_2  = EncounterWipePlate("25H", 2,  1100, Boss["Lady Deathwhisper"]),
+      kill_3  = EncounterKillPlate("25H", 3,  1139, Boss["Razorscale"]),
+      wipe_3  = EncounterWipePlate("25H", 3,  1139, Boss["Razorscale"]),
+      kill_4  = EncounterKillPlate("25H", 4,  1096, Boss["Deathbringer Saurfang"]),
+      wipe_4  = EncounterWipePlate("25H", 4,  1096, Boss["Deathbringer Saurfang"]),
+      kill_5  = EncounterKillPlate("25H", 5,  1097, Boss["Festergut"]),
+      wipe_5  = EncounterWipePlate("25H", 5,  1097, Boss["Festergut"]),
+      kill_6  = EncounterKillPlate("25H", 6,  1104, Boss["Rotface"]),
+      wipe_6  = EncounterWipePlate("25H", 6,  1104, Boss["Rotface"]),
+      kill_7  = EncounterKillPlate("25H", 7,  1102, Boss["Professor Putricide"]),
+      wipe_7  = EncounterWipePlate("25H", 7,  1102, Boss["Professor Putricide"]),
+      kill_8  = EncounterKillPlate("25H", 8,  1095, Boss["Blood Council"]),
+      wipe_8  = EncounterWipePlate("25H", 8,  1095, Boss["Blood Council"]),
+      kill_9  = EncounterKillPlate("25H", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      wipe_9  = EncounterWipePlate("25H", 9,  1103, Boss["Blood-Queen Lana'thel"]),
+      kill_10 = EncounterKillPlate("25H", 10, 1098, Boss["Valithria Dreamwalker"]),
+      wipe_10 = EncounterWipePlate("25H", 10, 1098, Boss["Valithria Dreamwalker"]),
+      kill_11 = EncounterKillPlate("25H", 11, 1105, Boss["Sindragosa"]),
+      wipe_11 = EncounterWipePlate("25H", 11, 1105, Boss["Sindragosa"]),
+      kill_12 = EncounterKillPlate("25H", 12, 1106, Boss["The Lich King"]),
+      wipe_12 = EncounterWipePlate("25H", 12, 1106, Boss["The Lich King"]),
+    }
+  },
+  bossrewards_the_ruby_sanctum_10n = {
+    type = "group",
+    name = SubZone["The Ruby Sanctum"] .. " (10N)",
+    order = 100,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10N", 1,  1150, Boss["Halion"]),
+      wipe_1  = EncounterWipePlate("10N", 1,  1150, Boss["Halion"]),
+    }
+  },
+  bossrewards_the_ruby_sanctum_10h = {
+    type = "group",
+    name = SubZone["The Ruby Sanctum"] .. " (10H)",
+    order = 101,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("10H", 1,  1150, Boss["Halion"]),
+      wipe_1  = EncounterWipePlate("10H", 1,  1150, Boss["Halion"]),
+    }
+  },
+  bossrewards_the_ruby_sanctum_25n = {
+    type = "group",
+    name = SubZone["The Ruby Sanctum"] .. " (25N)",
+    order = 102,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25N", 1,  1150, Boss["Halion"]),
+      wipe_1  = EncounterWipePlate("25N", 1,  1150, Boss["Halion"]),
+    }
+  },
+  bossrewards_the_ruby_sanctum_25h = {
+    type = "group",
+    name = SubZone["The Ruby Sanctum"] .. " (25H)",
+    order = 103,
+    set = SetEP,
+    get = GetEP,
+    args = {
+      kill_1  = EncounterKillPlate("25H", 1,  1150, Boss["Halion"]),
+      wipe_1  = EncounterWipePlate("25H", 1,  1150, Boss["Halion"]),
     }
   },
 }
 
 local function dbmCallback(event, mod)
   Debug("dbmCallback: %s %s", event, mod.combatInfo.name)
-  EncounterAttempt(event, mod.combatInfo.name, mod.combatInfo.eId)
+  EncounterAttempt(event, mod.combatInfo.name, mod.combatInfo.eId, mod.engagedDiffIndex)
 end
 
 local function bwCallback(event, mod)
@@ -656,8 +847,7 @@ end
 function mod:DebugTestOne(event, id)
   local id_ = id or 0
   id_ = tonumber(id_) or 0
-  local e = Encounters:GetEncounter(id_ or 0)
-  local name = e and e.name or _G.UNKNOWNOBJECT
+  local name = _G.UNKNOWNOBJECT
   EPGP:Print(string.format("BOSS test: event=[%s], name=[%s], id=[%s]",
     tostring(event), name, tostring(id)))
   EncounterAttempt(event, name, id)
