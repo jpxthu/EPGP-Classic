@@ -1,9 +1,9 @@
-## Interface: 20501
-## X-Min-Interface: 20501
-## Title: EPGP TBC
+## Interface: 30400
+## X-Min-Interface: 30400
+## Title: EPGP WotLK
 ## Notes: Effort Points/Gear Points Loot System
 ## Author: jpxthu (Maintainer)
-## Version: v1.6.4-tbc
+## Version: v1.7.0-wlk
 ## SavedVariables: EPGP_DB
 ## OptionalDeps: LibRealmInfo
 ## X-Category: Guild

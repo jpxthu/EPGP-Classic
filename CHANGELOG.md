@@ -1,3 +1,7 @@
+### v1.7.0-wlk (2022.10.6)
+
+- Update ilvl, raid list, bosses and custom items for WotLK.
+
 ### v1.6.4-tbc (2021.6.28)
 
 - Update the custom item list for TBC.
