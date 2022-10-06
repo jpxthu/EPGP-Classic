@@ -25,6 +25,7 @@ L["%s is not in the award list now. Whisper me 'epgp standby' to enlist again."]
 L["%s is now removed from the award list. Whisper me 'epgp standby' to enlist again."] = "%s 已被移出计分名单，密语 \"epgp standby\" 以重新加入。"
 L["%s to %s"] = "%s 给 %s"
 L["%s, %s, %s"] = "%s、%s、%s"
+L["%s, %s, %s, %s"] = "%s、%s、%s、%s"
 L["%s: %+d EP (%s) to %s"] = "%s: %+d EP (%s) 给 %s"
 L["%s: %+d GP (%s) to %s"] = "%s: %+d GP (%s) 给 %s"
 L["%s: %s to %s"] = "%s: %s 由 %s"

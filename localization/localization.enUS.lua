@@ -228,6 +228,7 @@ L["%s %s"] = true
 L["'%s' '%s' - expected 'on', 'off' or 'default', or no argument to toggle."] = true
 L["'%s' '%s' - expected 'on' or 'off', or no argument to toggle."] = true
 L["%s, %s, %s"] = true
+L["%s, %s, %s, %s"] = true
 L["%s: %s to %s"] = true
 L["Standby"] = true
 L["Standby for others is NOT allowed. Whisper 'epgp standby' instead."] = true

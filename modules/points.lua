@@ -17,8 +17,8 @@ local profileDefault = {
   enabled = true,
 
   baseGP = 1000,
-  standardIlvl = 66,
-  ilvlDenominator = 10,
+  standardIlvl = 200,
+  ilvlDenominator = 13,
   legendaryScale = 3,
 
   headScale1 = 1,
@@ -537,9 +537,10 @@ mod.optionsArgs = {
     type = "group",
     name = _G.INVTYPE_RELIC,
     args = {
-      help = HelpPlate(L["%s, %s, %s"]:format(
+      help = HelpPlate(L["%s, %s, %s, %s"]:format(
           LOCAL_NAME.Idol,   -- 神像
           LOCAL_NAME.Libram, -- 圣契
+          LOCAL_NAME.Sigil,  -- 魔印
           LOCAL_NAME.Totem)),-- 图腾
       relicScale1 = ScalePlate(1),
       relicComment1 = CommentPlate(1),
