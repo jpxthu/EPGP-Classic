@@ -16,7 +16,7 @@ local isDebugging = lib.isDebugging and lib:isDebugging() or false
 -- The main frame.
 frame:EnableMouse()
 
-frame:SetMinResize(300, 100)
+frame:SetResizeBounds(300, 100)
 frame:SetWidth(400)
 frame:SetHeight(400)
 
