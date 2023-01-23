@@ -1,3 +1,9 @@
+### BLZ will shutdown the CN servers. I will not try other regions, and I will not update these addons anymore. Goodbye! May the wind guide your path!
+
+### 玻璃渣即将关闭中国地区服务器。我不会转战其它地区，也不会在更新插件。再会了，愿风指引你的道路！
+
+=========================================
+
 # EPGP Classic
 
 EPGP-Classic **CAN** work on **WOW Classic**.
